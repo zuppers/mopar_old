@@ -1,0 +1,4 @@
+{
+	"scripts" : ["rune_types.rb", "runecrafting.rb"],
+	"dependencies" : []
+}

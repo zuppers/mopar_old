@@ -1,0 +1,4 @@
+{
+	"scripts" : [ "bars.rb", "smithing_types.rb", "smithing_products.rb", "smithing.rb" ],
+	"dependencies" : []
+}

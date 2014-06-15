@@ -1,0 +1,22 @@
+*.class
+*.jar
+
+# Netbeans
+build/
+lib/
+dist/
+nbproject/
+build.xml
+
+# Eclipse
+.project
+.classpath
+.metadata
+
+# Junk
+run.bat
+run.sh
+bin/**
+tmp/**
+dependencies/**
+*.launch

@@ -1,0 +1,4 @@
+{
+	"scripts" : [ "ores.rb", "pickaxes.rb", "mining.rb" ],
+	"dependencies" : []
+}

@@ -1,0 +1,4 @@
+{
+	"scripts" : ["arrows.rb", "bows.rb", "fletching_recipes.rb", "fletching.rb"],
+	"dependencies" : []
+}

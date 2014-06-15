@@ -1,0 +1,5 @@
+{
+	"authors" : [ "sinisoul", "davidi2" ],
+	"scripts" : [ "commands.rb", "skill_menu.rb", "buttons.rb", "shops.rb"],
+	"dependencies" : []
+}
