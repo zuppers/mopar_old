@@ -12,105 +12,179 @@ import net.scapeemulator.game.net.game.GameSession;
 import net.scapeemulator.game.task.TaskScheduler;
 import net.scapeemulator.game.update.PlayerUpdater;
 
+/**
+ * Represents our singleton world which can be retrieved by {@link getWorld()}.
+ * This contains a {@link MobList} for {@link Player} and one for {@link Npc}. 
+ * This contains a {@link GroundItemList} and a {@link GroundObjectList}.
+ * 
+ */
 public final class World {
 
-	public static final int MAX_PLAYERS = 2000;
+    public static final int MAX_PLAYERS = 2000;
 
-	private static final World world = new World();
+    private static final World world = new World();
 
-	public static World getWorld() {
-		return world;
-	}
+    /**
+     * The world instance.
+     * @return 
+     */
+    public static World getWorld() {
+        return world;
+    }
 
-	private final MobList<Player> players = new MobList<>(MAX_PLAYERS);
-	private final MobList<NPC> npcs = new MobList<>(32000);
-	private final TaskScheduler taskScheduler = new TaskScheduler();
-	private final GrandExchange grandExchange = new GrandExchange();
-	private final PlayerUpdater updater = new PlayerUpdater(this);
+    private final MobList<Player> players = new MobList<>(MAX_PLAYERS);
+    private final MobList<NPC> npcs = new MobList<>(32000);
+    private final TaskScheduler taskScheduler = new TaskScheduler();
+    private final GrandExchange grandExchange = new GrandExchange();
+    private final PlayerUpdater updater = new PlayerUpdater(this);
     private final GroundItemList groundItems = new GroundItemList(Type.WORLD);
     private final GroundObjectList groundObjects = new GroundObjectList();
     private final TraversalMap traversalMap = new TraversalMap();
 
-	private World() {
+    /**
+     * Adds a listener ({@link ObjectDataListener}) to our groundObjects list.
+     */
+    private World() {
         /* TODO: Is this in the correct place? */
         /* Add the object data listener for the traversal map */
-		groundObjects.addListener(new ObjectDataListener(traversalMap));
-	}
-	
-	public MobList<Player> getPlayers() {
-		return players;
-	}
+        groundObjects.addListener(new ObjectDataListener(traversalMap));
+    }
 
-	public void addNpc(NPC npc) {
-		npcs.add(npc);
-	}
-	
-	public MobList<NPC> getNpcs() {
-		return npcs;
-	}
+    /**
+     * Gets the {@link MobList} of all Players in this world.
+     * @return 
+     */
+    public MobList<Player> getPlayers() {
+        return players;
+    }
 
+    /**
+     * Add the npc to our MobList of npcs.
+     * @param npc The {@link NPC} to add.
+     */
+    public void addNpc(NPC npc) {
+        npcs.add(npc);
+    }
+
+    /**
+     * Gets the {@link MobList} of all Npcs in this world.
+     * @return 
+     */
+    public MobList<NPC> getNpcs() {
+        return npcs;
+    }
+
+    /**
+     * Gets the {@link GroundItemList} of this world.
+     * @return 
+     */
     public GroundItemList getGroundItems() {
         return groundItems;
     }
 
+    /**
+     * Gets the {@link GroundObjectList} of this world.
+     * @return 
+     */
     public GroundObjectList getGroundObjects() {
         return groundObjects;
     }
 
+    /**
+     * Gets the {@link TraversalMap} of this world.
+     * @return 
+     */
     public TraversalMap getTraversalMap() {
         return traversalMap;
     }
 
-	public TaskScheduler getTaskScheduler() {
-		return taskScheduler;
-	}
+    /**
+     * Gets the {@link TaskScheduler} of this world.
+     * @return 
+     */
+    public TaskScheduler getTaskScheduler() {
+        return taskScheduler;
+    }
 
-	public GrandExchange getGrandExchange() {
-		return grandExchange;
-	}
-	
-	public void tick() {
-		for (Player player : players) {
-			GameSession session = player.getSession();
-			if (session != null)
-				session.processMessageQueue();
-		}
-		taskScheduler.tick();
-		groundItems.tick();
-		updater.tick();
-	}
+    /**
+     * Gets the {@link GrandExchange} of this world.
+     * @return 
+     */    
+    public GrandExchange getGrandExchange() {
+        return grandExchange;
+    }
 
-	public Player getPlayerByName(String username) {
-		for (Player player : players) {
-			if (player.getUsername().equalsIgnoreCase(username) || player.getDisplayName().equalsIgnoreCase(username))
-				return player;
-		}
+    /**
+     * Performs {@link GameSession#processMessageQueue()} for every {@Player} in {@link getPlayers()}
+     * as well as perform the {@link TaskScheduler#tick()}, {@link GroundItemList#tick()} & {@link PlayerUpdater#tick()}.
+     */
+    public void tick() {
+        for (Player player : players) {
+            GameSession session = player.getSession();
+            if (session != null) {
+                session.processMessageQueue();
+            }
+        }
+        taskScheduler.tick();
+        groundItems.tick();
+        updater.tick();
+    }
 
-		return null;
-	}
-	
-	public Player getPlayerByLongName(long longName) {
-		for (Player player : players) {
-			if (player.getLongUsername() == longName)  {
-				return player;
-			}
-		}
-		return null;
-	}
-	
-	public Player getPlayerByDatabaseId(int id) {
-		for (Player player : players) {
-			if (player.getDatabaseId() == id)
-				return player;
-		}
+    /**
+     * Get a {@link Player} for which {@link Player#getUsername()} or {@link Player#getDisplayName()} returns username, ignoring the cases.
+     * Iterates over {@link getPlayers()} to find the {@link Player}.
+     * @param username The String used to find a match.
+     * @return The {@link Player} we found a match for. Null if no match was found.
+     */
+    public Player getPlayerByName(String username) {
+        for (Player player : players) {
+            if (player.getUsername().equalsIgnoreCase(username) || player.getDisplayName().equalsIgnoreCase(username)) {
+                return player;
+            }
+        }
 
-		return null;
-	}
-	
-	public void sendGlobalMessage(String text) {
-		for(Player player : players) {
-			player.sendMessage(text);
-		}
-	}
-	
+        return null;
+    }
+
+    /**
+     * Get a {@link Player} for which {@link Player#getLongUsername()} returns longName.
+     * Iterates over {@link getPlayers()} to find the {@link Player}.
+     * @param longName The long used to find a match.
+     * @return The {@link Player} we found a match for. Null if no match was found.
+     */
+    public Player getPlayerByLongName(long longName) {
+        for (Player player : players) {
+            if (player.getLongUsername() == longName) {
+                return player;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Get a {@link Player} associated with the databaseId.
+     * Iterates over {@link getPlayers()} and uses {@link Player#getDatabaseId()}.
+     * @param id The id to search the associated player with.
+     * @return The player or null if no player was found to be associated with the given id.
+     */
+    public Player getPlayerByDatabaseId(int id) {
+        for (Player player : players) {
+            if (player.getDatabaseId() == id) {
+                return player;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Send the provided text to all players, {@link getPlayers()} using {@link Player#sendMessage(String text)}.
+     * @param text The text to send to every player.
+     */
+    public void sendGlobalMessage(String text) {
+        for (Player player : players) {
+            player.sendMessage(text);
+        }
+    }
+
 }
