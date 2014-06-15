@@ -23,7 +23,7 @@
 package net.scapeemulator.game.model;
 
 /**
- * Created by Hadyn Richard
+ * @author Hadyn Richard
  */
 public abstract class Door {
 
