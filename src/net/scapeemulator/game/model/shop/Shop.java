@@ -397,55 +397,5 @@ public class Shop {
         }
         return amount;
     }
-    
-    /**
-     * Gets the best slot for the specified itemId. This implies we seek a slot
-     * with the same itemId, else the first empty slot is chosen.
-     *
-     * @param itemId The id of the item we are looking the best slot for.
-     * @return The best slot for the itemId as described above. -1 if no slot
-     * was found.
-     */
-    public int getBestSlot(int itemId) {
-        int foundSlot = -1;
-
-        for (int i = 0; i < mainStock.length; i++) {
-            //First empty slot found
-            if (foundSlot == -1 && mainStock[i] == -1) {
-                foundSlot = i;
-            }
-            //Slot with same item found
-            if (mainStock[i] == itemId) {
-                return i;
-            }
-        }
-        return foundSlot;
-    }
-    
-    /**
-     * Add a certain amount of the {@link Item} itemId to a "stock" of this {@link Shop}.
-     * 
-     * @param itemId The itemId to add an {@link Item} of.
-     * @param amount The amount of the itemId to add.
-     * @return The amount that was added to this {@link Shop}. 
-     * If the itemId resides in the {@link StockType#Main} or amount {@literal <}= 0, 0 is returned.
-     * In other cases the given amount may be adjusted to fit the {@link Shop}'s needs and or rules.
-     */
-    public int add(int itemId, int amount) {
-        return 0;
-    }
-    
-    /**
-     * Removes a certain amount of the {@link Item} with the itemId out of a "stock" of this {@link Shop}.
-     *
-     * @param itemId The id of the item to remove.
-     * @param amount The amount of the item we attempt to remove.
-     * @return The amount of items of the itemId removed in this {@link Shop}}. 
-     * If the itemId isn't in this {@link Shop} or the amount is less than or equal to 0, 0 is returned.
-     * In all other cases the given amount to remove may be adjusted to fit the {@link Shop}'s needs and or rules.
-     */
-    public int remove(int itemId, int amount) {
-        return 0;
-    }
 
 }
