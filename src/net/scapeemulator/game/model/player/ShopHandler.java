@@ -17,7 +17,7 @@ import net.scapeemulator.game.msg.impl.inter.InterfaceVisibleMessage;
 
 public class ShopHandler extends ComponentListener {
 
-    public final static HashMap<String, Shop> shops = new HashMap<String, Shop>();
+    public final static HashMap<String, Shop> shops = new HashMap<>();
     private final static int[] amounts = {1, 5, 10, 50};
 
     private final Player player;
@@ -47,14 +47,19 @@ public class ShopHandler extends ComponentListener {
     }
 
     public void sell(int itemId, int amount) {
+        if (activeShop == null) {
+            return;
+        }
         int unnotedId = ItemDefinitions.forId(itemId).getUnnotedId();
         if (!activeShop.acceptsItem(unnotedId)) {
             player.sendMessage("You cannot sell that item to this shop.");
             return;
         }
+        //Adjust amount to player's inventory
         int playerAmount = player.getInventory().getAmount(itemId);
         Item toSell = new Item(itemId, ((amount > playerAmount) ? playerAmount : amount));
-        int payment = toSell.getAmount() * ItemDefinitions.forId(unnotedId).getLowAlchemyValue();
+
+        int payment = toSell.getAmount() * ItemDefinitions.forId(unnotedId).getLowAlchemyValue(); //TODO What if the ..* .. exceeds the Integer? It would be -...! Make a long out of this?
         long tAmt = (long) player.getInventory().getAmount(995) + payment;
         if (tAmt > Integer.MAX_VALUE) {
             //TODO check for space for coins if selling stackable
@@ -66,10 +71,8 @@ public class ShopHandler extends ComponentListener {
             return;
         }
         player.getInventory().add(new Item(995, payment));
-        if (activeShop instanceof GeneralStore) {
-            if (((GeneralStore) activeShop).add(unnotedId, toSell.getAmount()) > 0) {
-                updateShopGlobally();
-            }
+        if (activeShop.add(unnotedId, toSell.getAmount()) > 0) {
+            updateShopGlobally();
         }
     }
 
@@ -78,6 +81,9 @@ public class ShopHandler extends ComponentListener {
             return;
         }
         int item = activeShop.getItemAtIndex(activeStock, index);
+        if (item == -1) {
+            return;
+        }
         // ---- Start amount check ----//
         ItemDefinition def = ItemDefinitions.forId(item);
         int cost = def.getValue();
@@ -114,16 +120,8 @@ public class ShopHandler extends ComponentListener {
         if (!activeShop.contains(activeStock, item)) {
             return;
         }
-        switch (activeStock) {
-            case PLAYER:
-                GeneralStore store = (GeneralStore) activeShop;
-                amount = store.remove(item, amount);
-                if (amount > 0) {
-                    updateShopGlobally();
-                }
-                break;
-            case MAIN:
-                break;
+        if (activeShop.remove(item, amount) > 0) {
+            updateShopGlobally();
         }
         player.getInventory().remove(new Item(995, cost * amount));
         player.getInventory().add(new Item(item, amount));
@@ -207,7 +205,7 @@ public class ShopHandler extends ComponentListener {
     public void updateShopGlobally() {
         for (Player p : World.getWorld().getPlayers()) {
             if (p.getShopHandler().getActiveShop() == activeShop) {
-                p.send(new InterfaceItemsMessage(-1, 64271, 31, activeShop.getPlayerStock()));
+                p.send(new InterfaceItemsMessage(-1, 64271, 31, activeShop.getStock(StockType.PLAYER)));
             }
         }
     }
@@ -216,7 +214,7 @@ public class ShopHandler extends ComponentListener {
         if (activeStock == StockType.PLAYER) {
             return;
         }
-        if (!(activeShop instanceof GeneralStore)) {
+        if (activeShop.getStock(StockType.PLAYER) == null) {
             player.sendMessage("This shop has no player stock.");
             return;
         }
@@ -252,8 +250,8 @@ public class ShopHandler extends ComponentListener {
         Shop shop = shops.get(shopName);
         activeShop = shop;
         player.send(new InterfaceItemsMessage(-1, 64209, 93, player.getInventory().toArray()));
-        if (shop instanceof GeneralStore) {
-            player.send(new InterfaceItemsMessage(-1, 64271, 31, activeShop.getPlayerStock()));
+        if (shop.getStock(StockType.PLAYER) != null) {
+            player.send(new InterfaceItemsMessage(-1, 64271, 31, activeShop.getStock(StockType.PLAYER)));
         }
         player.setInterfaceText(620, 22, shopName);
         player.send(new InterfaceVisibleMessage(620, 34, shop instanceof GeneralStore));
