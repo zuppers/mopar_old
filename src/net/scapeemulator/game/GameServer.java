@@ -205,7 +205,7 @@ public final class GameServer {
             tick();
             long elapsed = (System.currentTimeMillis() - start);
             long waitFor = 600 - elapsed;
-            if (waitFor >= 0) {
+            if (waitFor > 0) {
                 try {
                     Thread.sleep(waitFor);
                 } catch (InterruptedException e) {
