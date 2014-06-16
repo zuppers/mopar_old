@@ -30,9 +30,8 @@ import net.scapeemulator.game.model.player.Player;
 import net.scapeemulator.game.model.player.ShopHandler;
 import net.scapeemulator.game.model.player.inventory.Inventory;
 import net.scapeemulator.game.model.shop.GeneralStore;
-import net.scapeemulator.game.model.shop.StockedShop;
+import net.scapeemulator.game.model.shop.Shop;
 import net.scapeemulator.game.net.login.LoginResponse;
-
 import org.mindrot.jbcrypt.BCrypt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -251,7 +250,7 @@ public final class JdbcSerializer extends Serializer implements Closeable {
 				if (set.getBoolean("is_gen")) {
 					ShopHandler.shops.put(name, new GeneralStore(id, name, shopId, stockIds));
 				} else {
-					ShopHandler.shops.put(name, new StockedShop(id, name, shopId, stockIds));
+					ShopHandler.shops.put(name, new Shop(id, name, shopId, stockIds));
 				}
 				count++;
 			}
