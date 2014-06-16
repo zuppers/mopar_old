@@ -77,9 +77,15 @@ public class ShopHandler extends ComponentListener {
         if (activeShop == null) {
             return;
         }
-        int item = activeShop.getItemAtIndex(activeStock, index).getId();
+        
+        Item item = activeShop.getItemAtIndex(activeStock, index);
+        if(item == null) {
+            return;
+        }
+        int itemId = item.getId();
+        
         // ---- Start amount check ----//
-        ItemDefinition def = ItemDefinitions.forId(item);
+        ItemDefinition def = ItemDefinitions.forId(itemId);
         int cost = def.getValue();
         cost = cost < 1 ? 1 : cost;
         int assets = player.getInventory().getAmount(995);
@@ -100,8 +106,8 @@ public class ShopHandler extends ComponentListener {
                 return;
             }
         } else {
-            if (player.getInventory().contains(item)) {
-                int curAmount = player.getInventory().getAmount(item);
+            if (player.getInventory().contains(itemId)) {
+                int curAmount = player.getInventory().getAmount(itemId);
                 long tAmt = (long) curAmount + amount;
                 amount = tAmt > Integer.MAX_VALUE ? Integer.MAX_VALUE - curAmount : amount;
             } else {
@@ -111,15 +117,15 @@ public class ShopHandler extends ComponentListener {
             }
         }
         // ---- End amount check ----//
-        if (!activeShop.contains(activeStock, item)) {
+        if (!activeShop.contains(activeStock, itemId)) {
             return;
         }
-        amount = activeShop.remove(activeStock, item, amount);
+        amount = activeShop.remove(activeStock, itemId, amount);
         if(amount > 0) {
             updateShopGlobally();
         }
         player.getInventory().remove(new Item(995, cost * amount));
-        player.getInventory().add(new Item(item, amount));
+        player.getInventory().add(new Item(itemId, amount));
     }
 
     public void handleInput(int childId, int dynamicId, ExtendedOption option) {

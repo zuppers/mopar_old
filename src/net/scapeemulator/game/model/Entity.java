@@ -5,22 +5,24 @@ package net.scapeemulator.game.model;
  */
 public abstract class Entity {
 
-	protected Position position;
+    protected Position position;
 
-        /**
-         * Retrieve the position of this {@link Entity}
-         * @return 
-         */
-	public Position getPosition() {
-		return position;
-	}
+    /**
+     * Retrieve the position of this {@link Entity}
+     *
+     * @return
+     */
+    public Position getPosition() {
+        return position;
+    }
 
-        /**
-         * Set the {@link Position} of this {@link Entity} to position.
-         * @param position The {@link Position} to set it to.
-         */
-	public void setPosition(Position position) {
-		this.position = position;
-	}
+    /**
+     * Set the {@link Position} of this {@link Entity} to position.
+     *
+     * @param position The {@link Position} to set it to.
+     */
+    public void setPosition(Position position) {
+        this.position = position;
+    }
 
 }
