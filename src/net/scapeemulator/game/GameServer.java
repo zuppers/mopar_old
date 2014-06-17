@@ -164,11 +164,12 @@ public final class GameServer {
         mapLoader.load(cache, landscapeKeyTable);
 
         /* load message codecs and dispatcher */
-
+        logger.info("Populating codecs...");
         codecRepository = new CodecRepository(landscapeKeyTable);
 
         /* load the server pluginLoader */
 
+        logger.info("Loading plugins...");
         pluginLoader.setContext(scriptContext);
         pluginLoader.load("./data/game/plugins/");
 
