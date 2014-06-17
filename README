@@ -10,6 +10,9 @@ Davidi2 <https://www.moparscape.org/smf/index.php?action=profile;u=324294>
 
 ### Java Dependencies
 
+# Full download
+https://dl.dropboxusercontent.com/u/267844771/dependencies.zip
+
 asm 4.1 (asm-tree and asm-util)
 jackson-core-asl-1.9.13
 javaassist-3.17.1-GA
