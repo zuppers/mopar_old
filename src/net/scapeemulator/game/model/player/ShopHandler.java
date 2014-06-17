@@ -7,7 +7,6 @@ import net.scapeemulator.game.model.ExtendedOption;
 import net.scapeemulator.game.model.World;
 import net.scapeemulator.game.model.definition.ItemDefinitions;
 import net.scapeemulator.game.model.player.InterfaceSet.Component;
-import net.scapeemulator.game.model.shop.GeneralStore;
 import net.scapeemulator.game.model.shop.StockType;
 import net.scapeemulator.game.model.shop.Shop;
 import net.scapeemulator.game.msg.impl.ScriptMessage;
@@ -47,6 +46,9 @@ public class ShopHandler extends ComponentListener {
     }
 
     public void sell(int itemId, int amount) {
+        if(activeShop == null) {
+            return;
+        }
         int unnotedId = ItemDefinitions.forId(itemId).getUnnotedId();
         if (!activeShop.acceptsItem(unnotedId)) {
             player.sendMessage("You cannot sell that item to this shop.");
@@ -66,10 +68,8 @@ public class ShopHandler extends ComponentListener {
             return;
         }
         player.getInventory().add(new Item(995, payment));
-        if (activeShop instanceof GeneralStore) {
-            if (((GeneralStore) activeShop).add(unnotedId, toSell.getAmount()) > 0) {
+        if (activeShop.add(unnotedId, toSell.getAmount()) > 0) {
                 updateShopGlobally();
-            }
         }
     }
 
@@ -77,9 +77,15 @@ public class ShopHandler extends ComponentListener {
         if (activeShop == null) {
             return;
         }
-        int item = activeShop.getItemAtIndex(activeStock, index);
+        
+        Item item = activeShop.getItemAtIndex(activeStock, index);
+        if(item == null) {
+            return;
+        }
+        int itemId = item.getId();
+        
         // ---- Start amount check ----//
-        ItemDefinition def = ItemDefinitions.forId(item);
+        ItemDefinition def = ItemDefinitions.forId(itemId);
         int cost = def.getValue();
         cost = cost < 1 ? 1 : cost;
         int assets = player.getInventory().getAmount(995);
@@ -100,8 +106,8 @@ public class ShopHandler extends ComponentListener {
                 return;
             }
         } else {
-            if (player.getInventory().contains(item)) {
-                int curAmount = player.getInventory().getAmount(item);
+            if (player.getInventory().contains(itemId)) {
+                int curAmount = player.getInventory().getAmount(itemId);
                 long tAmt = (long) curAmount + amount;
                 amount = tAmt > Integer.MAX_VALUE ? Integer.MAX_VALUE - curAmount : amount;
             } else {
@@ -111,22 +117,15 @@ public class ShopHandler extends ComponentListener {
             }
         }
         // ---- End amount check ----//
-        if (!activeShop.contains(activeStock, item)) {
+        if (!activeShop.contains(activeStock, itemId)) {
             return;
         }
-        switch (activeStock) {
-            case PLAYER:
-                GeneralStore store = (GeneralStore) activeShop;
-                amount = store.remove(item, amount);
-                if (amount > 0) {
-                    updateShopGlobally();
-                }
-                break;
-            case MAIN:
-                break;
+        amount = activeShop.remove(activeStock, itemId, amount);
+        if(amount > 0) {
+            updateShopGlobally();
         }
         player.getInventory().remove(new Item(995, cost * amount));
-        player.getInventory().add(new Item(item, amount));
+        player.getInventory().add(new Item(itemId, amount));
     }
 
     public void handleInput(int childId, int dynamicId, ExtendedOption option) {
@@ -141,9 +140,9 @@ public class ShopHandler extends ComponentListener {
             case 24:
                 switch (option) {
                     case ONE:
-                        int value = value(activeShop.getItemAtIndex(activeStock, dynamicId));
+                        int value = value(activeShop.getItemAtIndex(activeStock, dynamicId).getId());
                         value = value < 1 ? 1 : value;
-                        String name = name(activeShop.getItemAtIndex(activeStock, dynamicId));
+                        String name = name(activeShop.getItemAtIndex(activeStock, dynamicId).getId());
                         player.sendMessage(name + " costs " + value + " coin" + (value == 1 ? "" : "s") + ".");
                         break;
                     case TWO:
@@ -207,7 +206,7 @@ public class ShopHandler extends ComponentListener {
     public void updateShopGlobally() {
         for (Player p : World.getWorld().getPlayers()) {
             if (p.getShopHandler().getActiveShop() == activeShop) {
-                p.send(new InterfaceItemsMessage(-1, 64271, 31, activeShop.getPlayerStock()));
+                p.send(new InterfaceItemsMessage(-1, 64271, 31, activeShop.getStock(StockType.PLAYER)));
             }
         }
     }
@@ -216,7 +215,7 @@ public class ShopHandler extends ComponentListener {
         if (activeStock == StockType.PLAYER) {
             return;
         }
-        if (!(activeShop instanceof GeneralStore)) {
+        if (!activeShop.hasStock(StockType.PLAYER)) {
             player.sendMessage("This shop has no player stock.");
             return;
         }
@@ -252,11 +251,11 @@ public class ShopHandler extends ComponentListener {
         Shop shop = shops.get(shopName);
         activeShop = shop;
         player.send(new InterfaceItemsMessage(-1, 64209, 93, player.getInventory().toArray()));
-        if (shop instanceof GeneralStore) {
-            player.send(new InterfaceItemsMessage(-1, 64271, 31, activeShop.getPlayerStock()));
+        if (shop.hasStock(StockType.PLAYER)) {
+            player.send(new InterfaceItemsMessage(-1, 64271, 31, activeShop.getStock(StockType.PLAYER)));
         }
         player.setInterfaceText(620, 22, shopName);
-        player.send(new InterfaceVisibleMessage(620, 34, shop instanceof GeneralStore));
+        player.send(new InterfaceVisibleMessage(620, 34, shop.hasStock(StockType.PLAYER)));
         player.getInterfaceSet().openWindow(620);
         player.getInterfaceSet().openInventory(621);
         player.send(new ScriptMessage(150, "IviiiIsssssssss", new Object[]{"", "", "", "", "Sell 50", "Sell 10", "Sell 5", "Sell 1", "Value", -1, 0, 7, 4, 93, 621 << 16}));
