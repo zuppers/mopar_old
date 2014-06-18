@@ -342,6 +342,10 @@ public final class Player extends Mob {
 		return updateModelLists;
 	}
 
+	public void toggleClipping() {
+	   clipped = !clipped;
+	}
+		
 	public boolean actionsBlocked() {
 		return blockActions || !alive();
 	}

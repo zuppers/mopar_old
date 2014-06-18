@@ -574,9 +574,12 @@ module RuneEmulator
 end
 
 RuneEmulator::Doors.bind_door(24375, 24376)
+RuneEmulator::Doors.bind_door(1531, 1530)
+RuneEmulator::Doors.bind_door(15535, 15536)
 RuneEmulator::Doors.bind_door(36848, 36844)
 RuneEmulator::Doors.bind_door(36848, 36846)
 RuneEmulator::Doors.bind_double_door(37000, 37003, 36999, 37002)
 RuneEmulator::Doors.bind_gate(36912, 36914, 36913, 36915)
+RuneEmulator::Doors.bind_gate(15515, 15517, 15514, 15516)
 RuneEmulator::Doors.bind_handlers()
 RuneEmulator::Doors.refresh()

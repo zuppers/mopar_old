@@ -12,7 +12,9 @@ SHOPKEEPERS = {
   549 => 'Horvik\'s Armour Shop',
   550 => 'Lowe\'s Archery Emporium',
   551 => 'Varrock Sword Shop', 552 => 'Varrock Sword Shop',
-  553 => 'Aubury\'s Rune Shop'
+  553 => 'Aubury\'s Rune Shop',
+  2233 => 'Draynor Seed Market',
+  3671 => 'Wine Shop'
 }
 
 bind :npc, :option => :two do
@@ -32,5 +34,4 @@ class OpenShopAction < DistancedAction
     mob.get_shop_handler.open_shop SHOPKEEPERS[@npc.type]
     stop
   end
-
 end
