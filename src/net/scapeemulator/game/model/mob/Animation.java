@@ -10,7 +10,6 @@ public final class Animation {
 
     /**
      * Creates an {@link Animation} with the provided id and 0 delay.
-     *
      * @param id The id of the {@link Animation}.
      */
     public Animation(int id) {
@@ -30,7 +29,7 @@ public final class Animation {
 
     /**
      * Gets the id of this {@link Animation}.
-     * @return
+     * @return The id of this {@link Animation}.
      */
     public int getId() {
         return id;
@@ -38,7 +37,7 @@ public final class Animation {
 
     /**
      * Gets the delay of this {@link Animation}.
-     * @return
+     * @return The delay of this {@link Animation}.
      */
     public int getDelay() {
         return delay;

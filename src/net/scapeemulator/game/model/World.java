@@ -14,9 +14,9 @@ import net.scapeemulator.game.update.PlayerUpdater;
 
 /**
  * Represents our singleton world which can be retrieved by {@link getWorld()}.
- * This contains a {@link MobList} for {@link Player} and one for {@link Npc}. 
+ * This contains a {@link MobList} for {@link Player} and one for {@link Npc}.
  * This contains a {@link GroundItemList} and a {@link GroundObjectList}.
- * 
+ *
  */
 public final class World {
 
@@ -26,7 +26,7 @@ public final class World {
 
     /**
      * The world instance.
-     * @return 
+     * @return The world.
      */
     public static World getWorld() {
         return world;
@@ -52,7 +52,7 @@ public final class World {
 
     /**
      * Gets the {@link MobList} of all Players in this world.
-     * @return 
+     * @return The {@link Player}-s in this {@link World}.
      */
     public MobList<Player> getPlayers() {
         return players;
@@ -68,7 +68,7 @@ public final class World {
 
     /**
      * Gets the {@link MobList} of all Npcs in this world.
-     * @return 
+     * @return The {@link NPC}-s in this {@link World}.
      */
     public MobList<NPC> getNpcs() {
         return npcs;
@@ -76,7 +76,7 @@ public final class World {
 
     /**
      * Gets the {@link GroundItemList} of this world.
-     * @return 
+     * @return The {@link GroundItem}-s in this {@link World}.
      */
     public GroundItemList getGroundItems() {
         return groundItems;
@@ -84,7 +84,7 @@ public final class World {
 
     /**
      * Gets the {@link GroundObjectList} of this world.
-     * @return 
+     * @return The {@link GroundObject}-s in this {@link World}.
      */
     public GroundObjectList getGroundObjects() {
         return groundObjects;
@@ -92,7 +92,7 @@ public final class World {
 
     /**
      * Gets the {@link TraversalMap} of this world.
-     * @return 
+     * @return The {@link TraversalMap} of this {@link World}.
      */
     public TraversalMap getTraversalMap() {
         return traversalMap;
@@ -100,7 +100,7 @@ public final class World {
 
     /**
      * Gets the {@link TaskScheduler} of this world.
-     * @return 
+     * @return The {@link TaskScheduler} in this {@link World}.
      */
     public TaskScheduler getTaskScheduler() {
         return taskScheduler;
@@ -108,15 +108,17 @@ public final class World {
 
     /**
      * Gets the {@link GrandExchange} of this world.
-     * @return 
-     */    
+     * @return The {@link GrandExchange} in this {@link World}.
+     */
     public GrandExchange getGrandExchange() {
         return grandExchange;
     }
 
     /**
-     * Performs {@link GameSession#processMessageQueue()} for every {@Player} in {@link getPlayers()}
-     * as well as perform the {@link TaskScheduler#tick()}, {@link GroundItemList#tick()} & {@link PlayerUpdater#tick()}.
+     * Performs {@link GameSession#processMessageQueue()} for every {
+     *
+     * @Player} in {@link getPlayers()} as well as perform the
+     * {@link TaskScheduler#tick()}, {@link GroundItemList#tick()} & {@link PlayerUpdater#tick()}.
      */
     public void tick() {
         for (Player player : players) {
@@ -131,10 +133,13 @@ public final class World {
     }
 
     /**
-     * Get a {@link Player} for which {@link Player#getUsername()} or {@link Player#getDisplayName()} returns username, ignoring the cases.
+     * Get a {@link Player} for which {@link Player#getUsername()} or
+     * {@link Player#getDisplayName()} returns username, ignoring the cases.
      * Iterates over {@link getPlayers()} to find the {@link Player}.
+     *
      * @param username The String used to find a match.
-     * @return The {@link Player} we found a match for. Null if no match was found.
+     * @return The {@link Player} we found a match for. Null if no match was
+     * found.
      */
     public Player getPlayerByName(String username) {
         for (Player player : players) {
@@ -147,10 +152,12 @@ public final class World {
     }
 
     /**
-     * Get a {@link Player} for which {@link Player#getLongUsername()} returns longName.
-     * Iterates over {@link getPlayers()} to find the {@link Player}.
+     * Get a {@link Player} for which {@link Player#getLongUsername()} returns
+     * longName. Iterates over {@link getPlayers()} to find the {@link Player}.
+     *
      * @param longName The long used to find a match.
-     * @return The {@link Player} we found a match for. Null if no match was found.
+     * @return The {@link Player} we found a match for. Null if no match was
+     * found.
      */
     public Player getPlayerByLongName(long longName) {
         for (Player player : players) {
@@ -162,10 +169,12 @@ public final class World {
     }
 
     /**
-     * Get a {@link Player} associated with the databaseId.
-     * Iterates over {@link getPlayers()} and uses {@link Player#getDatabaseId()}.
+     * Get a {@link Player} associated with the databaseId. Iterates over
+     * {@link getPlayers()} and uses {@link Player#getDatabaseId()}.
+     *
      * @param id The id to search the associated player with.
-     * @return The player or null if no player was found to be associated with the given id.
+     * @return The player or null if no player was found to be associated with
+     * the given id.
      */
     public Player getPlayerByDatabaseId(int id) {
         for (Player player : players) {
@@ -178,7 +187,9 @@ public final class World {
     }
 
     /**
-     * Send the provided text to all players, {@link getPlayers()} using {@link Player#sendMessage(String text)}.
+     * Send the provided text to all players, {@link getPlayers()} using
+     * {@link Player#sendMessage(String text)}.
+     *
      * @param text The text to send to every player.
      */
     public void sendGlobalMessage(String text) {
