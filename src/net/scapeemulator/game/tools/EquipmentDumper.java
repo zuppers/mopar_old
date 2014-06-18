@@ -543,7 +543,7 @@ public final class EquipmentDumper {
 			}
 		}
 		if (name.contains("staff")) {
-			return 420;
+			return 419;
 		}
 
 		return -1;

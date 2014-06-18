@@ -188,6 +188,7 @@ public final class GameServer {
         serviceBootstrap.group(loopGroup);
         serviceBootstrap.channel(NioServerSocketChannel.class);
         serviceBootstrap.childHandler(new RsChannelInitializer(this));
+        serializer.loadNPCDrops();
         serializer.loadNPCDefinitions();
         serializer.loadNPCSpawns();
         serializer.loadShops();
