@@ -7,8 +7,9 @@ import net.scapeemulator.game.model.mob.Mob;
 
 /**
  * A {@link MobList} can store a certain amount of a certain {@link Mob} type.
- * It provides a way to retrieve, add and remove as well as an {@link MobListIterator}.
- * 
+ * It provides a way to retrieve, add and remove as well as an
+ * {@link MobListIterator}.
+ *
  * @author Graham?
  * @param <T> The type of {@link Mob} this {@link MobList} should store.
  */
@@ -26,17 +27,18 @@ public final class MobList<T extends Mob> implements Iterable<T> {
     }
 
     /**
-     * The size of the list, the amount of {@link Mob}'s stored.
-     * @return 
+     * The size of the list.
+     * @return The amount of {@link Mob}-s stored.
      */
     public int getSize() {
         return size;
     }
 
     /**
-     * Add mob to this {@link MobList}.
-     * Seeks the first empty spot in the list and fills it up.
-     * The Id of mob will be updated as well. ({@link Mob#setId(int)})
+     * Add mob to this {@link MobList}. Seeks the first empty spot in the list
+     * and fills it up. The Id of mob will be updated as well.
+     * ({@link Mob#setId(int)})
+     *
      * @param mob The element to add.
      * @return True when successfully added, false otherwise.
      */
@@ -56,9 +58,10 @@ public final class MobList<T extends Mob> implements Iterable<T> {
 
     /**
      * Gets the element on the index specified.
+     *
      * @param index The index where to find retrieve the element from.
-     * @return The element on that index. 
-     * null is returned when index exceeds the boundaries.
+     * @return The element on that index. null is returned when index exceeds
+     * the boundaries.
      */
     @SuppressWarnings("unchecked")
     public T get(int index) {
@@ -71,6 +74,7 @@ public final class MobList<T extends Mob> implements Iterable<T> {
 
     /**
      * Remove the element from this {@link MobList}.
+     * 
      * @param mob The element to remove.
      */
     public void remove(T mob) {
@@ -87,8 +91,9 @@ public final class MobList<T extends Mob> implements Iterable<T> {
     }
 
     /**
-     * Gets a new {@link MobListIterator} to iterate over this {@link MobList}'s elements.
-     * @return 
+     * Gets a new {@link MobListIterator} to iterate over this {@link MobList}'s
+     * elements.
+     * @return A new {@link MobListIterator}.
      */
     @Override
     public Iterator<T> iterator() {
@@ -96,7 +101,8 @@ public final class MobList<T extends Mob> implements Iterable<T> {
     }
 
     /**
-     * An {@link Iterator} to iterate over elements the {@link MobList} contains.
+     * An {@link Iterator} to iterate over elements the {@link MobList}
+     * contains.
      */
     private class MobListIterator implements Iterator<T> {
 
@@ -104,7 +110,7 @@ public final class MobList<T extends Mob> implements Iterable<T> {
 
         /**
          * Gets whether there is another element left for {@link next()}.
-         * @return 
+         * @return Whether there exists a next non-null element.
          */
         @Override
         public boolean hasNext() {
@@ -119,7 +125,8 @@ public final class MobList<T extends Mob> implements Iterable<T> {
 
         /**
          * Gets the next element.
-         * @return 
+         *
+         * @return The next element.
          * @throws NoSuchElementException When there is no next element.
          * @see hasNext()
          */

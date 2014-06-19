@@ -9,8 +9,7 @@ public abstract class Entity {
 
     /**
      * Retrieve the position of this {@link Entity}
-     *
-     * @return
+     * @return The current {@link Position}.
      */
     public Position getPosition() {
         return position;
@@ -18,7 +17,6 @@ public abstract class Entity {
 
     /**
      * Set the {@link Position} of this {@link Entity} to position.
-     *
      * @param position The {@link Position} to set it to.
      */
     public void setPosition(Position position) {

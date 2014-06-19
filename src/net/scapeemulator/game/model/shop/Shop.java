@@ -4,10 +4,9 @@ import net.scapeemulator.game.model.definition.ItemDefinitions;
 import net.scapeemulator.game.model.player.Item;
 
 /**
- * Represents an in-game Shop with a certain databaseId, name & shopId.
- * A {@link Shop} can have a main stock with a (in)finite supply.
- * A {@link Shop} can have a player stock.
- * 
+ * Represents an in-game Shop with a certain databaseId, name & shopId. A
+ * {@link Shop} can have a main stock with a (in)finite supply. A {@link Shop}
+ * can have a player stock.
  */
 public class Shop {
 
@@ -103,7 +102,7 @@ public class Shop {
     /**
      * Creates a very basic, empty {@link Shop} with the main stock disabled.
      *
-     * @param databaseId The databaseId for this {@link Shop}
+     * @param databaseId The databaseId for this {@link Shop}.
      * @param name The name for this {@link Shop}.
      * @param shopId The id for this {@link Shop}.
      */
@@ -117,7 +116,7 @@ public class Shop {
 
     /**
      * Gets the databaseId of this {@link Shop}.
-     * @return
+     * @return The associated id in the database.
      */
     public int getDatabaseId() {
         return this.databaseId;
@@ -125,7 +124,7 @@ public class Shop {
 
     /**
      * Gets the name of this {@link Shop}.
-     * @return
+     * @return The name, which can be used as the title on top of the interface.
      */
     public String getName() {
         return this.name;
@@ -133,7 +132,7 @@ public class Shop {
 
     /**
      * Gets the Id of this {@link Shop}.
-     * @return
+     * @return The id of this shop.
      */
     public int getShopId() {
         return this.shopId;
@@ -141,7 +140,7 @@ public class Shop {
 
     /**
      * Gets whether this {@link Shop} its main stock is a finite supply or not.
-     * @return
+     * @return Whether the main stock has a finite supply.
      */
     public boolean isMainFinite() {
         return this.isFinite;
@@ -292,14 +291,15 @@ public class Shop {
     }
 
     /**
-     * Removes the specified amount of the {@link Item} with the itemId out of this {@link Shop}.
-     * If {@link StockType#MAIN} contains the itemId, the item will be removed from
-     * the {@link StockType#MAIN} "stock", else the {@link StockType#PLAYER}
-     * "stock".
-     * 
+     * Removes the specified amount of the {@link Item} with the itemId out of
+     * this {@link Shop}. If {@link StockType#MAIN} contains the itemId, the
+     * item will be removed from the {@link StockType#MAIN} "stock", else the
+     * {@link StockType#PLAYER} "stock".
+     *
      * @param itemId The id of the item to remove.
      * @param amount The amount of the item to remove.
-     * @return The amount of itemsInStock of the itemId removed in this {@link Shop}.
+     * @return The amount of itemsInStock of the itemId removed in this
+     * {@link Shop}.
      * @see remove(StockType, int, int)
      */
     public int remove(int itemId, int amount) {
@@ -309,7 +309,7 @@ public class Shop {
             return remove(StockType.PLAYER, itemId, amount);
         }
     }
-    
+
     /**
      * Removes the specified amount of the {@link Item} with the itemId out of
      * the specified "stock" of this shop.

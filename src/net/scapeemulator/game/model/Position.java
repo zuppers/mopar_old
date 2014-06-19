@@ -1,8 +1,8 @@
 package net.scapeemulator.game.model;
 
 /**
- * Represents an (immutable) position in-game.
- * Contains x and y-coordinates as well as a height level.
+ * Represents an (immutable) position in-game. Contains x and y-coordinates as
+ * well as a height level.
  */
 public final class Position {
 
@@ -10,6 +10,7 @@ public final class Position {
 
     /**
      * Creates a {@link Position} using (x,y,0) as the coordinates.
+     *
      * @param x The x-coordinate of this position.
      * @param y The y-coordinate of this position.
      */
@@ -21,6 +22,7 @@ public final class Position {
 
     /**
      * Creates a {@link Position} using (x,y,height) as the coordinates.
+     *
      * @param x The x-coordinate of this position.
      * @param y The y-coordinate of this position.
      * @param height The height of this position.
@@ -33,7 +35,7 @@ public final class Position {
 
     /**
      * Gets the x-coordinate of this position.
-     * @return 
+     * @return The x-coordinate.
      */
     public int getX() {
         return x;
@@ -41,13 +43,12 @@ public final class Position {
 
     /**
      * Gets the y-coordinate of this position.
-     * @return 
+     * @return The y-coordinate.
      */
     public int getY() {
         return y;
     }
 
-    
     public int getBaseLocalX() {
         return getBaseLocalX(getCentralRegionX());
     }
@@ -82,7 +83,7 @@ public final class Position {
 
     /**
      * Retrieve the X-coordinate of the central of this Region.
-     * @return 
+     * @return The x-coordinate of the central of the region.
      */
     public int getCentralRegionX() {
         return x / 8;
@@ -90,7 +91,7 @@ public final class Position {
 
     /**
      * Retrieve the Y-coordinate of the central of this Region.
-     * @return 
+     * @return The y-coordinate of the central of the region.
      */
     public int getCentralRegionY() {
         return y / 8;
@@ -98,17 +99,17 @@ public final class Position {
 
     /**
      * Gets the height of this position.
-     * @return 
+     * @return The height.
      */
     public int getHeight() {
         return height;
     }
 
     /**
-     * Whether position is within distance of this.
-     * This implies the difference in {@link getX()} should be >= -16 && {@literal <}= to 15.
-     * And it implies the same for the difference in {@link getY()}.
-     * 
+     * Whether position is within distance of this. This implies the difference
+     * in {@link getX()} should be >= -16 && {@literal <}= to 15. And it implies
+     * the same for the difference in {@link getY()}.
+     *
      * @param position The position to calculate distance with.
      * @return Whether the position is within the distance as described above.
      */
@@ -122,10 +123,10 @@ public final class Position {
     }
 
     /**
-     * Whether position is within scene of this.
-     * This implies the difference in {@link getX()} should be >= -52 && {@literal <}= to 51.
-     * And it implies the same for the difference in {@link getY()}.
-     * 
+     * Whether position is within scene of this. This implies the difference in
+     * {@link getX()} should be >= -52 && {@literal <}= to 51. And it implies
+     * the same for the difference in {@link getY()}.
+     *
      * @param position The position to calculate distance with.
      * @return Whether the position is within the distance as described above.
      */
@@ -136,11 +137,12 @@ public final class Position {
     }
 
     /**
-     * Gets the distance between this and other.
-     * Uses {@link Math#floor(double)} on the formula Math.sqrt((x1-x2)^2 + (y1-y2)^2)
-     * 
+     * Gets the distance between this and other. Uses {@link Math#floor(double)}
+     * on the formula Math.sqrt((x1-x2)^2 + (y1-y2)^2)
+     *
      * @param other The other {@link Position} to check the distance with.
-     * @return The distance calculated rounded down using {@link Math#floor(double)}
+     * @return The distance calculated rounded down using
+     * {@link Math#floor(double)}
      */
     public int getDistance(Position other) {
         int deltaX = x - other.x;
@@ -169,10 +171,11 @@ public final class Position {
 
     /**
      * Whether this is equal to the provided Object.
+     *
      * @param obj The object to check for equality.
-     * @return False if obj is null, when {@link getClass()} doesn't match
-     *          or when the {@link getHeight()}, the {@link getX()} or the {@link getY()} don't match.
-     *          else true.
+     * @return False if obj is null, when {@link getClass()} doesn't match or
+     * when the {@link getHeight()}, the {@link getX()} or the {@link getY()}
+     * don't match. else true.
      */
     @Override
     public boolean equals(Object obj) {
@@ -199,8 +202,9 @@ public final class Position {
     }
 
     /**
-     * Gets a String using the format "position[x: {@link getX()}, y: {@link getY()}, height: {@link getHeight()}]" of this {@link Position}.
-     * @return 
+     * Gets this representation in String form.
+     * @return using the format "position[x: {@link getX()}, y:
+     * {@link getY()}, height: {@link getHeight()}]" of this {@link Position}.
      */
     @Override
     public String toString() {
