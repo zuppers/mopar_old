@@ -24,6 +24,7 @@ public abstract class Mob extends Entity {
 
     protected int id;
     protected boolean teleporting;
+    protected boolean clipped = true;
     protected final WalkingQueue walkingQueue = new WalkingQueue(this);
     protected Direction firstDirection = Direction.NONE;
     protected Direction secondDirection = Direction.NONE;
@@ -584,7 +585,15 @@ public abstract class Mob extends Entity {
     public CombatHandler<? extends Mob> getCombatHandler() {
         return combatHandler;
     }
-
+    
+    /**
+     * Gets whether this {@link mob} is clipped.
+     * @return whether it is clipped.
+     */
+    public boolean isClipped() {
+        return clipped;
+    }
+    
     /**
      * Gets whether this {@link Mob} is running.
      * @return Whether this {@link Mob} is running.

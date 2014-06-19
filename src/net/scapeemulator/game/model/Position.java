@@ -114,8 +114,11 @@ public final class Position {
      * @return Whether the position is within the distance as described above.
      */
     public boolean isWithinDistance(Position position) {
-        int deltaX = position.getX() - x;
-        int deltaY = position.getY() - y;
+        if(position.height != height) {
+            return false;
+        }
+        int deltaX = position.x - x;
+        int deltaY = position.y - y;
         return deltaX >= -16 && deltaX <= 15 && deltaY >= -16 && deltaY <= 15;
     }
 

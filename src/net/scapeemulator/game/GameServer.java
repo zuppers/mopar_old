@@ -164,11 +164,12 @@ public final class GameServer {
         mapLoader.load(cache, landscapeKeyTable);
 
         /* load message codecs and dispatcher */
-
+        logger.info("Populating codecs...");
         codecRepository = new CodecRepository(landscapeKeyTable);
 
         /* load the server pluginLoader */
 
+        logger.info("Loading plugins...");
         pluginLoader.setContext(scriptContext);
         pluginLoader.load("./data/game/plugins/");
 
@@ -187,6 +188,7 @@ public final class GameServer {
         serviceBootstrap.group(loopGroup);
         serviceBootstrap.channel(NioServerSocketChannel.class);
         serviceBootstrap.childHandler(new RsChannelInitializer(this));
+        serializer.loadNPCDrops();
         serializer.loadNPCDefinitions();
         serializer.loadNPCSpawns();
         serializer.loadShops();

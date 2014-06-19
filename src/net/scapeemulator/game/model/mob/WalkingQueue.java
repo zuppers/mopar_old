@@ -148,7 +148,7 @@ public final class WalkingQueue {
 
         if (next != null) {
             Direction direction = Direction.between(position, next);
-            boolean traversable = Direction.isTraversable(position, direction, mob.getSize());
+            boolean traversable = !mob.isClipped() || Direction.isTraversable(position, direction, mob.getSize());
             if (traversable) {
                 firstDirection = direction;
                 addRecentPoint(position);
@@ -157,7 +157,7 @@ public final class WalkingQueue {
                     next = points.poll();
                     if (next != null) {
                         direction = Direction.between(position, next);
-                        traversable = Direction.isTraversable(position, direction, mob.getSize());
+                        traversable = !mob.isClipped() || Direction.isTraversable(position, direction, mob.getSize());
                         if (traversable) {
                             secondDirection = direction;
                             addRecentPoint(position);
