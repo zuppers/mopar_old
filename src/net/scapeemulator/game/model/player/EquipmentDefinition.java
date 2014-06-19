@@ -88,8 +88,8 @@ public final class EquipmentDefinition {
 				int flags = reader.read() & 0xFF;
 				int slot = reader.read() & 0xFF;
 				int equipId = reader.readShort() & 0xFFFF;
-				int[] bonusValues = new int[12];
-				for(int i = 0; i < 12; i++) {
+				int[] bonusValues = new int[13];
+				for(int i = 0; i < 13; i++) {
 					bonusValues[i] = reader.readShort();
 				}
 				int stance = 0, weaponClass = 0, speed = 0, range = 0;
@@ -125,6 +125,7 @@ public final class EquipmentDefinition {
 				bonuses.setDefenceBonus(AttackType.RANGE, bonusValues[9]);
 				bonuses.setStrengthBonus(bonusValues[10]);
 				bonuses.setPrayerBonus(bonusValues[11]);
+				bonuses.setRangeStrengthBonus(bonusValues[12]);
 				equipment.bonuses = bonuses;
 				
 				if (slot == Equipment.WEAPON) {
