@@ -1,4 +1,0 @@
-{
-	"scripts" : ["logs.rb", "firemaking.rb"],
-	"dependencies" : []
-}

@@ -2,20 +2,14 @@ package net.scapeemulator.game.model.player.skills;
 
 public final class Skill {
 
-    public static final String[] SKILL_NAMES = new String[]{
-        "attack", "defence", "strength", "hitpoints", "ranged", "prayer",
-        "magic", "cooking", "woodcutting", "fletching", "fishing", "firemaking",
-        "crafting", "smithing", "mining", "herblore", "agility", "thieving",
-        "slayer", "farming", "runecrafting", "hunter", "construction", "summoning"
-    };
-    public static final int[] FLASHING_ICONS = new int[]{
-        4732, 4734, 4733, 4738, 4735, 4736, 4737, 4747, 4749, 4743, 4746, 4748, 4742,
-        4745, 4744, 4740, 4739, 4741, 4751, 4752, 4750, 4754, 4753, 4755
-    };
-    public static final int[] CONFIGS = new int[]{
-        1, 5, 2, 6, 3, 7, 4, 16, 18, 19, 15, 17, 11, 14, 13, 9,
-        8, 10, 20, 21, 12, 23, 22, 24
-    };
+    public static final String[] SKILL_NAMES = new String[] { "attack", "defence", "strength", "hitpoints", "ranged", "prayer", "magic", "cooking", "woodcutting", "fletching", "fishing",
+            "firemaking", "crafting", "smithing", "mining", "herblore", "agility", "thieving", "slayer", "farming", "runecrafting", "hunter", "construction", "summoning" };
+    
+    public static final int[] FLASHING_ICONS = new int[] { 4732, 4734, 4733, 4738, 4735, 4736, 4737, 4747, 4749, 4743, 4746, 4748, 4742, 4745, 4744, 4740, 4739, 4741, 4751, 4752, 4750, 4754, 4753,
+            4755 };
+    
+    public static final int[] CONFIGS = new int[] { 1, 5, 2, 6, 3, 7, 4, 16, 18, 19, 15, 17, 11, 14, 13, 9, 8, 10, 20, 21, 12, 23, 22, 24 };
+
     public static final int ATTACK = 0;
     public static final int DEFENCE = 1;
     public static final int STRENGTH = 2;
@@ -56,15 +50,15 @@ public final class Skill {
 
     public static boolean isCombatSkill(int id) {
         switch (id) {
-            case ATTACK:
-            case DEFENCE:
-            case STRENGTH:
-            case HITPOINTS:
-            case RANGED:
-            case PRAYER:
-            case MAGIC:
-            case SUMMONING:
-                return true;
+        case ATTACK:
+        case DEFENCE:
+        case STRENGTH:
+        case HITPOINTS:
+        case RANGED:
+        case PRAYER:
+        case MAGIC:
+        case SUMMONING:
+            return true;
         }
 
         return false;

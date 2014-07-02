@@ -9,12 +9,24 @@ import net.scapeemulator.game.model.pathfinding.TraversalMap;
 
 public enum Direction {
 
-	NONE(-1), NORTH(1), NORTH_EAST(2), EAST(4), SOUTH_EAST(7), SOUTH(6), SOUTH_WEST(5), WEST(3), NORTH_WEST(0);
+	NONE(-1, 0, 0), 
+	NORTH(1, 0, 1), 
+	NORTH_EAST(2, 1, 1), 
+	EAST(4, 1, 0), 
+	SOUTH_EAST(7, 1, -1), 
+	SOUTH(6, 0, -1), 
+	SOUTH_WEST(5, -1, -1), 
+	WEST(3, -1, 0), 
+	NORTH_WEST(0, -1, 1);
 
 	private final int intValue;
-
-	private Direction(int intValue) {
+	private final int x;
+	private final int y;
+	
+	private Direction(int intValue, int x, int y) {
 		this.intValue = intValue;
+		this.x = x;
+		this.y = y;
 	}
 
 	public Direction getInverted() {
@@ -167,5 +179,13 @@ public enum Direction {
 			}
 		}
 		throw new IllegalArgumentException(deltaX + " " + deltaY);
+	}
+	
+	public int getX() {
+	    return x;
+	}
+	
+	public int getY() {
+	    return y;
 	}
 }

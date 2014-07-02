@@ -35,6 +35,7 @@ import net.scapeemulator.game.model.definition.WidgetDefinitions;
 import net.scapeemulator.game.model.object.GroundObjectPopulator;
 import net.scapeemulator.game.model.pathfinding.MapDataListener;
 import net.scapeemulator.game.model.player.EquipmentDefinition;
+import net.scapeemulator.game.model.player.skills.firemaking.Firemaking;
 import net.scapeemulator.game.msg.CodecRepository;
 import net.scapeemulator.game.msg.MessageDispatcher;
 import net.scapeemulator.game.net.HttpChannelInitializer;
@@ -176,6 +177,9 @@ public final class GameServer {
         /* decorate each of the dispatchers */
         messageDispatcher.decorateDispatchers(scriptContext);
 
+        /* bind the no-script skill handlers to the dispatchers */
+        Firemaking.bindHandlers();
+        
         /* load player serializer from config file */
         serializer = createPlayerSerializer();
         logger.info("Using serializer: " + serializer + ".");

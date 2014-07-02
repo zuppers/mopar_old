@@ -50,6 +50,7 @@ public final class MessageDispatcher {
 
     private static final Logger logger = LoggerFactory.getLogger(MessageDispatcher.class);
     private final Map<Class<?>, MessageHandler<?>> handlers = new HashMap<>();
+
     private final ButtonDispatcher buttonDispatcher = new ButtonDispatcher();
     private final CommandDispatcher commandDispatcher = new CommandDispatcher();
     private final GroundItemDispatcher groundItemDispatcher = new GroundItemDispatcher();
@@ -99,7 +100,7 @@ public final class MessageDispatcher {
         bind(MagicOnNPCMessage.class, new MagicOnNPCMessageHandler(npcDispatcher));
         bind(NPCExamineMessage.class, new NPCExamineMessageHandler());
         bind(InterfaceInputMessage.class, new InterfaceInputMessageHandler());
-        //bind();
+        // bind();
     }
 
     public void decorateDispatchers(ScriptContext context) {
@@ -112,7 +113,7 @@ public final class MessageDispatcher {
         context.decoratePlayerDispatcher(playerDispatcher);
         context.decorateNPCDispatcher(npcDispatcher);
     }
-    
+
     public void purge() {
         buttonDispatcher.unbindAll();
         commandDispatcher.unbindAll();
@@ -141,4 +142,45 @@ public final class MessageDispatcher {
             logger.warn("Cannot dispatch message (no handler): " + message.getClass().getName() + ".");
         }
     }
+
+    public ButtonDispatcher getButtonDispatcher() {
+        return buttonDispatcher;
+    }
+
+    public CommandDispatcher getCommandDispatcher() {
+        return commandDispatcher;
+    }
+
+    public GroundItemDispatcher getGroundItemDispatcher() {
+        return groundItemDispatcher;
+    }
+
+    public ItemOnItemDispatcher getItemOnItemDispatcher() {
+        return itemOnItemDispatcher;
+    }
+
+    public ItemOnObjectDispatcher getItemOnObjectDispatcher() {
+        return itemOnObjectDispatcher;
+    }
+
+    public ItemDispatcher getItemDispatcher() {
+        return itemDispatcher;
+    }
+
+    public ItemInteractDispatcher getItemInteractDispatcher() {
+        return itemInteractDispatcher;
+    }
+
+    public ObjectDispatcher getObjectDispatcher() {
+        return objectDispatcher;
+    }
+
+    public PlayerDispatcher getPlayerDispatcher() {
+        return playerDispatcher;
+    }
+
+    public NPCDispatcher getNpcDispatcher() {
+        return npcDispatcher;
+    }
+    
 }

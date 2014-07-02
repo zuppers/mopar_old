@@ -34,74 +34,79 @@ import net.scapeemulator.game.model.player.inventory.Inventory;
  */
 public final class ItemOnItemDispatcher {
 
-	private Map<Integer, ItemOnItemHandler> handlers = new HashMap<>();
+    private Map<Integer, ItemOnItemHandler> handlers = new HashMap<>();
 
-	public ItemOnItemDispatcher() {}
+    public ItemOnItemDispatcher() {
+    }
 
-	public void bind(ItemOnItemHandler handler) {
-		handlers.put(calculateHash(handler.getItemOne(), handler.getItemTwo()), handler);
-	}
+    public void bind(ItemOnItemHandler handler) {
+        int hash = calculateHash(handler.getItemOne(), handler.getItemTwo());
+        if (handlers.containsKey(hash)) {
+            System.out.println("Overwriting existing ItemOnItem handler! <id1: " + handler.getItemOne() + "; id2: " + handler.getItemTwo() + ">");
+        }
+        handlers.put(hash, handler);
+    }
 
-	public void unbindAll() {
-		handlers.clear();
-	}
+    public void unbindAll() {
+        handlers.clear();
+    }
 
-	public void handle(Player player, int idOne, int idTwo, int hashOne, int hashTwo, int slotOne, int slotTwo) {
-		if(player.actionsBlocked()) {
-			return;
-		}
-		Inventory inventoryOne = player.getInventorySet().get(hashOne);
-		Inventory inventoryTwo = inventoryOne;
-		if (hashOne != hashTwo) {
-			inventoryTwo = player.getInventorySet().get(hashTwo);
-		}
+    public void handle(Player player, int idOne, int idTwo, int hashOne, int hashTwo, int slotOne, int slotTwo) {
+        if (player.actionsBlocked()) {
+            return;
+        }
+        Inventory inventoryOne = player.getInventorySet().get(hashOne);
+        Inventory inventoryTwo = inventoryOne;
+        if (hashOne != hashTwo) {
+            inventoryTwo = player.getInventorySet().get(hashTwo);
+        }
 
-		if (inventoryOne == null || !checkInventory(inventoryOne, slotOne, idOne) || inventoryTwo == null || !checkInventory(inventoryTwo, slotTwo, idTwo)) {
-			return;
-		}
+        if (inventoryOne == null || !checkInventory(inventoryOne, slotOne, idOne) || inventoryTwo == null || !checkInventory(inventoryTwo, slotTwo, idTwo)) {
+            return;
+        }
 
-		ItemOnItemHandler handler = handlers.get(calculateHash(idOne, idTwo));
-		if (handler != null) {
+        ItemOnItemHandler handler = handlers.get(calculateHash(idOne, idTwo));
+        if (handler != null) {
 
-			SlottedItem itemOne = new SlottedItem(slotOne, inventoryOne.get(slotOne));
-			SlottedItem itemTwo = new SlottedItem(slotTwo, inventoryTwo.get(slotTwo));
+            SlottedItem itemOne = new SlottedItem(slotOne, inventoryOne.get(slotOne));
+            SlottedItem itemTwo = new SlottedItem(slotTwo, inventoryTwo.get(slotTwo));
 
-			/* Swap the items and inventories if they are out of place */
-			if (idOne != handler.getItemOne()) {
-				Inventory tempInv = inventoryOne;
-				inventoryOne = inventoryTwo;
-				inventoryTwo = tempInv;
+            /* Swap the items and inventories if they are out of place */
+            if (idOne != handler.getItemOne()) {
+                Inventory tempInv = inventoryOne;
+                inventoryOne = inventoryTwo;
+                inventoryTwo = tempInv;
 
-				SlottedItem tempItem = itemOne;
-				itemOne = itemTwo;
-				itemTwo = tempItem;
-			}
+                SlottedItem tempItem = itemOne;
+                itemOne = itemTwo;
+                itemTwo = tempItem;
+            }
 
-			handler.handle(player, inventoryOne, inventoryTwo, itemOne, itemTwo);
-		}
-	}
+            handler.handle(player, inventoryOne, inventoryTwo, itemOne, itemTwo);
+        }
+    }
 
-	private static boolean checkInventory(Inventory inventory, int slot, int itemId) {
-		return inventory.get(slot) != null && inventory.get(slot).getId() == itemId;
-	}
+    private static boolean checkInventory(Inventory inventory, int slot, int itemId) {
+        return inventory.get(slot) != null && inventory.get(slot).getId() == itemId;
+    }
 
-	static int calculateHash(int itemOne, int itemTwo) {
+    static int calculateHash(int itemOne, int itemTwo) {
 
-		int high = itemOne;
-		int low = itemTwo;
+        int high = itemOne;
+        int low = itemTwo;
 
-		if (itemTwo > itemOne) {
-			high = itemTwo;
-			low = itemOne;
-		}
+        if (itemTwo > itemOne) {
+            high = itemTwo;
+            low = itemOne;
+        }
 
-		return high << 16 | low;
-	}
+        return high << 16 | low;
+    }
 
-	static int[] reverseHash(int hash) {
+    static int[] reverseHash(int hash) {
         int[] ids = new int[2];
         ids[0] = hash & 0xffff;
-		ids[1] = hash >> 16;
-    	return ids;
+        ids[1] = hash >> 16;
+        return ids;
     }
 }
