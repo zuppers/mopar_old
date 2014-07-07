@@ -53,6 +53,7 @@ public final class PlayerUpdater {
 			player.setLastKnownRegion(position);
 			player.send(new RegionChangeMessage(position));
 		}
+		player.getPrayers().tick();
 		player.getGroundItems().tick();
 		player.getWalkingQueue().tick();
 		player.getCombatHandler().tick();

@@ -19,8 +19,7 @@ public class SkillRequirement extends Requirement {
 	private final boolean current;
 	
 	/**
-	 * 
-	 * A skill requirement that looks at the current level instead of the actual level for a player
+	 * A skill requirement that looks at the current level instead of the actual level of a player
 	 * 
 	 * @param skill The skill id
 	 * @param level The level 

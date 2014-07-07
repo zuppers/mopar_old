@@ -25,6 +25,7 @@ import net.scapeemulator.game.model.player.skills.SkillAppearanceListener;
 import net.scapeemulator.game.model.player.skills.SkillMessageListener;
 import net.scapeemulator.game.model.player.skills.SkillSet;
 import net.scapeemulator.game.model.player.skills.magic.Spellbook;
+import net.scapeemulator.game.model.player.skills.prayer.Prayers;
 import net.scapeemulator.game.msg.Message;
 import net.scapeemulator.game.msg.impl.ChatMessage;
 import net.scapeemulator.game.msg.impl.EnergyMessage;
@@ -71,6 +72,7 @@ public final class Player extends Mob {
     private final InventorySet inventorySet = new InventorySet(this);
     private ChatMessage chatMessage;
     private final Friends friends = new Friends(this);
+    private final Prayers prayers = new Prayers(this);
     private final ScriptInput scriptInput = new ScriptInput(this);
     private final PlayerSettings settings = new PlayerSettings(this);
     private final InterfaceSet interfaceSet = new InterfaceSet(this);
@@ -393,6 +395,10 @@ public final class Player extends Mob {
         }
     }
 
+    public Prayers getPrayers() {
+        return prayers;
+    }
+
     public Friends getFriends() {
         return friends;
     }
@@ -430,8 +436,15 @@ public final class Player extends Mob {
         equipmentBonuses.setPrayerBonus(prayerBonus);
         equipmentBonuses.setStrengthBonus(strengthBonus);
 
-        int rangeBonus = getEquipment().get(Equipment.WEAPON).getEquipmentDefinition().getBonuses().getRangeStrengthBonus();
-        rangeBonus = rangeBonus == 0 ? getEquipment().get(Equipment.AMMO).getEquipmentDefinition().getBonuses().getRangeStrengthBonus() : rangeBonus;
+        Item weapon = getEquipment().get(Equipment.WEAPON);
+        Item ammo = getEquipment().get(Equipment.AMMO);
+
+        int rangeBonus = weapon == null ? 0 : weapon.getEquipmentDefinition().getBonuses().getRangeStrengthBonus();
+
+        if (rangeBonus == 0 && ammo != null) {
+            rangeBonus = ammo.getEquipmentDefinition().getBonuses().getRangeStrengthBonus();
+        }
+
         equipmentBonuses.setRangeStrengthBonus(rangeBonus);
 
         if (getInterfaceSet().getWindow().getCurrentId() == 667) {
@@ -472,13 +485,20 @@ public final class Player extends Mob {
         return equipmentBonuses;
     }
 
+    public int getPrayerPoints() {
+        return skillSet.getCurrentLevel(Skill.PRAYER);
+    }
+    
+    public void reducePrayerPoints(int amount) {
+        skillSet.setCurrentLevel(Skill.PRAYER, getPrayerPoints() - amount);
+    }
+    
     public int getCurrentHitpoints() {
         return skillSet.getCurrentLevel(Skill.HITPOINTS);
     }
 
     public void reduceHp(int amount) {
         skillSet.setCurrentLevel(Skill.HITPOINTS, getCurrentHitpoints() - amount);
-        skillSet.refresh();
     }
 
     protected void onDeath() {
