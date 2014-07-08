@@ -26,7 +26,7 @@ public class SkillRequirement extends Requirement {
         if (current) {
             return player.getSkillSet().getCurrentLevel(skill) >= level;
         } else {
-            return player.getSkillSet().getMaximumLevel(skill) >= level;
+            return player.getSkillSet().getLevel(skill) >= level;
         }
     }
 

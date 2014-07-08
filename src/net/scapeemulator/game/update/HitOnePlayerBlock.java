@@ -15,7 +15,7 @@ public final class HitOnePlayerBlock extends PlayerBlock {
 
 	public HitOnePlayerBlock(Player player) {
 		super(0x1);
-		hpRatio = player.getCurrentHitpoints() * 255 / player.getSkillSet().getMaximumLevel(Skill.HITPOINTS);
+		hpRatio = player.getCurrentHitpoints() * 255 / player.getSkillSet().getLevel(Skill.HITPOINTS);
 		damage = player.getHits().getDamage(1);
 		type = player.getHits().getType(1);
 	}

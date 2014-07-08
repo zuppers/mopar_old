@@ -488,15 +488,17 @@ public final class Player extends Mob {
     public int getPrayerPoints() {
         return skillSet.getCurrentLevel(Skill.PRAYER);
     }
-    
+
     public void reducePrayerPoints(int amount) {
         skillSet.setCurrentLevel(Skill.PRAYER, getPrayerPoints() - amount);
     }
-    
+
+    @Override
     public int getCurrentHitpoints() {
         return skillSet.getCurrentLevel(Skill.HITPOINTS);
     }
 
+    @Override
     public void reduceHp(int amount) {
         skillSet.setCurrentLevel(Skill.HITPOINTS, getCurrentHitpoints() - amount);
     }

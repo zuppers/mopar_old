@@ -27,11 +27,11 @@ public final class SkillMessageListener implements SkillListener {
     public void skillLevelledUp(SkillSet set, int amount, int skill) {
         //TODO: If in combat, dont pop this up
         player.setInterfaceText(740, 0, "Congratulations! You've advanced a " + StringUtils.capitalize(Skill.getName(skill)) + " level!");
-        player.setInterfaceText(740, 1, "You have reached level " + set.getMaximumLevel(skill) + "!");
+        player.setInterfaceText(740, 1, "You have reached level " + set.getLevel(skill) + "!");
         player.getStateSet().setBitState(4757, Skill.getConfigValue(skill));
         player.getInterfaceSet().openChatbox(740, new CloseOnInputComponentListener());
         
-        int level = set.getMaximumLevel(skill);
+        int level = set.getLevel(skill);
         String msg = "You've just advanced " + (amount == 1 ? "a" : String.valueOf(amount)) + " "
                 + StringUtils.capitalize(Skill.getName(skill)) + " level" + (amount == 1 ? "" : "s") + "! You have reached level " + level + ".";
         player.sendMessage(msg);

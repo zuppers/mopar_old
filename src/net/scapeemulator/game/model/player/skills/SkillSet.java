@@ -22,21 +22,21 @@ public final class SkillSet {
         return 99;
     }
 
-    private final int[] level = new int[24];
-    private final int[] maxLevel = new int[level.length];
-    private final double[] exp = new double[level.length];
+    private final int[] curLevel = new int[24];
+    private final int[] level = new int[curLevel.length];
+    private final double[] exp = new double[curLevel.length];
     private final List<SkillListener> listeners = new ArrayList<>();
     private int combatLevel;
 
     public SkillSet() {
-        for (int i = 0; i < level.length; i++) {
+        for (int i = 0; i < curLevel.length; i++) {
+            curLevel[i] = 1;
             level[i] = 1;
-            maxLevel[i] = 1;
             exp[i] = 0;
         }
 
+        curLevel[Skill.HITPOINTS] = 10;
         level[Skill.HITPOINTS] = 10;
-        maxLevel[Skill.HITPOINTS] = 10;
         exp[Skill.HITPOINTS] = 1154;
         calculateCombatLevel();
     }
@@ -54,25 +54,25 @@ public final class SkillSet {
     }
 
     public int size() {
-        return level.length;
+        return curLevel.length;
     }
 
     public int getCurrentLevel(int skill) {
-        return level[skill];
+        return curLevel[skill];
     }
 
     public void setCurrentLevel(int skill, int curLvl) {
-        if (level[skill] == curLvl) {
+        if (curLevel[skill] == curLvl) {
             return;
         }
         curLvl = curLvl < 0 ? 0 : curLvl;
-        level[skill] = curLvl;
+        curLevel[skill] = curLvl;
         for (SkillListener listener : listeners)
             listener.skillChanged(this, skill);
     }
 
-    public int getMaximumLevel(int skill) {
-        return maxLevel[skill];
+    public int getLevel(int skill) {
+        return level[skill];
     }
 
     public double getExperience(int skill) {
@@ -81,7 +81,7 @@ public final class SkillSet {
 
     public void setExperience(int skill, double experience) {
         exp[skill] = experience;
-        maxLevel[skill] = getLevelFromExperience(exp[skill]);
+        level[skill] = getLevelFromExperience(exp[skill]);
         calculateCombatLevel();
     }
 
@@ -90,15 +90,15 @@ public final class SkillSet {
             return;
         }
 
-        int oldLevel = maxLevel[skill];
+        int oldLevel = level[skill];
         int oldCB = combatLevel;
 
         exp[skill] = Math.min(exp[skill] + xp, MAXIMUM_EXPERIENCE);
-        maxLevel[skill] = getLevelFromExperience(exp[skill]);
+        level[skill] = getLevelFromExperience(exp[skill]);
 
         calculateCombatLevel();
-        int delta = maxLevel[skill] - oldLevel;
-        level[skill] += delta;
+        int delta = level[skill] - oldLevel;
+        curLevel[skill] += delta;
 
         for (SkillListener listener : listeners) {
             listener.skillChanged(this, skill);
@@ -117,15 +117,15 @@ public final class SkillSet {
     }
 
     public void refresh() {
-        for (int skill = 0; skill < level.length; skill++) {
+        for (int skill = 0; skill < curLevel.length; skill++) {
             for (SkillListener listener : listeners)
                 listener.skillChanged(this, skill);
         }
     }
 
     public void restoreStats() {
-        for (int skill = 0; skill < level.length; skill++) {
-            level[skill] = maxLevel[skill];
+        for (int skill = 0; skill < curLevel.length; skill++) {
+            curLevel[skill] = level[skill];
             for (SkillListener listener : listeners)
                 listener.skillChanged(this, skill);
         }
@@ -136,14 +136,14 @@ public final class SkillSet {
     }
 
     public void calculateCombatLevel() {
-        int defence = maxLevel[Skill.DEFENCE];
-        int hitpoints = maxLevel[Skill.HITPOINTS];
-        int prayer = maxLevel[Skill.PRAYER];
-        int attack = maxLevel[Skill.ATTACK];
-        int strength = maxLevel[Skill.STRENGTH];
-        int magic = maxLevel[Skill.MAGIC];
-        int ranged = maxLevel[Skill.RANGED];
-        int summoning = maxLevel[Skill.SUMMONING];
+        int defence = level[Skill.DEFENCE];
+        int hitpoints = level[Skill.HITPOINTS];
+        int prayer = level[Skill.PRAYER];
+        int attack = level[Skill.ATTACK];
+        int strength = level[Skill.STRENGTH];
+        int magic = level[Skill.MAGIC];
+        int ranged = level[Skill.RANGED];
+        int summoning = level[Skill.SUMMONING];
 
         double base = 1.3 * Math.max(Math.max(attack + strength, 1.5 * magic), 1.5 * ranged);
 
@@ -152,8 +152,8 @@ public final class SkillSet {
 
     public int getTotalLevel() {
         int total = 0;
-        for (int skill = 0; skill < level.length; skill++) {
-            total += maxLevel[skill];
+        for (int skill = 0; skill < curLevel.length; skill++) {
+            total += level[skill];
         }
         return total;
     }
