@@ -14,7 +14,7 @@ public final class HitOneNpcBlock extends NpcBlock {
 
 	public HitOneNpcBlock(NPC npc) {
 		super(0x40);
-		hpRatio = npc.getCurrentHitpoints() * 255 / npc.getDefinition().getBaseHitpoints();
+		hpRatio = npc.getCurrentHitpoints() * 255 / npc.getMaximumHitpoints();
 		damage = npc.getHits().getDamage(1);
 		type = npc.getHits().getType(1);
 	}

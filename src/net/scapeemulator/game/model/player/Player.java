@@ -1,5 +1,6 @@
 package net.scapeemulator.game.model.player;
 
+import static net.scapeemulator.game.model.player.skills.prayer.Prayer.HEAL;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 
@@ -525,5 +526,25 @@ public final class Player extends Mob {
 
     public Animation getDeathAnimation() {
         return DEATH_ANIMATION;
+    }
+
+    @Override
+    public int getMaximumHitpoints() {
+        return skillSet.getLevel(Skill.HITPOINTS);
+    }
+
+    @Override
+    protected void heal(int amount) {
+        int temp = getCurrentHitpoints() + amount;
+        temp = temp > getMaximumHitpoints() ? getMaximumHitpoints() : temp;
+        skillSet.setCurrentLevel(Skill.HITPOINTS, temp);
+    }
+
+    @Override
+    public int getHealthRegen() {
+        int regen = prayers.prayerActive(HEAL) ? 2 : 1;
+        // Regen brace
+        regen += getEquipment().get(Equipment.HANDS).getId() == 11133 ? 1 : 0;
+        return regen;
     }
 }

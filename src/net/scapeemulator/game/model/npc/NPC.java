@@ -63,10 +63,21 @@ public abstract class NPC extends Mob {
         return spawnPosition;
     }
 
+    public int getHealthRegen() {
+        return 2;
+    }
+    
     protected void reduceHp(int amount) {
         currentHp -= amount;
     }
 
+    public void heal(int amount) {
+        currentHp += amount;
+        if(currentHp > getMaximumHitpoints()) {
+            currentHp = getMaximumHitpoints();
+        }
+    }
+    
     public void healToFull() {
         currentHp = definition.getBaseHitpoints();
     }
@@ -86,7 +97,12 @@ public abstract class NPC extends Mob {
         reset();
         startAction(new NPCDeathAction(this));
     }
-
+    
+    @Override
+    public int getMaximumHitpoints() {
+        return definition.getBaseHitpoints();
+    }
+    
     @Override
     public int getCurrentHitpoints() {
         return currentHp;

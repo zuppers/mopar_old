@@ -1,7 +1,6 @@
 package net.scapeemulator.game.update;
 
 import net.scapeemulator.game.model.player.Player;
-import net.scapeemulator.game.model.player.skills.Skill;
 import net.scapeemulator.game.msg.impl.PlayerUpdateMessage;
 import net.scapeemulator.game.net.game.DataTransformation;
 import net.scapeemulator.game.net.game.DataType;
@@ -15,7 +14,7 @@ public final class HitOnePlayerBlock extends PlayerBlock {
 
 	public HitOnePlayerBlock(Player player) {
 		super(0x1);
-		hpRatio = player.getCurrentHitpoints() * 255 / player.getSkillSet().getLevel(Skill.HITPOINTS);
+		hpRatio = player.getCurrentHitpoints() * 255 / player.getMaximumHitpoints();
 		damage = player.getHits().getDamage(1);
 		type = player.getHits().getType(1);
 	}

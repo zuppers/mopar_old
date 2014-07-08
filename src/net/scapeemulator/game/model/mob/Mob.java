@@ -522,11 +522,25 @@ public abstract class Mob extends Entity {
     public abstract int getCurrentHitpoints();
 
     /**
+     * Gets the current amount of hit points this {@link Mob} has.
+     * 
+     * @return The current amount of hit points.
+     */
+    public abstract int getMaximumHitpoints();
+
+    /**
      * Reduce the hit points of this {@link Mob}.
      * 
-     * @param amount The amount to reduce with.
+     * @param amount number of hitpoints to reduce
      */
     protected abstract void reduceHp(int amount);
+
+    /**
+     * Increase the hit points of this {@link Mob}.
+     * 
+     * @param amount number of hitpoints to heal
+     */
+    protected abstract void heal(int amount);
 
     /**
      * Executes what has to be done when this {@link Mob} dies.
@@ -622,4 +636,11 @@ public abstract class Mob extends Entity {
      * @return Whether this {@link Mob} is running.
      */
     public abstract boolean isRunning();
+
+    /**
+     * Gets the health regen per tick of this {@link Mob}. 100 = One hitpoint per tick
+     * 
+     * @return the health regen value of this {@link Mob}
+     */
+    public abstract int getHealthRegen();
 }
