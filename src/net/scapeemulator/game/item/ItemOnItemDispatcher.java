@@ -83,6 +83,8 @@ public final class ItemOnItemDispatcher {
             }
 
             handler.handle(player, inventoryOne, inventoryTwo, itemOne, itemTwo);
+        } else {
+            player.sendMessage("Nothing interesting happens.");
         }
     }
 

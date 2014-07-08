@@ -8,6 +8,9 @@ public final class IntegerScriptInputMessageHandler extends MessageHandler<Integ
 
 	@Override
 	public void handle(Player player, IntegerScriptInputMessage message) {
+	    if(message.getValue() < 1) {
+	        return;
+	    }
 		if(player.getScriptInput().getIntegerInputListener() != null) {
 			player.getScriptInput().getIntegerInputListener().inputReceived(message.getValue());
 		} else {

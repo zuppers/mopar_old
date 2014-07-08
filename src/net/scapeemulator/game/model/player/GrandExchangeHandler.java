@@ -8,7 +8,6 @@ import net.scapeemulator.game.model.grandexchange.OfferType;
 import net.scapeemulator.game.msg.impl.GrandExchangeUpdateMessage;
 import net.scapeemulator.game.msg.impl.ScriptMessage;
 import net.scapeemulator.game.msg.impl.inter.InterfaceAccessMessage;
-import net.scapeemulator.game.msg.impl.inter.InterfaceCloseMessage;
 import net.scapeemulator.game.msg.impl.inter.InterfaceItemsMessage;
 import net.scapeemulator.game.msg.impl.inter.InterfaceOpenMessage;
 import net.scapeemulator.game.msg.impl.inter.InterfaceVisibleMessage;
