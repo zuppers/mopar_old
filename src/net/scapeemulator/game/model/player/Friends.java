@@ -1,6 +1,5 @@
 package net.scapeemulator.game.model.player;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import net.scapeemulator.game.model.World;

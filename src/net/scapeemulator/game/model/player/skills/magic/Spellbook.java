@@ -199,7 +199,7 @@ public class Spellbook {
     }
 
     private static SkillRequirement level(int level) {
-        return new SkillRequirement(Skill.MAGIC, level, "cast that spell");
+        return new SkillRequirement(Skill.MAGIC, level, true, "cast that spell");
     }
 
     public int getInterfaceId() {

@@ -1,8 +1,6 @@
 package net.scapeemulator.game.model.player.skills.magic;
 
-import net.scapeemulator.game.model.SpotAnimation;
 import net.scapeemulator.game.model.area.Area;
-import net.scapeemulator.game.model.mob.Animation;
 import net.scapeemulator.game.model.player.Player;
 import net.scapeemulator.game.task.Action;
 

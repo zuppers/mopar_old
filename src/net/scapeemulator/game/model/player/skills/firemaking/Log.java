@@ -51,7 +51,7 @@ public enum Log {
         this.itemId = itemId;
         this.level = level;
         requirements = new Requirements();
-        requirements.addRequirement(new SkillRequirement(Skill.FIREMAKING, level, "burn those logs"));
+        requirements.addRequirement(new SkillRequirement(Skill.FIREMAKING, level, true, "burn those logs"));
         this.xp = xp;
         this.fireId = fireId;
     }
@@ -63,8 +63,8 @@ public enum Log {
      * @return the Log with the given item id, or null if none found
      */
     public static Log forId(int itemId) {
-        for(Log log : values()) {
-            if(log.itemId == itemId) {
+        for (Log log : values()) {
+            if (log.itemId == itemId) {
                 return log;
             }
         }
