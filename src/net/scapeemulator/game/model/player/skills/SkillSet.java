@@ -7,6 +7,9 @@ public final class SkillSet {
 
     public static final double MAXIMUM_EXPERIENCE = 200000000;
 
+    private int hpRegenCounter;
+    private int regenCounter;
+
     private static int getLevelFromExperience(double xp) {
         int points = 0;
         int output = 0;
@@ -156,6 +159,39 @@ public final class SkillSet {
             total += level[skill];
         }
         return total;
+    }
+
+    public void tick(int hpRegen, int skillRegen) {
+        if (curLevel[Skill.HITPOINTS] < level[Skill.HITPOINTS]) {
+            hpRegenCounter += hpRegen;
+            if (hpRegenCounter >= 100) {
+                hpRegenCounter = 0;
+                curLevel[Skill.HITPOINTS] = curLevel[Skill.HITPOINTS] + 1;
+                for (SkillListener listener : listeners) {
+                    listener.skillChanged(this, Skill.HITPOINTS);
+                }
+            }
+        }
+        regenCounter += skillRegen;
+        if (regenCounter >= 100) {
+            regenCounter = 0;
+            for (int skill = 0; skill < curLevel.length; skill++) {
+                if (skill == Skill.HITPOINTS || skill == Skill.PRAYER) {
+                    continue;
+                }
+                if (curLevel[skill] != level[skill]) {
+                    if (curLevel[skill] < level[skill]) {
+                        curLevel[skill] = curLevel[skill] + 1;
+                    } else {
+                        curLevel[skill] = curLevel[skill] - 1;
+                    }
+                    for (SkillListener listener : listeners) {
+                        listener.skillChanged(this, skill);
+                    }
+
+                }
+            }
+        }
     }
 
 }

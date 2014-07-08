@@ -8,6 +8,7 @@ import net.scapeemulator.game.model.Position;
 import net.scapeemulator.game.model.World;
 import net.scapeemulator.game.model.npc.NPC;
 import net.scapeemulator.game.model.player.Player;
+import net.scapeemulator.game.model.player.skills.prayer.Prayer;
 import net.scapeemulator.game.msg.impl.NpcUpdateMessage;
 import net.scapeemulator.game.msg.impl.PlayerUpdateMessage;
 import net.scapeemulator.game.msg.impl.RegionChangeMessage;
@@ -54,6 +55,7 @@ public final class PlayerUpdater {
             player.send(new RegionChangeMessage(position));
         }
         player.getPrayers().tick();
+        player.getSkillSet().tick(player.getHealthRegen(), player.getPrayers().prayerActive(Prayer.RESTORE) ? 2 : 1);
         player.getGroundItems().tick();
         player.getWalkingQueue().tick();
         player.getCombatHandler().tick();
