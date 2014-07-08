@@ -9,339 +9,344 @@ import net.scapeemulator.game.model.grounditem.GroundItemList;
 import net.scapeemulator.game.model.mob.Mob;
 import net.scapeemulator.game.model.player.Item;
 import net.scapeemulator.game.model.player.Player;
+import net.scapeemulator.game.model.player.SlottedItem;
 
 public final class Inventory {
 
-	public enum StackMode {
-		ALWAYS, STACKABLE_ONLY;
-	}
+    public enum StackMode {
+        ALWAYS, STACKABLE_ONLY;
+    }
 
-	private final Player player;
-	private final StackMode stackMode;
-	private final Item[] items;
-	private final List<InventoryListener> listeners = new ArrayList<>();
+    private final Player player;
+    private final StackMode stackMode;
+    private final Item[] items;
+    private final List<InventoryListener> listeners = new ArrayList<>();
 
-	public Inventory(Player player, int slots) {
-		this(player, slots, StackMode.STACKABLE_ONLY);
-	}
+    public Inventory(Player player, int slots) {
+        this(player, slots, StackMode.STACKABLE_ONLY);
+    }
 
-	public Inventory(Player player, int slots, StackMode stackMode) {
-		this.player = player;
-		this.stackMode = stackMode;
-		this.items = new Item[slots];
-	}
+    public Inventory(Player player, int slots, StackMode stackMode) {
+        this.player = player;
+        this.stackMode = stackMode;
+        this.items = new Item[slots];
+    }
 
-	public Inventory(Inventory inventory) {
-		this.stackMode = inventory.stackMode;
-		this.items = inventory.toArray();
-		this.player = inventory.player;
-	}
+    public Inventory(Inventory inventory) {
+        this.stackMode = inventory.stackMode;
+        this.items = inventory.toArray();
+        this.player = inventory.player;
+    }
 
-	public Item[] toArray() {
-		Item[] array = new Item[items.length];
-		System.arraycopy(items, 0, array, 0, items.length);
-		return array;
-	}
+    public Item[] toArray() {
+        Item[] array = new Item[items.length];
+        System.arraycopy(items, 0, array, 0, items.length);
+        return array;
+    }
 
-	public void addListener(InventoryListener listener) {
-		listeners.add(listener);
-	}
+    public void addListener(InventoryListener listener) {
+        listeners.add(listener);
+    }
 
-	public void removeListener(InventoryListener listener) {
-		listeners.remove(listener);
-	}
+    public void removeListener(InventoryListener listener) {
+        listeners.remove(listener);
+    }
 
-	public void removeListeners() {
-		listeners.clear();
-	}
+    public void removeListeners() {
+        listeners.clear();
+    }
 
-	public void refresh() {
-		fireItemsChanged();
-	}
+    public void refresh() {
+        fireItemsChanged();
+    }
 
-	public Item get(int slot) {
-		checkSlot(slot);
-		return items[slot];
-	}
+    public Item get(int slot) {
+        checkSlot(slot);
+        return items[slot];
+    }
 
-	public void set(int slot, Item item) {
-		checkSlot(slot);
-		items[slot] = item;
-		fireItemChanged(slot);
-	}
+    public void set(int slot, Item item) {
+        checkSlot(slot);
+        items[slot] = item;
+        fireItemChanged(slot);
+    }
 
-	public void swap(int slot1, int slot2) {
-		checkSlot(slot1);
-		checkSlot(slot2);
+    public void swap(int slot1, int slot2) {
+        checkSlot(slot1);
+        checkSlot(slot2);
 
-		Item tmp = items[slot1];
-		items[slot1] = items[slot2];
-		items[slot2] = tmp;
+        Item tmp = items[slot1];
+        items[slot1] = items[slot2];
+        items[slot2] = tmp;
 
-		fireItemChanged(slot1);
-		fireItemChanged(slot2);
-	}
+        fireItemChanged(slot1);
+        fireItemChanged(slot2);
+    }
 
-	public void reset(int slot) {
-		set(slot, null);
-	}
+    public void reset(int slot) {
+        set(slot, null);
+    }
 
-	public Item add(Item item) {
-		return add(item, -1);
-	}
+    public Item add(Item item) {
+        return add(item, -1);
+    }
 
-	public Item add(Item item, int preferredSlot) {
-		int id = item.getId();
-		boolean stackable = isStackable(item);
-		if (stackable) {
-			/* try to add this item to an existing stack */
-			int slot = slotOf(id);
-			if (slot != -1) {
-				Item other = items[slot];
-				long total = (long) other.getAmount() + item.getAmount();
-				int amount;
+    public Item add(Item item, int preferredSlot) {
+        int id = item.getId();
+        boolean stackable = isStackable(item);
+        if (stackable) {
+            /* try to add this item to an existing stack */
+            int slot = slotOf(id);
+            if (slot != -1) {
+                Item other = items[slot];
+                long total = (long) other.getAmount() + item.getAmount();
+                int amount;
 
-				/* check if there are too many items in the stack */
-				Item remaining = null;
-				if (total > Integer.MAX_VALUE) {
-					amount = Integer.MAX_VALUE;
-					remaining = new Item(id, (int) (total - amount));
-					fireCapacityExceeded();
-				} else {
-					amount = (int) total;
-				}
+                /* check if there are too many items in the stack */
+                Item remaining = null;
+                if (total > Integer.MAX_VALUE) {
+                    amount = Integer.MAX_VALUE;
+                    remaining = new Item(id, (int) (total - amount));
+                    fireCapacityExceeded();
+                } else {
+                    amount = (int) total;
+                }
 
-				/* update stack and return any remaining items */
-				set(slot, new Item(item.getId(), amount));
-				return remaining;
-			}
+                /* update stack and return any remaining items */
+                set(slot, new Item(item.getId(), amount));
+                return remaining;
+            }
 
-			/* try to add this item to the preferred slot */
-			if (preferredSlot != -1) {
-				checkSlot(preferredSlot);
-				if (items[preferredSlot] == null) {
-					set(preferredSlot, item);
-					return null;
-				}
-			}
+            /* try to add this item to the preferred slot */
+            if (preferredSlot != -1) {
+                checkSlot(preferredSlot);
+                if (items[preferredSlot] == null) {
+                    set(preferredSlot, item);
+                    return null;
+                }
+            }
 
-			/* try to add this item to any slot */
-			for (slot = 0; slot < items.length; slot++) {
-				if (items[slot] == null) {
-					set(slot, item);
-					return null;
-				}
-			}
+            /* try to add this item to any slot */
+            for (slot = 0; slot < items.length; slot++) {
+                if (items[slot] == null) {
+                    set(slot, item);
+                    return null;
+                }
+            }
 
-			/* give up */
-			fireCapacityExceeded();
-			return item;
-		} else {
-			final Item single = new Item(id, 1);
-			int remaining = item.getAmount();
+            /* give up */
+            fireCapacityExceeded();
+            return item;
+        } else {
+            final Item single = new Item(id, 1);
+            int remaining = item.getAmount();
 
-			if (remaining == 0)
-				return null;
+            if (remaining == 0)
+                return null;
 
-			/* try to first place item at the preferred slot */
-			if (preferredSlot != -1) {
-				checkSlot(preferredSlot);
-				if (items[preferredSlot] == null) {
-					set(preferredSlot, single);
-					remaining--;
-				}
-			}
+            /* try to first place item at the preferred slot */
+            if (preferredSlot != -1) {
+                checkSlot(preferredSlot);
+                if (items[preferredSlot] == null) {
+                    set(preferredSlot, single);
+                    remaining--;
+                }
+            }
 
-			if (remaining == 0)
-				return null;
+            if (remaining == 0)
+                return null;
 
-			/* place any subsequent remaining items wherever space is available */
-			for (int slot = 0; slot < items.length; slot++) {
-				if (items[slot] == null) {
-					set(slot, single);
-					remaining--;
-				}
+            /* place any subsequent remaining items wherever space is available */
+            for (int slot = 0; slot < items.length; slot++) {
+                if (items[slot] == null) {
+                    set(slot, single);
+                    remaining--;
+                }
 
-				if (remaining == 0)
-					return null;
-			}
+                if (remaining == 0)
+                    return null;
+            }
 
-			/* give up */
-			fireCapacityExceeded();
-			return new Item(id, remaining);
-		}
-	}
+            /* give up */
+            fireCapacityExceeded();
+            return new Item(id, remaining);
+        }
+    }
 
-	public Item remove(Item item) {
-		return remove(item, -1);
-	}
+    public Item remove(SlottedItem item) {
+        return remove(item.getItem(), item.getSlot());
+    }
 
-	/**
-	 * @param item
-	 * @param preferredSlot
-	 * @return Item with amount value being the number actually removed
-	 */
-	public Item remove(Item item, int preferredSlot) {
-		int id = item.getId();
-		boolean stackable = isStackable(item);
+    public Item remove(Item item) {
+        return remove(item, -1);
+    }
 
-		if (stackable) {
-			/* try to remove this item from its stack */
-			int slot = slotOf(id);
-			if (slot != -1) {
-				Item other = items[slot];
-				if (other.getAmount() <= item.getAmount()) {
-					set(slot, null);
-					return new Item(id, other.getAmount());
-				} else {
-					other = new Item(id, other.getAmount() - item.getAmount());
-					set(slot, other);
-					return item;
-				}
-			}
-			return null;
-		} else {
-			int removed = 0;
+    /**
+     * @param item
+     * @param preferredSlot
+     * @return Item with amount value being the number actually removed
+     */
+    public Item remove(Item item, int preferredSlot) {
+        int id = item.getId();
+        boolean stackable = isStackable(item);
 
-			/* try to remove the item from the preferred slot first */
-			if (preferredSlot != -1) {
-				checkSlot(preferredSlot);
-				if (items[preferredSlot].getId() == id) {
-					set(preferredSlot, null);
+        if (stackable) {
+            /* try to remove this item from its stack */
+            int slot = slotOf(id);
+            if (slot != -1) {
+                Item other = items[slot];
+                if (other.getAmount() <= item.getAmount()) {
+                    set(slot, null);
+                    return new Item(id, other.getAmount());
+                } else {
+                    other = new Item(id, other.getAmount() - item.getAmount());
+                    set(slot, other);
+                    return item;
+                }
+            }
+            return null;
+        } else {
+            int removed = 0;
 
-					if (++removed >= item.getAmount())
-						return new Item(id, removed);
-				}
-			}
+            /* try to remove the item from the preferred slot first */
+            if (preferredSlot != -1) {
+                checkSlot(preferredSlot);
+                if (items[preferredSlot].getId() == id) {
+                    set(preferredSlot, null);
 
-			/* try other slots */
-			for (int slot = 0; slot < items.length; slot++) {
-				Item other = items[slot];
-				if (other != null && other.getId() == id) {
-					set(slot, null);
+                    if (++removed >= item.getAmount())
+                        return new Item(id, removed);
+                }
+            }
 
-					if (++removed >= item.getAmount())
-						return new Item(id, removed);
-				}
-			}
+            /* try other slots */
+            for (int slot = 0; slot < items.length; slot++) {
+                Item other = items[slot];
+                if (other != null && other.getId() == id) {
+                    set(slot, null);
 
-			return removed == 0 ? null : new Item(id, removed);
-		}
-	}
+                    if (++removed >= item.getAmount())
+                        return new Item(id, removed);
+                }
+            }
 
-	public void shift() {
-		int destSlot = 0;
+            return removed == 0 ? null : new Item(id, removed);
+        }
+    }
 
-		for (int slot = 0; slot < items.length; slot++) {
-			Item item = items[slot];
-			if (item != null) {
-				items[destSlot++] = item;
-			}
-		}
+    public void shift() {
+        int destSlot = 0;
 
-		for (int slot = destSlot; slot < items.length; slot++)
-			items[slot] = null;
+        for (int slot = 0; slot < items.length; slot++) {
+            Item item = items[slot];
+            if (item != null) {
+                items[destSlot++] = item;
+            }
+        }
 
-		fireItemsChanged();
-	}
+        for (int slot = destSlot; slot < items.length; slot++)
+            items[slot] = null;
 
-	public void empty() {
-		for (int slot = 0; slot < items.length; slot++)
-			items[slot] = null;
+        fireItemsChanged();
+    }
 
-		fireItemsChanged();
-	}
+    public void empty() {
+        for (int slot = 0; slot < items.length; slot++)
+            items[slot] = null;
 
-	public boolean isEmpty() {
-		for (int slot = 0; slot < items.length; slot++)
-			if (items[slot] != null)
-				return false;
+        fireItemsChanged();
+    }
 
-		return true;
-	}
+    public boolean isEmpty() {
+        for (int slot = 0; slot < items.length; slot++)
+            if (items[slot] != null)
+                return false;
 
-	public int freeSlots() {
-		int slots = 0;
-		for (int slot = 0; slot < items.length; slot++)
-			if (items[slot] == null)
-				slots++;
+        return true;
+    }
 
-		return slots;
-	}
+    public int freeSlots() {
+        int slots = 0;
+        for (int slot = 0; slot < items.length; slot++)
+            if (items[slot] == null)
+                slots++;
 
-	public int slotOf(int id) {
-		for (int slot = 0; slot < items.length; slot++) {
-			Item item = items[slot];
-			if (item != null && item.getId() == id)
-				return slot;
-		}
+        return slots;
+    }
 
-		return -1;
-	}
+    public int slotOf(int id) {
+        for (int slot = 0; slot < items.length; slot++) {
+            Item item = items[slot];
+            if (item != null && item.getId() == id)
+                return slot;
+        }
 
-	public int getAmount(int id) {
-		int amount = 0;
-		for (Item item : items) {
-			if (item == null)
-				continue;
-			if (item.getId() == id) {
-				amount += item.getAmount();
-			}
-		}
-		return amount;
-	}
+        return -1;
+    }
 
-	public int getAmountNotedAndUnnoted(int id) {
-		ItemDefinition def = ItemDefinitions.forId(id);
-		if (def.isStackable() && def.isUnnoted()) {
-			return getAmount(id);
-		}
-		return getAmount(id) + getAmount(def.isNoted() ? def.getUnnotedId() : def.getNotedId());
-	}
+    public int getAmount(int id) {
+        int amount = 0;
+        for (Item item : items) {
+            if (item == null)
+                continue;
+            if (item.getId() == id) {
+                amount += item.getAmount();
+            }
+        }
+        return amount;
+    }
 
-	public boolean contains(int id) {
-		return slotOf(id) != -1;
-	}
+    public int getAmountNotedAndUnnoted(int id) {
+        ItemDefinition def = ItemDefinitions.forId(id);
+        if (def.isStackable() && def.isUnnoted()) {
+            return getAmount(id);
+        }
+        return getAmount(id) + getAmount(def.isNoted() ? def.getUnnotedId() : def.getNotedId());
+    }
 
-	private void fireItemChanged(int slot) {
-		for (InventoryListener listener : listeners)
-			listener.itemChanged(this, slot, items[slot]);
-	}
+    public boolean contains(int id) {
+        return slotOf(id) != -1;
+    }
 
-	private void fireItemsChanged() {
-		for (InventoryListener listener : listeners)
-			listener.itemsChanged(this);
-	}
+    private void fireItemChanged(int slot) {
+        for (InventoryListener listener : listeners)
+            listener.itemChanged(this, slot, items[slot]);
+    }
 
-	public void fireCapacityExceeded() {
-		for (InventoryListener listener : listeners)
-			listener.capacityExceeded(this);
-	}
+    private void fireItemsChanged() {
+        for (InventoryListener listener : listeners)
+            listener.itemsChanged(this);
+    }
 
-	private boolean isStackable(Item item) {
-		if (stackMode == StackMode.ALWAYS)
-			return true;
+    public void fireCapacityExceeded() {
+        for (InventoryListener listener : listeners)
+            listener.capacityExceeded(this);
+    }
 
-		return item.getDefinition().isStackable();
-	}
+    private boolean isStackable(Item item) {
+        if (stackMode == StackMode.ALWAYS)
+            return true;
 
-	public boolean check(int slot, int itemId) {
-		return get(slot) != null && get(slot).getId() == itemId;
-	}
+        return item.getDefinition().isStackable();
+    }
 
-	public void dropAll(Mob receiver) {
-		GroundItemList groundItemList = receiver instanceof Player ? ((Player) receiver).getGroundItems() : player.getGroundItems();
-		for (Item item : items) {
-			if (item != null) {
-				groundItemList.add(item.getId(), item.getAmount(), player.getPosition());
-			}
-		}
-		empty();
-	}
+    public boolean check(int slot, int itemId) {
+        return get(slot) != null && get(slot).getId() == itemId;
+    }
 
-	private void checkSlot(int slot) {
-		if (slot < 0 || slot >= items.length)
-			throw new IndexOutOfBoundsException("slot out of range");
-	}
+    public void dropAll(Mob receiver) {
+        GroundItemList groundItemList = receiver instanceof Player ? ((Player) receiver).getGroundItems() : player.getGroundItems();
+        for (Item item : items) {
+            if (item != null) {
+                groundItemList.add(item.getId(), item.getAmount(), player.getPosition());
+            }
+        }
+        empty();
+    }
+
+    private void checkSlot(int slot) {
+        if (slot < 0 || slot >= items.length)
+            throw new IndexOutOfBoundsException("slot out of range");
+    }
 
 }
