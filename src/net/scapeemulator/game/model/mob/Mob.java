@@ -11,12 +11,12 @@ import net.scapeemulator.game.model.mob.combat.Hits;
 import net.scapeemulator.game.model.pathfinding.Path;
 import net.scapeemulator.game.model.player.Player;
 import net.scapeemulator.game.model.player.action.PlayerDeathAction;
+import net.scapeemulator.game.model.player.skills.prayer.HeadIcon;
 import net.scapeemulator.game.task.Action;
 
 /**
- * This represents an in-game Mob. An Entity with (mainly)
- * {@link Animation}, {@link CombatHandler} and {@link WalkingQueue}.
- *
+ * This represents an in-game Mob. An Entity with (mainly) {@link Animation}, {@link CombatHandler}
+ * and {@link WalkingQueue}.
  */
 public abstract class Mob extends Entity {
 
@@ -37,13 +37,14 @@ public abstract class Mob extends Entity {
     protected Mob currentTarget;
     protected int turnToTargetId = -1;
     protected int frozen;
+    protected HeadIcon headIcon = HeadIcon.NONE;
     protected Action<? extends Mob> action;
     protected boolean hidden;
     protected CombatHandler<? extends Mob> combatHandler;
 
     /**
-     * Create a {@link Mob} with {@link getSize()} equal to 1 and
-     * {@link getMostRecentDirection} equal to {@link Direction#SOUTH}.
+     * Create a {@link Mob} with {@link getSize()} equal to 1 and {@link getMostRecentDirection}
+     * equal to {@link Direction#SOUTH}.
      */
     public Mob() {
         size = 1;
@@ -51,6 +52,7 @@ public abstract class Mob extends Entity {
 
     /**
      * Gets the id of this {@link Mob}.
+     * 
      * @return The id.
      */
     public int getId() {
@@ -66,7 +68,7 @@ public abstract class Mob extends Entity {
 
     /**
      * Set the id of this {@link Mob} to id.
-     *
+     * 
      * @param id The id to set it to.
      */
     public void setId(int id) {
@@ -75,7 +77,7 @@ public abstract class Mob extends Entity {
 
     /**
      * Set the size of this {@link Mob} to size.
-     *
+     * 
      * @param size The size to set it to.
      */
     public void setSize(int size) {
@@ -84,6 +86,7 @@ public abstract class Mob extends Entity {
 
     /**
      * Gets the size of this {@link Mob}.
+     * 
      * @return The size.
      */
     public int getSize() {
@@ -92,6 +95,7 @@ public abstract class Mob extends Entity {
 
     /**
      * Gets whether this {@link Mob} is active or not.
+     * 
      * @return Whether the {@link getId()} isn't 0.
      */
     public boolean isActive() {
@@ -99,9 +103,9 @@ public abstract class Mob extends Entity {
     }
 
     /**
-     * Start action. When different from the current Action, the currentAction
-     * is stopped and action is scheduled.
-     *
+     * Start action. When different from the current Action, the currentAction is stopped and action
+     * is scheduled.
+     * 
      * @param action The {@link Action} to start.
      * @see stopAction()
      */
@@ -122,6 +126,7 @@ public abstract class Mob extends Entity {
 
     /**
      * Stop the current {@link Action}.
+     * 
      * @see Action#stop()
      */
     public void stopAction() {
@@ -134,6 +139,7 @@ public abstract class Mob extends Entity {
 
     /**
      * Gets whether this {@link Mob} is teleporting.
+     * 
      * @return Whether this is teleporting.
      * @see teleport(Position)
      */
@@ -142,10 +148,10 @@ public abstract class Mob extends Entity {
     }
 
     /**
-     * Teleport this {@link Mob} to the specified Position. This implies
-     * {@link getPosition()} is equal to position, {@link isTeleporting()} ==
-     * true and the {@link WalkingQueue} will be reset.
-     *
+     * Teleport this {@link Mob} to the specified Position. This implies {@link getPosition()} is
+     * equal to position, {@link isTeleporting()} == true and the {@link WalkingQueue} will be
+     * reset.
+     * 
      * @param position The {@link Position} to teleport to.
      * @see WalkingQueue#reset()
      */
@@ -157,6 +163,7 @@ public abstract class Mob extends Entity {
 
     /**
      * Gets the {@link WalkingQueue} used by this {@link Mob}.
+     * 
      * @return The {@link WalkingQueue}.
      */
     public WalkingQueue getWalkingQueue() {
@@ -165,6 +172,7 @@ public abstract class Mob extends Entity {
 
     /**
      * Gets the first {@link Direction} of this {@link Mob}.
+     * 
      * @return The first {@link Direction}.
      */
     public Direction getFirstDirection() {
@@ -173,6 +181,7 @@ public abstract class Mob extends Entity {
 
     /**
      * Gets the second {@link Direction} of this {@link Mob}.
+     * 
      * @return The second {@link Direction}.
      */
     public Direction getSecondDirection() {
@@ -180,10 +189,9 @@ public abstract class Mob extends Entity {
     }
 
     /**
-     * Gets whether this {@link Mob} isn't walking. Determined by
-     * {@link getFirstDirection()} and {@link getSecondDirection()} both being
-     * {@link Direction#NONE}.
-     *
+     * Gets whether this {@link Mob} isn't walking. Determined by {@link getFirstDirection()} and
+     * {@link getSecondDirection()} both being {@link Direction#NONE}.
+     * 
      * @return Whether this isn't walking.
      */
     public boolean notWalking() {
@@ -192,26 +200,21 @@ public abstract class Mob extends Entity {
 
     /**
      * Get the most recent {@link Direction} of this {@link Mob}.
-     *
-     * @return The previous non
-     * {@link Direction#NONE}, {@link getSecondDirection} or
-     * {@link getFirstDirection}
+     * 
+     * @return The previous non {@link Direction#NONE}, {@link getSecondDirection} or
+     *         {@link getFirstDirection}
      */
     public Direction getMostRecentDirection() {
         return mostRecentDirection;
     }
 
     /**
-     * Set the {@link getFirstDirection} and {@link getSecondDirection} to
-     * firstDirection and secondDirection. {@link getMostRecentDirection()} will
-     * be set to the current non
-     * {@link Direction#NONE}, {@link getSecondDirection} or
-     * {@link getFirstDirection}.
-     *
-     * @param firstDirection The {@link Direction} to set the
-     * {@link getFirstDirection} to.
-     * @param secondDirection The {@link Direction} to set the
-     * {@link getSecondDirection} to.
+     * Set the {@link getFirstDirection} and {@link getSecondDirection} to firstDirection and
+     * secondDirection. {@link getMostRecentDirection()} will be set to the current non
+     * {@link Direction#NONE}, {@link getSecondDirection} or {@link getFirstDirection}.
+     * 
+     * @param firstDirection The {@link Direction} to set the {@link getFirstDirection} to.
+     * @param secondDirection The {@link Direction} to set the {@link getSecondDirection} to.
      */
     public void setDirections(Direction firstDirection, Direction secondDirection) {
         this.firstDirection = firstDirection;
@@ -226,8 +229,8 @@ public abstract class Mob extends Entity {
 
     /**
      * Gets the current {@link Action} of this {@link Mob}.
-     * @return The current {@link Action}. 
-     * Returns null if there is currently no {@link Action}.
+     * 
+     * @return The current {@link Action}. Returns null if there is currently no {@link Action}.
      * @see startAction(Action)
      * @see stopAction()
      */
@@ -235,11 +238,19 @@ public abstract class Mob extends Entity {
         return action;
     }
 
+    public HeadIcon getHeadIcon() {
+        return headIcon;
+    }
+
+    public void setHeadIcon(HeadIcon headIcon) {
+        this.headIcon = headIcon;
+    }
+
     /**
      * Gets the current {@link Animation} of this {@link Mob}.
-     *
-     * @return The current {@link Animation}. 
-     * Returns null if there is currently no {@link Animation}.
+     * 
+     * @return The current {@link Animation}. Returns null if there is currently no
+     *         {@link Animation}.
      * @see playAnimation(Animation)
      * @see isAnimationUpdated()
      */
@@ -249,9 +260,9 @@ public abstract class Mob extends Entity {
 
     /**
      * Gets the current {@link SpotAnimation} of this {@link Mob}.
-     *
-     * @return The current {@link SpotAnimation}. 
-     * Returns null if there is currently no {@link SpotAnimation}.
+     * 
+     * @return The current {@link SpotAnimation}. Returns null if there is currently no
+     *         {@link SpotAnimation}.
      * @see playSpotAnimation(SpotAnimation}
      * @see isSpotAnimationUpdated()
      */
@@ -261,6 +272,7 @@ public abstract class Mob extends Entity {
 
     /**
      * Gets whether the current {@link Animation} is updated.
+     * 
      * @return Whether {@link getAnimation()} isn't null.
      */
     public boolean isAnimationUpdated() {
@@ -269,6 +281,7 @@ public abstract class Mob extends Entity {
 
     /**
      * Gets whether the current {@link SpotAnimation} is updated.
+     * 
      * @return Whether {@link getSpotAnimation()} isn't null.
      */
     public boolean isSpotAnimationUpdated() {
@@ -276,9 +289,8 @@ public abstract class Mob extends Entity {
     }
 
     /**
-     * Play the provided {@link Animation}. {@link getAnimation()} will be equal
-     * to animation.
-     *
+     * Play the provided {@link Animation}. {@link getAnimation()} will be equal to animation.
+     * 
      * @param animation The {@link Animation} to play.
      */
     public void playAnimation(Animation animation) {
@@ -286,17 +298,16 @@ public abstract class Mob extends Entity {
     }
 
     /**
-     * Cancels the {@link getAnimation()}. {@link getAnimation()} will be equal
-     * to {@link CANCEL_ANIMATION}.
+     * Cancels the {@link getAnimation()}. {@link getAnimation()} will be equal to
+     * {@link CANCEL_ANIMATION}.
      */
     public void cancelAnimation() {
         animation = CANCEL_ANIMATION;
     }
 
     /**
-     * Play the provided {@link SpotAnimation}. {@link getAnimation()} will be
-     * equal to animation.
-     *
+     * Play the provided {@link SpotAnimation}. {@link getAnimation()} will be equal to animation.
+     * 
      * @param spotAnimation The {@link SpotAnimation} to play.
      */
     public void playSpotAnimation(SpotAnimation spotAnimation) {
@@ -304,9 +315,9 @@ public abstract class Mob extends Entity {
     }
 
     /**
-     * Turn to the provided turnToPosition. {@link getTurnToPosition()} will be
-     * equal to turnToPosition.
-     *
+     * Turn to the provided turnToPosition. {@link getTurnToPosition()} will be equal to
+     * turnToPosition.
+     * 
      * @param turnToPosition The {@link Position} to turn to.
      */
     public void turnToPosition(Position turnToPosition) {
@@ -315,6 +326,7 @@ public abstract class Mob extends Entity {
 
     /**
      * Gets whether the {@link getTurnToPosition()} is updated.
+     * 
      * @return Whether {@link getTurnToPosition()} isn't null.
      */
     public boolean isTurnToPositionUpdated() {
@@ -323,6 +335,7 @@ public abstract class Mob extends Entity {
 
     /**
      * Gets the {@link Position} to turn to.
+     * 
      * @return The {@link Position} to turn to.
      * @see turnToPosition(Position)
      */
@@ -331,9 +344,9 @@ public abstract class Mob extends Entity {
     }
 
     /**
-     * Turn to the specified target. {@link getTurnToTarget()} = target
-     * <b>and</b> {@link getTurnToTargetId()} = {@link getTargetId(Mob)}
-     *
+     * Turn to the specified target. {@link getTurnToTarget()} = target <b>and</b> {@link
+     * getTurnToTargetId()} = {@link getTargetId(Mob)}
+     * 
      * @param target The {@link Mob} to turn to.
      */
     public void turnToTarget(Mob target) {
@@ -346,6 +359,7 @@ public abstract class Mob extends Entity {
 
     /**
      * Gets the {@link Mob} target to turn to.
+     * 
      * @return The target to turn to.
      * @see getTurnToTargetId()
      */
@@ -354,8 +368,8 @@ public abstract class Mob extends Entity {
     }
 
     /**
-     * Reset the target to turn to. {@link getTurnToTargetId()} = 65535
-     * <b>and</b> {@link getTurnToTarget()} = null
+     * Reset the target to turn to. {@link getTurnToTargetId()} = 65535 <b>and</b> {@link
+     * getTurnToTarget()} = null
      */
     public void resetTurnToTarget() {
         turnToTargetId = 65535;
@@ -364,6 +378,7 @@ public abstract class Mob extends Entity {
 
     /**
      * Gets whether there is a target to turn to.
+     * 
      * @return Whether {@link getTurnToTarget()} isn't equal to null.
      */
     public boolean isTurnToTargetSet() {
@@ -372,6 +387,7 @@ public abstract class Mob extends Entity {
 
     /**
      * Gets whether the first hit is updated.
+     * 
      * @return The result of {@code getHits().updated(1)}
      * @see Hits#updated(int)
      */
@@ -381,6 +397,7 @@ public abstract class Mob extends Entity {
 
     /**
      * Gets whether the second hit is updated.
+     * 
      * @return The result of {@code getHits().updated(2)}
      * @see Hits#updated(int)
      */
@@ -390,6 +407,7 @@ public abstract class Mob extends Entity {
 
     /**
      * Gets the instance of our {@link Hits} on this {@link Mob}.
+     * 
      * @return The hits.
      */
     public Hits getHits() {
@@ -398,6 +416,7 @@ public abstract class Mob extends Entity {
 
     /**
      * Set this {@link Mob}'s hidden status to the argument.
+     * 
      * @param hidden Whether the {@link Mob} should be hidden.
      * @see isHidden()
      */
@@ -407,6 +426,7 @@ public abstract class Mob extends Entity {
 
     /**
      * Gets whether this {@link Mob} is hidden.
+     * 
      * @return Whether this {@link Mob} is hidden.
      */
     public boolean isHidden() {
@@ -415,6 +435,7 @@ public abstract class Mob extends Entity {
 
     /**
      * Gets whether this {@link Mob} is frozen.
+     * 
      * @return Whether this {@link Mob} appears to be frozen.
      */
     public boolean frozen() {
@@ -423,6 +444,7 @@ public abstract class Mob extends Entity {
 
     /**
      * Gets whether the {@link getTurnToTargetId()} is updated.
+     * 
      * @return Whether {@link getTurnToTargetId()} isn't -1.
      */
     public boolean isTurnToTargetUpdated() {
@@ -431,6 +453,7 @@ public abstract class Mob extends Entity {
 
     /**
      * Gets the id of the target to turn to.
+     * 
      * @return The id of the target.
      * @see getTurnToTarget()
      */
@@ -441,7 +464,7 @@ public abstract class Mob extends Entity {
     /**
      * Walk the {@link Path} specified. The {@link getWalkingQueue()} will be
      * {@link WalkingQueue#reset()} and contain {@link Path#getPoints()}.
-     *
+     * 
      * @param path The {@link Path} to walk.
      */
     public void walkPath(Path path) {
@@ -454,7 +477,7 @@ public abstract class Mob extends Entity {
     }
 
     /**
-     *
+     * 
      * @param object The object to check for equality.
      * @return True if the {@link Mob#getTargetId()} match, else false.
      */
@@ -471,7 +494,7 @@ public abstract class Mob extends Entity {
     }
 
     /**
-     *
+     * 
      * @return hashCode depending on getTargetId(this).
      */
     @Override
@@ -482,12 +505,10 @@ public abstract class Mob extends Entity {
     }
 
     /**
-     * Gets whether this {@link Mob} can traverse in the specified
-     * {@link Direction}.
-     *
+     * Gets whether this {@link Mob} can traverse in the specified {@link Direction}.
+     * 
      * @param direction The {@link Direction} to check if traversable.
-     * @return
-     * {@code Direction.isTraversable(getPosition(), direction, getSize())}
+     * @return {@code Direction.isTraversable(getPosition(), direction, getSize())}
      */
     public boolean canTraverse(Direction direction) {
         return Direction.isTraversable(position, direction, size);
@@ -495,6 +516,7 @@ public abstract class Mob extends Entity {
 
     /**
      * Gets the current amount of hit points this {@link Mob} has.
+     * 
      * @return The current amount of hit points.
      */
     public abstract int getCurrentHitpoints();
@@ -513,6 +535,7 @@ public abstract class Mob extends Entity {
 
     /**
      * Gets whether this {@link Mob} is alive.
+     * 
      * @return {@code getCurrentHitpoints() > 0}
      */
     public boolean alive() {
@@ -520,11 +543,9 @@ public abstract class Mob extends Entity {
     }
 
     /**
-     * Process the hit of a certain {@link Mob} source. This includes starting
-     * possible retaliation,
-     * {@link Hits#addHit(Mob, HitType, int)}, {@link reduceHp(int)} and
-     * possible {@link onDeath()}.
-     *
+     * Process the hit of a certain {@link Mob} source. This includes starting possible retaliation,
+     * {@link Hits#addHit(Mob, HitType, int)}, {@link reduceHp(int)} and possible {@link onDeath()}.
+     * 
      * @param source The source of the damage.
      * @param damage The damage to process.
      */
@@ -546,12 +567,11 @@ public abstract class Mob extends Entity {
     }
 
     /**
-     * Reset this {@link Mob}.
-     * {@link getAnimation()} = {@link getSpotAnimation()} = {@link getTurnToPosition()}
-     * = null. <b>and</b>
-     * {@link isTeleporting()} = {@link WalkingQueue#isMinimapFlagReset()} =
-     * false. <b>and</b> {@link getTurnToTargetId()} = -1.
-     *
+     * Reset this {@link Mob}. {@link getAnimation()} = {@link getSpotAnimation()} = {@link
+     * getTurnToPosition()} = null. <b>and</b> {@link isTeleporting()} =
+     * {@link WalkingQueue#isMinimapFlagReset()} = false. <b>and</b> {@link getTurnToTargetId()} =
+     * -1.
+     * 
      * @see Hits#reset()
      */
     public void reset() {
@@ -566,7 +586,7 @@ public abstract class Mob extends Entity {
 
     /**
      * Get the target id for this mob.
-     *
+     * 
      * @param mob The {@link Mob} for which the target id has to be given.
      * @return The id of mob, and when it is a Player, 0x8000 is added.
      */
@@ -580,22 +600,25 @@ public abstract class Mob extends Entity {
 
     /**
      * Gets the {@link CombatHandler} of this {@link Mob}.
+     * 
      * @return The {@link CombatHandler}.
      */
     public CombatHandler<? extends Mob> getCombatHandler() {
         return combatHandler;
     }
-    
+
     /**
      * Gets whether this {@link mob} is clipped.
+     * 
      * @return whether it is clipped.
      */
     public boolean isClipped() {
         return clipped;
     }
-    
+
     /**
      * Gets whether this {@link Mob} is running.
+     * 
      * @return Whether this {@link Mob} is running.
      */
     public abstract boolean isRunning();

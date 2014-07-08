@@ -35,7 +35,10 @@ import net.scapeemulator.game.model.definition.WidgetDefinitions;
 import net.scapeemulator.game.model.object.GroundObjectPopulator;
 import net.scapeemulator.game.model.pathfinding.MapDataListener;
 import net.scapeemulator.game.model.player.EquipmentDefinition;
+import net.scapeemulator.game.model.player.skills.cooking.Cooking;
 import net.scapeemulator.game.model.player.skills.firemaking.Firemaking;
+import net.scapeemulator.game.model.player.skills.magic.Magic;
+import net.scapeemulator.game.model.player.skills.prayer.PrayerSkill;
 import net.scapeemulator.game.msg.CodecRepository;
 import net.scapeemulator.game.msg.MessageDispatcher;
 import net.scapeemulator.game.net.HttpChannelInitializer;
@@ -178,7 +181,10 @@ public final class GameServer {
         messageDispatcher.decorateDispatchers(scriptContext);
 
         /* bind the no-script skill handlers to the dispatchers */
-        Firemaking.bindHandlers();
+        Magic.initialize();
+        Cooking.initialize();
+        Firemaking.initialize();
+        PrayerSkill.initialize();
         
         /* load player serializer from config file */
         serializer = createPlayerSerializer();
