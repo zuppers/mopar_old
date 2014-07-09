@@ -31,7 +31,6 @@ public final class VarbitDefinition {
 
     private int state, lowBit, highBit;
 
-    @SuppressWarnings("unused")
     public static VarbitDefinition decode(ByteBuffer buffer) {
         VarbitDefinition def = new VarbitDefinition();
         while (true) {
