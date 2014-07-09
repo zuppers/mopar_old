@@ -513,6 +513,10 @@ public final class Player extends Mob {
         return HOME_LOCATIONS[homeId];
     }
 
+    public int getTotalWeight() {
+        return getInventory().getWeight() + getEquipment().getWeight();
+    }
+    
     @Override
     public void setHidden(boolean hidden) {
         super.setHidden(hidden);
@@ -544,7 +548,9 @@ public final class Player extends Mob {
     public int getHealthRegen() {
         int regen = prayers.prayerActive(HEAL) ? 2 : 1;
         // Regen brace
-        regen += getEquipment().get(Equipment.HANDS).getId() == 11133 ? 1 : 0;
+        if (getEquipment().get(Equipment.HANDS) != null) {
+            regen += getEquipment().get(Equipment.HANDS).getId() == 11133 ? 1 : 0;
+        }
         return regen;
     }
 }

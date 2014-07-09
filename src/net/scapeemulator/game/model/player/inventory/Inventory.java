@@ -22,6 +22,11 @@ public final class Inventory {
     private final Item[] items;
     private final List<InventoryListener> listeners = new ArrayList<>();
 
+    /**
+     * The total weight of this inventory in grams.
+     */
+    private int weight;
+
     public Inventory(Player player, int slots) {
         this(player, slots, StackMode.STACKABLE_ONLY);
     }
@@ -67,6 +72,12 @@ public final class Inventory {
 
     public void set(int slot, Item item) {
         checkSlot(slot);
+        if (items[slot] != null) {
+            weight -= items[slot].getDefinition().getWeight();
+        }
+        if (item != null) {
+            weight += item.getDefinition().getWeight();
+        }
         items[slot] = item;
         fireItemChanged(slot);
     }
@@ -314,6 +325,12 @@ public final class Inventory {
     }
 
     private void fireItemsChanged() {
+        weight = 0;
+        for (Item item : items) {
+            if (item != null) {
+                weight += item.getDefinition().getWeight();
+            }
+        }
         for (InventoryListener listener : listeners)
             listener.itemsChanged(this);
     }
@@ -347,6 +364,10 @@ public final class Inventory {
     private void checkSlot(int slot) {
         if (slot < 0 || slot >= items.length)
             throw new IndexOutOfBoundsException("slot out of range");
+    }
+
+    public int getWeight() {
+        return weight;
     }
 
 }

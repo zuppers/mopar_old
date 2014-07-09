@@ -5,7 +5,6 @@ import net.scapeemulator.game.model.player.Player;
 import net.scapeemulator.game.model.mob.Direction;
 import net.scapeemulator.game.model.mob.Mob;
 import net.scapeemulator.game.task.Action;
-import net.scapeemulator.game.task.DistancedAction;
 
 public final class InitiateCombatAction extends Action<Player> {
 

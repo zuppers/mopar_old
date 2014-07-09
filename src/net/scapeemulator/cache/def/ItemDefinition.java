@@ -49,6 +49,7 @@ public final class ItemDefinition {
     private int[] stackableAmounts;
     private int teamId;
     private int lendId;
+    private int weight;
     private int lendTemplateId;
 
     /**
@@ -351,6 +352,10 @@ public final class ItemDefinition {
         return lendId;
     }
 
+    public int getWeight() {
+        return weight;
+    }
+    
     public int getLendTemplateId() {
         return lendTemplateId;
     }
