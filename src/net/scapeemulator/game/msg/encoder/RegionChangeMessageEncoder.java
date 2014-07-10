@@ -1,9 +1,7 @@
 package net.scapeemulator.game.msg.encoder;
 
 import io.netty.buffer.ByteBufAllocator;
-import net.scapeemulator.game.GameServer;
 import net.scapeemulator.game.model.Position;
-import net.scapeemulator.game.model.World;
 import net.scapeemulator.game.msg.MessageEncoder;
 import net.scapeemulator.game.msg.impl.RegionChangeMessage;
 import net.scapeemulator.game.net.game.DataOrder;
