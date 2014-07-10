@@ -7,6 +7,7 @@ import io.netty.channel.ChannelFutureListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.scapeemulator.game.GameServer;
 import net.scapeemulator.game.model.Position;
 import net.scapeemulator.game.model.World;
 import net.scapeemulator.game.model.definition.NPCDefinitions;
@@ -64,7 +65,6 @@ public final class Player extends Mob {
     private boolean updateModelLists;
     private boolean blockActions;
     private Position lastKnownRegion;
-    private final World world = World.getWorld();
     private final List<Player> localPlayers = new ArrayList<>();
     private final List<NPC> localNpcs = new ArrayList<>();
     private Appearance appearance = new Appearance(this);
@@ -122,10 +122,8 @@ public final class Player extends Mob {
         combatHandler = new PlayerCombatHandler(this);
         skillSet.addListener(new SkillMessageListener(this));
         skillSet.addListener(new SkillAppearanceListener(this));
-
-        world.getGroundObjects().addListener(groundObjSync);
-
-        world.getGroundItems().addListener(groundItemSync);
+        World.getWorld().getGroundObjects().addListener(groundObjSync);
+        World.getWorld().getGroundItems().addListener(groundItemSync);
         groundItems.addListener(groundItemSync);
 
         /* Initialize all the player options */
@@ -210,6 +208,11 @@ public final class Player extends Mob {
 
     public void setLastKnownRegion(Position lastKnownRegion) {
         this.lastKnownRegion = lastKnownRegion;
+        World.getWorld().getGroundObjects().removeListener(groundObjSync);
+
+        GameServer.getInstance().getMapLoader().load(lastKnownRegion.getX() / 64, lastKnownRegion.getY() / 64);
+
+        World.getWorld().getGroundObjects().addListener(groundObjSync);
         this.regionChanging = true;
     }
 
@@ -516,7 +519,7 @@ public final class Player extends Mob {
     public int getTotalWeight() {
         return getInventory().getWeight() + getEquipment().getWeight();
     }
-    
+
     @Override
     public void setHidden(boolean hidden) {
         super.setHidden(hidden);

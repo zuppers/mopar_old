@@ -16,160 +16,146 @@ import net.scapeemulator.game.util.LandscapeKeyTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * TODO: Convert to class
- */
 public final class MapLoader {
 
-	public static final int FLAG_CLIP = 0x1;
-	public static final int BRIDGE_FLAG = 0x2;
+    public static final int FLAG_CLIP = 0x1;
+    public static final int BRIDGE_FLAG = 0x2;
 
-	private static final boolean LOAD_ALL = true;
+    private static final Logger logger = LoggerFactory.getLogger(MapLoader.class);
+    private final List<MapListener> listeners = new LinkedList<MapListener>();
+    private final Cache cache;
+    private final LandscapeKeyTable keyTable;
+    private final boolean[][] loaded = new boolean[256][256];
 
-	private static final Logger logger = LoggerFactory.getLogger(MapLoader.class);
-	private final List<MapListener> listeners = new LinkedList<MapListener>();
+    private ReferenceTable rt;
 
-	private Cache cache;
-	private ReferenceTable rt;
-	private LandscapeKeyTable keyTable;
-	private boolean[][] loaded = new boolean[255][255];
+    public MapLoader(Cache cache, LandscapeKeyTable keyTable) {
+        this.cache = cache;
+        this.keyTable = keyTable;
+    }
 
-	public MapLoader() {
-	}
+    public void addListener(MapListener listener) {
+        listeners.add(listener);
+    }
 
-	public void addListener(MapListener listener) {
-		listeners.add(listener);
-	}
+    public void load(boolean loadAll) throws IOException {
+        rt = ReferenceTable.decode(Container.decode(cache.getStore().read(255, 5)).getData());
+        if (loadAll) {
+            logger.info("Reading all map and landscape files...");
+            for (int x = 0; x < 256; x++) {
+                for (int y = 0; y < 256; y++) {
+                    load(x, y);
+                }
+            }
+        }
+    }
 
-	public void load(Cache cache, LandscapeKeyTable keyTable) throws IOException {
-		logger.info("Reading map and landscape files...");
-		rt = ReferenceTable.decode(Container.decode(cache.getStore().read(255, 5)).getData());
-		this.cache = cache;
-		this.keyTable = keyTable;
-		if (LOAD_ALL) {
-			for (int x = 0; x < 256; x++) {
-				for (int y = 0; y < 256; y++) {
-					try {
-						int landscapeId = rt.getEntryId("l" + x + "_" + y);
+    public void load(int mX, int mY) {
+        for (int x = mX - 4; x <= mX + 4; x++) {
+            for (int y = mY - 4; y <= mY + 4; y++) {
+                if (loaded[x][y]) {
+                    continue;
+                }
+                try {
+                    int landscapeId = rt.getEntryId("l" + x + "_" + y);
+                    if (landscapeId != -1) {
+                        readLandscape(x, y, landscapeId);
+                    }
 
-						if (landscapeId != -1) {
-							readLandscape(cache, keyTable, x, y, landscapeId);
-						}
+                    int mapId = rt.getEntryId("m" + x + "_" + y);
+                    if (mapId != -1) {
+                        readMap(x, y, mapId);
+                    }
 
-						int mapId = rt.getEntryId("m" + x + "_" + y);
+                    loaded[x][y] = true;
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+    }
 
-						if (mapId != -1) {
-							readMap(cache, x, y, mapId);
-						}
-					} catch (Exception ex) {
-						// logger.info("Failed to read map/landscape file " + x + ", " + y + ".",
-						// ex);
-					}
-				}
-			}
-		}
-	}
+    private void readLandscape(int x, int y, int fileId) throws IOException {
+        ByteBuffer buffer = cache.getStore().read(5, fileId);
 
-	public void load(int x, int y) {
-		if (loaded[x][y]) {
-			return;
-		}
-		try {
-			int landscapeId = rt.getEntryId("l" + x + "_" + y);
+        int[] keys = keyTable.getKeys(x, y);
 
-			if (landscapeId != -1) {
-				readLandscape(cache, keyTable, x, y, landscapeId);
-			}
+        buffer = Container.decode(buffer, keys).getData();
 
-			int mapId = rt.getEntryId("m" + x + "_" + y);
+        int id = -1;
 
-			if (mapId != -1) {
-				readMap(cache, x, y, mapId);
-			}
-			loaded[x][y] = true;
-		} catch (Exception ex) {}
-	}
+        while (true) {
+            int deltaId = ByteBufferUtils.getSmart(buffer);
+            if (deltaId == 0) {
+                break;
+            }
 
-	private void readLandscape(Cache cache, LandscapeKeyTable keyTable, int x, int y, int fileId) throws IOException {
-		ByteBuffer buffer = cache.getStore().read(5, fileId);
+            id += deltaId;
 
-		int[] keys = keyTable.getKeys(x, y);
+            int pos = 0;
 
-		buffer = Container.decode(buffer, keys).getData();
+            while (true) {
 
-		int id = -1;
+                int deltaPos = ByteBufferUtils.getSmart(buffer);
+                if (deltaPos == 0) {
+                    break;
+                }
 
-		while (true) {
-			int deltaId = ByteBufferUtils.getSmart(buffer);
-			if (deltaId == 0) {
-				break;
-			}
+                pos += deltaPos - 1;
 
-			id += deltaId;
+                int localX = (pos >> 6) & 0x3F;
+                int localY = pos & 0x3F;
+                int height = (pos >> 12) & 0x3;
 
-			int pos = 0;
+                int temp = buffer.get() & 0xFF;
+                int type = temp >> 2;
+                int rotation = temp & 0x3;
 
-			while (true) {
+                Position position = new Position(x * 64 + localX, y * 64 + localY, height);
 
-				int deltaPos = ByteBufferUtils.getSmart(buffer);
-				if (deltaPos == 0) {
-					break;
-				}
+                for (MapListener listener : listeners) {
+                    listener.objectDecoded(id, rotation, ObjectType.forId(type), position);
+                }
+            }
+        }
+    }
 
-				pos += deltaPos - 1;
+    @SuppressWarnings("unused")
+    private void readMap(int x, int y, int id) throws IOException {
+        ByteBuffer buffer = cache.read(5, id).getData();
 
-				int localX = (pos >> 6) & 0x3F;
-				int localY = pos & 0x3F;
-				int height = (pos >> 12) & 0x3;
+        for (int plane = 0; plane < 4; plane++) {
+            for (int localX = 0; localX < 64; localX++) {
+                for (int localY = 0; localY < 64; localY++) {
 
-				int temp = buffer.get() & 0xFF;
-				int type = temp >> 2;
-				int rotation = temp & 0x3;
+                    Position position = new Position(x * 64 + localX, y * 64 + localY, plane);
 
-				Position position = new Position(x * 64 + localX, y * 64 + localY, height);
+                    /* The tile variables */
+                    int flags = 0;
 
-				for (MapListener listener : listeners) {
-					listener.objectDecoded(id, rotation, ObjectType.forId(type), position);
-				}
-			}
-		}
-	}
+                    for (;;) {
+                        int config = buffer.get() & 0xFF;
 
-	private void readMap(Cache cache, int x, int y, int id) throws IOException {
-		ByteBuffer buffer = cache.read(5, id).getData();
+                        if (config == 0) {
+                            for (MapListener listener : listeners) {
+                                listener.tileDecoded(flags, position);
+                            }
+                            break;
+                        } else if (config == 1) {
+                            int i = buffer.get() & 0xFF;
 
-		for (int plane = 0; plane < 4; plane++) {
-			for (int localX = 0; localX < 64; localX++) {
-				for (int localY = 0; localY < 64; localY++) {
-
-					Position position = new Position(x * 64 + localX, y * 64 + localY, plane);
-
-					/* The tile variables */
-					int flags = 0;
-
-					for (;;) {
-						int config = buffer.get() & 0xFF;
-
-						if (config == 0) {
-							for (MapListener listener : listeners) {
-								listener.tileDecoded(flags, position);
-							}
-							break;
-						} else if (config == 1) {
-							int i = buffer.get() & 0xFF;
-
-							for (MapListener listener : listeners) {
-								listener.tileDecoded(flags, position);
-							}
-							break;
-						} else if (config <= 49) {
-							int i = buffer.get() & 0xFF;
-						} else if (config <= 81) {
-							flags = config - 49;
-						}
-					}
-				}
-			}
-		}
-	}
+                            for (MapListener listener : listeners) {
+                                listener.tileDecoded(flags, position);
+                            }
+                            break;
+                        } else if (config <= 49) {
+                            int i = buffer.get() & 0xFF;
+                        } else if (config <= 81) {
+                            flags = config - 49;
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

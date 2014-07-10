@@ -58,7 +58,9 @@ public final class GameServer {
 
     private static final Logger logger = LoggerFactory.getLogger(GameServer.class);
     private static GameServer server;
+
     private static final boolean HTTP_SERVER_ENABLED = false;
+    private static final boolean LOAD_MAPS_ON_STARTUP = false;
 
     public static void main(String[] args) {
         try {
@@ -97,7 +99,7 @@ public final class GameServer {
     private final UpdateService updateService = new UpdateService();
     private final PluginLoader pluginLoader = new PluginLoader();
     private final ScriptContext scriptContext = new ScriptContext();
-    private final MapLoader mapLoader = new MapLoader();
+    private MapLoader mapLoader;
 
     private final MessageDispatcher messageDispatcher = new MessageDispatcher();
     private LoginService loginService;
@@ -163,10 +165,10 @@ public final class GameServer {
         EquipmentDefinition.init();
 
         /* load all the maps into memory */
-
+        mapLoader = new MapLoader(cache, landscapeKeyTable);
         mapLoader.addListener(new GroundObjectPopulator(world.getGroundObjects()));
         mapLoader.addListener(new MapDataListener(world.getTraversalMap()));
-        mapLoader.load(cache, landscapeKeyTable);
+        mapLoader.load(LOAD_MAPS_ON_STARTUP);
 
         /* load message codecs and dispatcher */
         logger.info("Populating codecs...");
@@ -187,7 +189,7 @@ public final class GameServer {
         Firemaking.initialize();
         PrayerSkill.initialize();
         Herblore.initialize();
-        
+
         /* load player serializer from config file */
         serializer = createPlayerSerializer();
         logger.info("Using serializer: " + serializer + ".");

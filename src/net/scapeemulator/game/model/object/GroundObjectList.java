@@ -79,24 +79,25 @@ public final class GroundObjectList {
         /**
          * Constructs a new {@link Tile};
          */
-        public Tile() {}
+        public Tile() {
+        }
 
         public boolean put(ObjectGroup group, GroundObject object) {
             /* Cannot contain multiple of the same group of object on a tile */
-            if(objects.containsKey(group)) {
+            if (objects.containsKey(group)) {
                 return false;
             }
 
             /* Put the object into the mapping */
             object.setUid(counter.incrementAndGet());
             objects.put(group, object);
-
+            
             /* Update the listeners */
-            for(GroundObjectListener listener : listeners) {
+            for (GroundObjectListener listener : listeners) {
                 listener.groundObjectAdded(object);
             }
-
-            if(recordUpdates) {
+            
+            if (recordUpdates) {
 
                 /* Add the object to the updated objects set */
                 updatedObjects.add(object);
@@ -105,29 +106,29 @@ public final class GroundObjectList {
         }
 
         public GroundObject get(int objectId) {
-            for(Entry<ObjectGroup, GroundObject> entry : objects.entrySet()) {
+            for (Entry<ObjectGroup, GroundObject> entry : objects.entrySet()) {
                 GroundObject object = entry.getValue();
-                if(object.id == objectId) {
+                if (object.id == objectId) {
                     return object;
                 }
             }
             return null;
         }
-        
+
         public boolean isEmpty() {
-            for(Entry<ObjectGroup, GroundObject> entry : objects.entrySet()) {
+            for (Entry<ObjectGroup, GroundObject> entry : objects.entrySet()) {
                 GroundObject object = entry.getValue();
-                if(object.id >= 0) {
+                if (object.id >= 0) {
                     return false;
                 }
             }
             return true;
         }
-        
+
         public boolean contains(int objectId) {
-            for(Entry<ObjectGroup, GroundObject> entry : objects.entrySet()) {
+            for (Entry<ObjectGroup, GroundObject> entry : objects.entrySet()) {
                 GroundObject object = entry.getValue();
-                if(object.id == objectId) {
+                if (object.id == objectId) {
                     return true;
                 }
             }
@@ -136,21 +137,21 @@ public final class GroundObjectList {
 
         public void remove(ObjectGroup group) {
             GroundObject object = objects.remove(group);
-            if(object != null) {
+            if (object != null) {
 
                 /* Update the listeners */
-                for(GroundObjectListener listener : listeners) {
+                for (GroundObjectListener listener : listeners) {
                     listener.groundObjectRemoved(object);
                 }
 
-                if(recordUpdates) {
+                if (recordUpdates) {
 
                     /* Remove the object from the updated objects set */
                     updatedObjects.remove(object);
                 }
             }
         }
-        
+
         public List<GroundObject> getObjects() {
             return new LinkedList<GroundObject>(objects.values());
         }
@@ -192,15 +193,15 @@ public final class GroundObjectList {
         public void setId(int id) {
             this.id = id;
 
-            if(!isHidden) {
+            if (!isHidden) {
 
                 /* Update the listeners */
-                for(GroundObjectListener listener : listeners) {
+                for (GroundObjectListener listener : listeners) {
                     listener.groundObjectUpdated(this);
                 }
             }
 
-            if(recordUpdates) {
+            if (recordUpdates) {
 
                 /* Add to the updated objects list */
                 updatedObjects.add(this);
@@ -216,6 +217,7 @@ public final class GroundObjectList {
 
         /**
          * Rotates an object by a certain amount.
+         * 
          * @param amount The amount to rotate the object.
          */
         public void rotate(int amount) {
@@ -231,19 +233,18 @@ public final class GroundObjectList {
             int oldRotation = this.rotation;
             this.rotation = rotation;
 
-
-            if(!isHidden) {
+            if (!isHidden) {
                 /* Update the listeners */
-                for(GroundObjectListener listener : listeners) {
+                for (GroundObjectListener listener : listeners) {
                     listener.groundObjectRotationUpdated(this, oldRotation);
                 }
 
-                for(GroundObjectListener listener : listeners) {
+                for (GroundObjectListener listener : listeners) {
                     listener.groundObjectUpdated(this);
                 }
             }
 
-            if(recordUpdates) {
+            if (recordUpdates) {
 
                 /* Add to the updated objects list */
                 updatedObjects.add(this);
@@ -254,14 +255,14 @@ public final class GroundObjectList {
          * Hides the object.
          */
         public void hide() {
-            if(!isHidden) {
+            if (!isHidden) {
 
                 /* Alert all the listeners */
-                for(GroundObjectListener listener : listeners) {
+                for (GroundObjectListener listener : listeners) {
                     listener.groundObjectRemoved(this);
                 }
 
-                if(recordUpdates) {
+                if (recordUpdates) {
 
                     /* Add to the updated objects list */
                     updatedObjects.add(this);
@@ -275,82 +276,82 @@ public final class GroundObjectList {
          * Reveals the object if it is hidden.
          */
         public void reveal() {
-           if(isHidden) {
+            if (isHidden) {
 
-               /* Alert all the listeners */
-               for(GroundObjectListener listener : listeners) {
-                   listener.groundObjectAdded(this);
-               }
+                /* Alert all the listeners */
+                for (GroundObjectListener listener : listeners) {
+                    listener.groundObjectAdded(this);
+                }
 
-               if(recordUpdates) {
+                if (recordUpdates) {
 
-                   /* Add to the updated objects list */
-                   updatedObjects.add(this);
-               }
+                    /* Add to the updated objects list */
+                    updatedObjects.add(this);
+                }
 
-               isHidden = false;
-           }
+                isHidden = false;
+            }
         }
-        
+
         /**
          * Calculates the center Position of this object
          */
         public Position getCenterPosition() {
-        	ObjectDefinition def = ObjectDefinitions.forId(id);
-        	int centerX = position.getX() + (def.getWidth()/2);
-        	int centerY = position.getY() + (def.getLength()/2);
-        	return new Position(centerX, centerY);
+            ObjectDefinition def = ObjectDefinitions.forId(id);
+            int centerX = position.getX() + (def.getWidth() / 2);
+            int centerY = position.getY() + (def.getLength() / 2);
+            return new Position(centerX, centerY);
         }
-        
-        /** 
+
+        /**
          * Calculates the turn to position.
          */
         public Position getTurnToPosition(Position from) {
             ObjectDefinition def = ObjectDefinitions.forId(id);
-            
+
             int width = def.getWidth();
             int length = def.getLength();
-            if(rotation == 1 || rotation == 3) {
+            if (rotation == 1 || rotation == 3) {
                 width = def.getLength();
                 length = def.getWidth();
             }
-            
-            int turnToX = from.getX(), turnToY = from.getY();          
-            
+
+            int turnToX = from.getX(), turnToY = from.getY();
+
             /* Within the width of the object */
-            if(from.getX() >= position.getX() && from.getX() < position.getX() + width) {
-               turnToY = position.getY();
-            } 
-            
+            if (from.getX() >= position.getX() && from.getX() < position.getX() + width) {
+                turnToY = position.getY();
+            }
+
             /* Within the length of the object */
-            if(from.getY() >= position.getY() && from.getY() < position.getY() + width) {
-               turnToX = position.getX();
-            } 
-            
+            if (from.getY() >= position.getY() && from.getY() < position.getY() + width) {
+                turnToX = position.getX();
+            }
+
             /* Upper left corner */
-            if(from.getX() < position.getX() && from.getY() >= position.getY() + length) {
+            if (from.getX() < position.getX() && from.getY() >= position.getY() + length) {
                 turnToX = position.getX();
                 turnToY = position.getY() + length - 1;
             }
-            
+
             /* Upper right corner */
-            if(from.getX() >= position.getX() + width && from.getY() >= position.getY() + length) {
+            if (from.getX() >= position.getX() + width && from.getY() >= position.getY() + length) {
                 turnToX = position.getX() + width - 1;
                 turnToY = position.getY() + length - 1;
-            }         
-                        
+            }
+
             /* Lower left corner */
-            if(from.getX() < position.getX() + width && from.getY() < position.getY()) {
+            if (from.getX() < position.getX() + width && from.getY() < position.getY()) {
                 turnToX = position.getX();
                 turnToY = position.getY();
             }
-            
+
             /* Lower right corner */
-            if(from.getX() >= position.getX() + width && from.getY() < position.getY()) {
+            if (from.getX() >= position.getX() + width && from.getY() < position.getY()) {
                 turnToX = position.getX() + width - 1;
                 turnToY = position.getY();
             }
-            
+
             return new Position(turnToX, turnToY);
         }
 
@@ -377,6 +378,7 @@ public final class GroundObjectList {
 
         /**
          * Gets if the object is hidden.
+         * 
          * @return If the object is hidden.
          */
         public boolean isHidden() {
@@ -393,6 +395,7 @@ public final class GroundObjectList {
 
     /**
      * Adds a listener to the list.
+     * 
      * @param listener The listener to add.
      */
     public void addListener(GroundObjectListener listener) {
@@ -401,6 +404,7 @@ public final class GroundObjectList {
 
     /**
      * Removes a listener from the list.
+     * 
      * @param listener The listener to remove.
      */
     public void removeListener(GroundObjectListener listener) {
@@ -409,6 +413,7 @@ public final class GroundObjectList {
 
     /**
      * Sets if the list will record update objects.
+     * 
      * @param recordUpdates The flag.
      */
     public void setRecordUpdates(boolean recordUpdates) {
@@ -419,9 +424,9 @@ public final class GroundObjectList {
      * Fires a ground item added message for each ground object.
      */
     public void fireAllEvents(GroundObjectListener listener) {
-        for(Entry<Position, Tile> entry : tiles.entrySet()) {
-            for(GroundObject object : entry.getValue().getObjects()) {
-                if(!object.isHidden) {
+        for (Entry<Position, Tile> entry : tiles.entrySet()) {
+            for (GroundObject object : entry.getValue().getObjects()) {
+                if (!object.isHidden) {
                     listener.groundObjectAdded(object);
                 } else {
                     listener.groundObjectRemoved(object);
@@ -434,8 +439,8 @@ public final class GroundObjectList {
      * Fires a ground item added event for each updated ground object.
      */
     public void fireEvents(GroundObjectListener listener) {
-        for(GroundObject object : updatedObjects) {
-            if(!object.isHidden) {
+        for (GroundObject object : updatedObjects) {
+            if (!object.isHidden) {
                 listener.groundObjectAdded(object);
             } else {
                 listener.groundObjectRemoved(object);
@@ -446,40 +451,40 @@ public final class GroundObjectList {
     public GroundObject put(Position position, int objectId, int rotation, ObjectType type) {
         GroundObject object = new GroundObject(position, objectId, rotation, type);
         Tile tile = tiles.get(position);
-        if(tile == null) {
+        if (tile == null) {
             tile = new Tile();
             tiles.put(position, tile);
         }
         return tile.put(object.getType().getObjectGroup(), object) ? object : null;
     }
-    
+
     public GroundObject get(int objectId, Position position) {
         Tile tile = tiles.get(position);
-        if(tile == null) {
+        if (tile == null) {
             return null;
         }
         return tile.get(objectId);
     }
-    
+
     public boolean contains(int objectId, Position position) {
         Tile tile = tiles.get(position);
-        if(tile == null) {
+        if (tile == null) {
             return false;
         }
         return tile.contains(objectId);
     }
-    
+
     public boolean isEmpty(Position position) {
         Tile tile = tiles.get(position);
-        if(tile == null) {
+        if (tile == null) {
             return true;
         }
         return tile.isEmpty();
     }
-    
+
     public void remove(Position position, ObjectGroup group) {
         Tile tile = tiles.get(position);
-        if(tile == null) {
+        if (tile == null) {
             return;
         }
         tile.remove(group);
