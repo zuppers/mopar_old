@@ -34,6 +34,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import net.scapeemulator.cache.def.ObjectDefinition;
 import net.scapeemulator.game.model.Entity;
 import net.scapeemulator.game.model.Position;
+import net.scapeemulator.game.model.area.Area;
+import net.scapeemulator.game.model.area.QuadArea;
 import net.scapeemulator.game.model.definition.ObjectDefinitions;
 
 /**
@@ -91,12 +93,12 @@ public final class GroundObjectList {
             /* Put the object into the mapping */
             object.setUid(counter.incrementAndGet());
             objects.put(group, object);
-            
+
             /* Update the listeners */
             for (GroundObjectListener listener : listeners) {
                 listener.groundObjectAdded(object);
             }
-            
+
             if (recordUpdates) {
 
                 /* Add the object to the updated objects set */
@@ -297,9 +299,15 @@ public final class GroundObjectList {
          * Calculates the center Position of this object
          */
         public Position getCenterPosition() {
-            ObjectDefinition def = ObjectDefinitions.forId(id);
-            int centerX = position.getX() + (def.getWidth() / 2);
-            int centerY = position.getY() + (def.getLength() / 2);
+            ObjectDefinition def = getDefinition();
+            int width = def.getWidth();
+            int length = def.getLength();
+            if (rotation == 1 || rotation == 3) {
+                width = def.getLength();
+                length = def.getWidth();
+            }
+            int centerX = position.getX() + (width / 2);
+            int centerY = position.getY() + (length / 2);
             return new Position(centerX, centerY);
         }
 
@@ -307,7 +315,7 @@ public final class GroundObjectList {
          * Calculates the turn to position.
          */
         public Position getTurnToPosition(Position from) {
-            ObjectDefinition def = ObjectDefinitions.forId(id);
+            ObjectDefinition def = getDefinition();
 
             int width = def.getWidth();
             int length = def.getLength();
@@ -355,6 +363,10 @@ public final class GroundObjectList {
             return new Position(turnToX, turnToY);
         }
 
+        public ObjectDefinition getDefinition() {
+            return ObjectDefinitions.forId(id);
+        }
+
         /**
          * Gets the rotation of the ground object.
          */
@@ -390,6 +402,17 @@ public final class GroundObjectList {
          */
         public ObjectType getType() {
             return type;
+        }
+
+        public Area getBounds() {
+            ObjectDefinition def = getDefinition();
+            int width = def.getWidth();
+            int length = def.getLength();
+            if (rotation == 1 || rotation == 3) {
+                width = def.getLength();
+                length = def.getWidth();
+            }
+            return new QuadArea(position.getX(), position.getY(), position.getX() + width, position.getY() + length);
         }
     }
 
