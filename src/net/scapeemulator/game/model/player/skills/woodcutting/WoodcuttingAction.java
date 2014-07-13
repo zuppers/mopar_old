@@ -64,8 +64,10 @@ public class WoodcuttingAction extends DistancedAction<Player> {
             boolean shouldGetLog = rand.nextInt(4) == 0;
             if (shouldGetLog) {
                 mob.getSkillSet().addExperience(WOODCUTTING, type.getXp());
-                mob.getInventory().add(new Item(type.getLogId()));
-
+                Item log = new Item(type.getLogId());
+                mob.getInventory().add(log);
+                mob.sendMessage("You get some " + log.getDefinition().getName().toLowerCase() + ".");
+                
                 /*
                  * The chance of the tree depleting is determined by the players level and the
                  * average number of logs the tree should give.
