@@ -387,12 +387,17 @@ public final class Player extends Mob {
         groundItems.fireEvents(groundItemSync);
     }
 
-    public void logout() {
-        // TODO: Make this cleaner?
+    public void unregister() {
         World.getWorld().getGroundItems().removeListener(groundItemSync);
         World.getWorld().getGroundObjects().removeListener(groundObjSync);
+        friends.logout();
+        stopAction();
+    }
 
-        // TODO this seems fragile
+    /**
+     * Forces the player to logout. Only call from logout button.
+     */
+    public void logout() {
         ChannelFuture future = send(new LogoutMessage());
         if (future != null) {
             future.addListener(ChannelFutureListener.CLOSE);

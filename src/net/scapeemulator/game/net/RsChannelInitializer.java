@@ -8,18 +8,15 @@ import net.scapeemulator.game.net.handshake.HandshakeDecoder;
 
 public final class RsChannelInitializer extends ChannelInitializer<SocketChannel> {
 
-	private final GameServer server;
+    private final GameServer server;
 
-	public RsChannelInitializer(GameServer server) {
-		this.server = server;
-	}
+    public RsChannelInitializer(GameServer server) {
+        this.server = server;
+    }
 
-	@Override
-	public void initChannel(SocketChannel ch) {
-		ch.pipeline().addLast(
-			new ReadTimeoutHandler(30),
-			new HandshakeDecoder(),
-			new RsChannelHandler(server));
-	}
+    @Override
+    public void initChannel(SocketChannel ch) {
+        ch.pipeline().addLast(new ReadTimeoutHandler(10), new HandshakeDecoder(), new RsChannelHandler(server));
+    }
 
 }
