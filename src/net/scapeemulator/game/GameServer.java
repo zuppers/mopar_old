@@ -40,6 +40,7 @@ import net.scapeemulator.game.model.player.skills.firemaking.Firemaking;
 import net.scapeemulator.game.model.player.skills.herblore.Herblore;
 import net.scapeemulator.game.model.player.skills.magic.Magic;
 import net.scapeemulator.game.model.player.skills.prayer.PrayerSkill;
+import net.scapeemulator.game.model.player.skills.woodcutting.Woodcutting;
 import net.scapeemulator.game.msg.CodecRepository;
 import net.scapeemulator.game.msg.MessageDispatcher;
 import net.scapeemulator.game.net.HttpChannelInitializer;
@@ -189,7 +190,8 @@ public final class GameServer {
         Firemaking.initialize();
         PrayerSkill.initialize();
         Herblore.initialize();
-
+        Woodcutting.initialize();
+        
         /* load player serializer from config file */
         serializer = createPlayerSerializer();
         logger.info("Using serializer: " + serializer + ".");
