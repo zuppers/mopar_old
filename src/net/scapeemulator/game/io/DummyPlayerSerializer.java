@@ -23,6 +23,16 @@ public final class DummyPlayerSerializer extends Serializer {
     }
 
     @Override
+    public boolean usernameAvailable(String username) {
+        return true;
+    }
+
+    @Override
+    public boolean register(String username, String password, String ip) {
+        return true;
+    }
+
+    @Override
     public void loadGrandExchange(GrandExchange ge) {
     }
 

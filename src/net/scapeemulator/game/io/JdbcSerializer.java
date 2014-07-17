@@ -43,6 +43,7 @@ public final class JdbcSerializer extends Serializer implements Closeable {
 
     private final Connection connection;
     private final PreparedStatement loginStatement;
+    private final PreparedStatement registerStatement;
     private final Table<Player>[] playerTables;
     private final Table<GrandExchange> geTable;
     private final Table<GEOffer> geOfferTable;
@@ -52,6 +53,7 @@ public final class JdbcSerializer extends Serializer implements Closeable {
         connection = DriverManager.getConnection(url, username, password);
         connection.setAutoCommit(false);
         loginStatement = connection.prepareStatement("SELECT id, password FROM players WHERE username = ?;");
+        registerStatement = connection.prepareStatement("INSERT INTO players (ip, username, password, rights, x, y, height) VALUES (?, ?, ?, 0, 3222, 3222, 0);");
 
         playerTables = new Table[] { new PlayersTable(connection), new FriendsTable(connection), new SettingsTable(connection), new AppearanceTable(connection), new SkillsTable(connection),
                 new ItemsTable(connection, "inventory") {
@@ -120,6 +122,36 @@ public final class JdbcSerializer extends Serializer implements Closeable {
 
             logger.warn("Saving player " + player.getDisplayName() + " failed.", ex);
         }
+    }
+
+    @Override
+    public boolean usernameAvailable(String username) {
+        try {
+            loginStatement.setString(1, username);
+            try (ResultSet set = loginStatement.executeQuery()) {
+                if (set.first()) {
+                    return false;
+                }
+                return true;
+            }
+        } catch (SQLException ex) {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean register(String ip, String username, String password) {
+        try {
+            registerStatement.setString(1, ip);
+            registerStatement.setString(2, username);
+            registerStatement.setString(3, BCrypt.hashpw(password, BCrypt.gensalt()));
+            registerStatement.execute();
+            connection.commit();
+            return true;
+        } catch (SQLException ex) {
+            return false;
+        }
+
     }
 
     public void saveGrandExchange(GrandExchange ge) {
@@ -242,23 +274,23 @@ public final class JdbcSerializer extends Serializer implements Closeable {
             while (set.next()) {
                 int npcType = set.getInt("type");
                 NPCDropTable table = NPCDropTable.DROP_TABLES[npcType];
-                if(table == null) {
+                if (table == null) {
                     table = new NPCDropTable();
                     NPCDropTable.DROP_TABLES[npcType] = table;
                     count++;
                 }
                 TableType type = TableType.valueOf(set.getString("table_type"));
                 double chance = set.getDouble("chance");
-                if(set.wasNull()) {
+                if (set.wasNull()) {
                     table.addTable(type);
                 } else {
                     table.addTable(type, chance);
                 }
                 String[] drops = set.getString("drops").split(" ");
-                for(String drop : drops) {
+                for (String drop : drops) {
                     String[] dropData = drop.split(":");
                     int itemId = Integer.parseInt(dropData[0]);
-                    if(dropData.length == 1) {
+                    if (dropData.length == 1) {
                         table.addItem(type, itemId);
                     } else {
                         table.addItem(type, itemId, dropData[1]);

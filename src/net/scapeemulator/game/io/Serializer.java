@@ -34,6 +34,10 @@ public abstract class Serializer {
 
     public abstract void savePlayer(Player player);
 
+    public abstract boolean usernameAvailable(String username);
+
+    public abstract boolean register(String username, String password, String ip);
+
     public abstract void loadGrandExchange(GrandExchange ge);
 
     public abstract void saveGrandExchange(GrandExchange ge);
