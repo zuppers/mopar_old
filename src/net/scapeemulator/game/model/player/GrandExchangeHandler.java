@@ -265,7 +265,7 @@ public class GrandExchangeHandler extends IntegerScriptInputListener {
 	public void sendUnclaimedSlots() {
 		GEOffer offer = playerOffers[activeSlot];
 		Item[] unclaimed = { new Item(offer.getUnclaimedItems() > 0 ? offer.getItemId() : -1, offer.getUnclaimedItems()), new Item(offer.getUnclaimedCoins() > 0 ? 995 : -1, offer.getUnclaimedCoins()) };
-		player.send(new InterfaceItemsMessage(-1, -1757, 523 + activeSlot, unclaimed));
+		player.send(new InterfaceItemsMessage(523 + activeSlot, unclaimed));
 	}
 
 	public void newOfferInterface(int slot, OfferType type) {

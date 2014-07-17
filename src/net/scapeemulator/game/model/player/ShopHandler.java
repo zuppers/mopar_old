@@ -206,7 +206,7 @@ public class ShopHandler extends ComponentListener {
     public void updateShopGlobally() {
         for (Player p : World.getWorld().getPlayers()) {
             if (p.getShopHandler().getActiveShop() == activeShop) {
-                p.send(new InterfaceItemsMessage(-1, 64271, 31, activeShop.getStock(StockType.PLAYER)));
+                p.send(new InterfaceItemsMessage(31, activeShop.getStock(StockType.PLAYER)));
             }
         }
     }
@@ -250,9 +250,9 @@ public class ShopHandler extends ComponentListener {
         player.getInterfaceSet().getWindow().setListener(this);
         Shop shop = shops.get(shopName);
         activeShop = shop;
-        player.send(new InterfaceItemsMessage(-1, 64209, 93, player.getInventory().toArray()));
+        player.send(new InterfaceItemsMessage(93, player.getInventory().toArray()));
         if (shop.hasStock(StockType.PLAYER)) {
-            player.send(new InterfaceItemsMessage(-1, 64271, 31, activeShop.getStock(StockType.PLAYER)));
+            player.send(new InterfaceItemsMessage(31, activeShop.getStock(StockType.PLAYER)));
         }
         player.setInterfaceText(620, 22, shopName);
         player.send(new InterfaceVisibleMessage(620, 34, shop.hasStock(StockType.PLAYER)));
