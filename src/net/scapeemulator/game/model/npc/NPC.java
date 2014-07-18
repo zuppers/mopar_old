@@ -19,7 +19,7 @@ public abstract class NPC extends Mob {
     private Position spawnPosition;
     private int type;
     private int currentHp;
-    private Area bounds;
+    private Area walkingBounds;
     private NPCDefinition definition;
 
     public NPC(int type) {
@@ -43,12 +43,12 @@ public abstract class NPC extends Mob {
         super.setPosition(position);
     }
 
-    public void setBounds(Area bounds) {
-        this.bounds = bounds;
+    public void setWalkingBounds(Area walkingBounds) {
+        this.walkingBounds = walkingBounds;
     }
 
-    public Area getBounds() {
-        return bounds;
+    public Area getWalkingBounds() {
+        return walkingBounds;
     }
 
     public int getType() {

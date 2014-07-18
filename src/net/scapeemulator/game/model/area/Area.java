@@ -29,46 +29,59 @@ import net.scapeemulator.game.model.Position;
  */
 public abstract class Area {
 
-	/**
-	 * Gets if a square area is within the area from the specified position and offset.
-	 * 
-	 * @param position The position of where the area begins.
-	 * @param offset The area offset.
-	 * @return If the square area is within the specified area.
-	 */
-	public boolean withinArea(Position position, int offset) {
-		for (int xOffset = 0; xOffset < offset; xOffset++) {
-			for (int yOffset = 0; yOffset < offset; yOffset++) {
+    /**
+     * Returns whether or not all of the defined tiles (bottom left corner defined by position,
+     * length and width by offset) are within this area.
+     * 
+     * @param position The bottom left corner of the area to check
+     * @param offset The area length and width
+     * @return true if the square area is entirely within the specified area.
+     */
+    public boolean allWithinArea(Position position, int offset, int padding) {
+        for (int xOffset = 0; xOffset < offset; xOffset++) {
+            for (int yOffset = 0; yOffset < offset; yOffset++) {
 
-				/* Check if the position at the new x and y offset is within the area */
-				if (!withinArea(position.getX() + xOffset, position.getY() + yOffset)) {
-					return false;
-				}
-			}
-		}
-		return true;
-	}
+                /* Check if the position at the new x and y offset is within the area */
+                if (!withinArea(position.getX() + xOffset, position.getY() + yOffset, padding)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 
-	/**
-	 * Gets if a certain coordinate is within the area.
-	 * 
-	 * @param x The x coordinate.
-	 * @param y The y coordinate.
-	 * @return If the coordinate set is within the area.
-	 */
-	public boolean withinArea(int x, int y) {
-		return withinAreaPadding(x, y, 0);
-	}
+    /**
+     * Returns whether or not any of the defined tiles (bottom left corner defined by position,
+     * length and width by offset) are within this area.
+     * 
+     * @param position The bottom left corner of the area to check
+     * @param offset The area length and width
+     * @return true if the square area is at least partially within the specified area.
+     */
+    public boolean anyWithinArea(Position position, int offset, int padding) {
+        for (int xOffset = 0; xOffset < offset; xOffset++) {
+            for (int yOffset = 0; yOffset < offset; yOffset++) {
 
-	/**
-	 * Gets if a certain coordinate is within the area
-	 * 
-	 * @param x The x coordinate.
-	 * @param y The y coordinate.
-	 * @param padding The padding around the area to also include in calculation
-	 * @return If the coordinate set is within the area.
-	 */
-	public abstract boolean withinAreaPadding(int x, int y, int padding);
-	
-	public abstract Position randomPosition(int height);
+                /* Check if the position at the new x and y offset is within the area */
+                if (withinArea(position.getX() + xOffset, position.getY() + yOffset, padding)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Gets if a certain coordinate is within the area.
+     * 
+     * @param x The x coordinate.
+     * @param y The y coordinate.
+     * @param padding The padding around the area to also include in calculation
+     * @return true if the coordinate is within the area
+     */
+    public abstract boolean withinArea(int x, int y, int padding);
+
+    public abstract Position center();
+    
+    public abstract Position randomPosition(int height);
 }

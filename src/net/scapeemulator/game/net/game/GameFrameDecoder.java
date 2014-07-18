@@ -11,12 +11,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class GameFrameDecoder extends ByteToMessageDecoder {
-    
+
     private static final Logger logger = LoggerFactory.getLogger(GameFrameDecoder.class);
 
-	private static final int[] SIZES = new int[256];
-	static {
-		SIZES[0] = 0;
+    private static final int[] SIZES = new int[256];
+    static {
+        SIZES[0] = 0;
         SIZES[1] = -3;
         SIZES[2] = -3;
         SIZES[3] = 2; // Attack NPC
@@ -69,7 +69,7 @@ public final class GameFrameDecoder extends ByteToMessageDecoder {
         SIZES[50] = -3;
         SIZES[51] = -3;
         SIZES[52] = -3;
-        SIZES[53] = -3; //TODO double check
+        SIZES[53] = -3; // TODO double check
         SIZES[54] = -3;
         SIZES[55] = 8; // Equip item
         SIZES[56] = -3;
@@ -82,7 +82,7 @@ public final class GameFrameDecoder extends ByteToMessageDecoder {
         SIZES[63] = -3;
         SIZES[64] = 6; // Interface option #8
         SIZES[65] = -3;
-        SIZES[66] = 6;  // Pick up item
+        SIZES[66] = 6; // Pick up item
         SIZES[67] = -3;
         SIZES[68] = 2; // Attack player
         SIZES[69] = -3;
@@ -140,7 +140,7 @@ public final class GameFrameDecoder extends ByteToMessageDecoder {
         SIZES[121] = -3;
         SIZES[122] = -3;
         SIZES[123] = -3;
-        SIZES[124] = 6; //Interface option #3
+        SIZES[124] = 6; // Interface option #3
         SIZES[125] = -3;
         SIZES[126] = -3;
         SIZES[127] = -3;
@@ -215,7 +215,7 @@ public final class GameFrameDecoder extends ByteToMessageDecoder {
         SIZES[196] = 6; // Interface option #2
         SIZES[197] = -3;
         SIZES[198] = -3;
-        SIZES[199] = 6; //Interface option #4
+        SIZES[199] = 6; // Interface option #4
         SIZES[200] = -3;
         SIZES[201] = -1; // Send PM
         SIZES[202] = -3;
@@ -250,7 +250,7 @@ public final class GameFrameDecoder extends ByteToMessageDecoder {
         SIZES[231] = 9; // Swap item slot
         SIZES[232] = -3;
         SIZES[233] = -3;
-        SIZES[234] = 6; //Interface option #5
+        SIZES[234] = 6; // Interface option #5
         SIZES[235] = -3;
         SIZES[236] = -3;
         SIZES[237] = -1; // Public chat
@@ -269,60 +269,60 @@ public final class GameFrameDecoder extends ByteToMessageDecoder {
         SIZES[250] = -3;
         SIZES[251] = -3;
         SIZES[252] = -3;
-        SIZES[253] = -3;
+        SIZES[253] = 14; // Magic on item
         SIZES[254] = 6; // First click object
         SIZES[255] = -3;
-	}
+    }
 
-	private enum State {
-		READ_OPCODE, READ_SIZE, READ_PAYLOAD
-	}
+    private enum State {
+        READ_OPCODE, READ_SIZE, READ_PAYLOAD
+    }
 
-	private final StreamCipher cipher;
-	private State state = State.READ_OPCODE;
-	private boolean variable;
-	private int opcode, size;
+    private final StreamCipher cipher;
+    private State state = State.READ_OPCODE;
+    private boolean variable;
+    private int opcode, size;
 
-	public GameFrameDecoder(StreamCipher cipher) {
-		this.cipher = cipher;
-	}
+    public GameFrameDecoder(StreamCipher cipher) {
+        this.cipher = cipher;
+    }
 
-	@Override
-	public void decode(ChannelHandlerContext ctx, ByteBuf buf, MessageBuf<Object> out) throws Exception {
-		if (state == State.READ_OPCODE) {
-			if (!buf.isReadable())
-				return;
+    @Override
+    public void decode(ChannelHandlerContext ctx, ByteBuf buf, MessageBuf<Object> out) throws Exception {
+        if (state == State.READ_OPCODE) {
+            if (!buf.isReadable())
+                return;
 
-			opcode = (buf.readUnsignedByte() - cipher.nextInt()) & 0xFF;
-			size = SIZES[opcode];
+            opcode = (buf.readUnsignedByte() - cipher.nextInt()) & 0xFF;
+            size = SIZES[opcode];
 
-			if (size == -3) {
-                            logger.info("invalid opcode: " + opcode);
-                            ctx.close();
-                            return;
-                        }
+            if (size == -3) {
+                logger.info("invalid opcode: " + opcode);
+                ctx.close();
+                return;
+            }
 
-			variable = size == -1;
-			state = variable ? State.READ_SIZE : State.READ_PAYLOAD;
-		}
+            variable = size == -1;
+            state = variable ? State.READ_SIZE : State.READ_PAYLOAD;
+        }
 
-		if (state == State.READ_SIZE) {
-			if (!buf.isReadable())
-				return;
+        if (state == State.READ_SIZE) {
+            if (!buf.isReadable())
+                return;
 
-			size = buf.readUnsignedByte();
-			state = State.READ_PAYLOAD;
-		}
+            size = buf.readUnsignedByte();
+            state = State.READ_PAYLOAD;
+        }
 
-		if (state == State.READ_PAYLOAD) {
-			if (buf.readableBytes() < size)
-				return;
+        if (state == State.READ_PAYLOAD) {
+            if (buf.readableBytes() < size)
+                return;
 
-			ByteBuf payload = buf.readBytes(size);
-			state = State.READ_OPCODE;
+            ByteBuf payload = buf.readBytes(size);
+            state = State.READ_OPCODE;
 
-			out.add(new GameFrame(opcode, variable ? Type.VARIABLE_BYTE : Type.FIXED, payload));
-		}
-	}
+            out.add(new GameFrame(opcode, variable ? Type.VARIABLE_BYTE : Type.FIXED, payload));
+        }
+    }
 
 }

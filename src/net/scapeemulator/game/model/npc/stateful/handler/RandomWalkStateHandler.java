@@ -30,7 +30,7 @@ public final class RandomWalkStateHandler extends StateHandler<NormalNPC> {
 
 		Set<Position> oldPositions = new HashSet<>();
 		oldPositions.add(currentPosition);
-		Area bounds = npc.getBounds();
+		Area bounds = npc.getWalkingBounds();
 
 		for (int i = 0; i < iterations; i++) {
 
@@ -39,7 +39,7 @@ public final class RandomWalkStateHandler extends StateHandler<NormalNPC> {
 			Iterator<Position> iterator = positions.iterator();
 			while (iterator.hasNext()) {
 				Position position = iterator.next();
-				if (!bounds.withinArea(position, npc.getSize()) || oldPositions.contains(position)) {
+				if (!bounds.allWithinArea(position, npc.getSize(), 0) || oldPositions.contains(position)) {
 					iterator.remove();
 				}
 			}

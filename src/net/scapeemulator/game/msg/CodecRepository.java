@@ -16,6 +16,7 @@ import net.scapeemulator.game.msg.decoder.object.ObjectExamineMessageDecoder;
 import net.scapeemulator.game.msg.decoder.object.ObjectOptionOneMessageDecoder;
 import net.scapeemulator.game.msg.decoder.object.ObjectOptionTwoMessageDecoder;
 import net.scapeemulator.game.msg.decoder.player.PlayerOptionFourMessageDecoder;
+import net.scapeemulator.game.msg.decoder.player.PlayerOptionThreeMessageDecoder;
 import net.scapeemulator.game.msg.encoder.*;
 
 import net.scapeemulator.game.util.LandscapeKeyTable;
@@ -35,10 +36,6 @@ public final class CodecRepository {
         bind(new WalkMessageDecoder(215));
         bind(new ChatMessageDecoder());
         bind(new CommandMessageDecoder());
-        bind(new SwapItemsMessageDecoder());
-        bind(new ItemOptionTwoMessageDecoder());
-        bind(new ItemExamineMessageDecoder());
-        bind(new ItemInteractMessageDecoder());
         bind(new DisplayMessageDecoder());
         bind(new RemoveItemMessageDecoder());
         bind(new RegionChangedMessageDecoder());
@@ -60,13 +57,18 @@ public final class CodecRepository {
         bind(new FriendListOperationMessageDecoder(213));
         bind(new PrivateChatSentMessageDecoder());
         bind(new GroundItemOptionThreeMessageDecoder());
-        bind(new ItemDropMessageDecoder());
         bind(new GrandExchangeSearchMessageDecoder());
-        
-        /* Bind all the item on target decoders */
+
+        /* Bind all the item decoders */
+        bind(new ItemOptionTwoMessageDecoder());
+        bind(new ItemExamineMessageDecoder());
+        bind(new ItemInteractMessageDecoder());
+        bind(new ItemDropMessageDecoder());
+        bind(new SwapItemsMessageDecoder());
         bind(new ItemOnItemMessageDecoder());
         bind(new ItemOnObjectMessageDecoder());
-        
+        bind(new MagicOnItemMessageDecoder());
+
         /* Bind all the button option decoders */
         bind(new ButtonOptionMessageDecoder(ExtendedOption.ONE, 155));
         bind(new ButtonOptionMessageDecoder(ExtendedOption.TWO, 196));
@@ -77,17 +79,18 @@ public final class CodecRepository {
         bind(new ButtonOptionMessageDecoder(ExtendedOption.SEVEN, 166));
         bind(new ButtonOptionMessageDecoder(ExtendedOption.EIGHT, 64));
         bind(new ButtonOptionMessageDecoder(ExtendedOption.NINE, 9));
-        
+
         bind(new InterfaceInputMessageDecoder());
-        
+
         bind(new PlayerOptionFourMessageDecoder());
-        
+        bind(new PlayerOptionThreeMessageDecoder());
+
         bind(new NPCOptionOneMessageDecoder());
         bind(new NPCOptionTwoMessageDecoder());
         bind(new NPCExamineMessageDecoder());
         bind(new NPCInteractMessageDecoder());
         bind(new MagicOnNPCMessageDecoder());
-        
+
         /* encoders */
         bind(new RegionChangeMessageEncoder(table));
         bind(new InterfaceRootMessageEncoder());

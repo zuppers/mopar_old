@@ -66,7 +66,7 @@ public abstract class DistancedAction<T extends Mob> extends Action<T> {
             // some actions (e.g. agility) will cause the player to move away again
             // so we don't check once the player got close enough once
             executeAction();
-        } else if (bounds.withinAreaPadding(mob.getPosition().getX(), mob.getPosition().getY(), distance)) {
+        } else if (bounds.withinArea(mob.getPosition().getX(), mob.getPosition().getY(), distance)) {
             reached = true;
             setDelay(delay);
             if (immediate) {

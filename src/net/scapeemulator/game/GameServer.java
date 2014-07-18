@@ -191,7 +191,7 @@ public final class GameServer {
         PrayerSkill.initialize();
         Herblore.initialize();
         Woodcutting.initialize();
-        
+
         /* load player serializer from config file */
         serializer = createPlayerSerializer();
         logger.info("Using serializer: " + serializer + ".");
@@ -241,21 +241,6 @@ public final class GameServer {
         loginService.registerNewPlayers(world);
 
         world.tick();
-    }
-
-    public void reloadPlugins() throws IOException, ScriptException {
-
-        /* Purge the dispatcher and script context */
-        messageDispatcher.purge();
-        scriptContext.purge();
-        pluginLoader.purge();
-
-        /* Reload all the plugins */
-        pluginLoader.setContext(scriptContext);
-        pluginLoader.load("./data/game/plugins/");
-
-        /* Decorate the dispatchers */
-        messageDispatcher.decorateDispatchers(scriptContext);
     }
 
     public World getWorld() {

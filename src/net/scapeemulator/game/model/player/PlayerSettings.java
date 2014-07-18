@@ -6,10 +6,6 @@ import net.scapeemulator.game.msg.impl.ScriptMessage;
 
 public final class PlayerSettings {
 
-	public enum PrivacySetting {
-		ON, FRIENDS, OFF, HIDE
-	}
-
 	private final Player player;
 
 	private int attackStyle;

@@ -4,6 +4,8 @@ import net.scapeemulator.game.model.Entity;
 import net.scapeemulator.game.model.Position;
 import net.scapeemulator.game.model.SpotAnimation;
 import net.scapeemulator.game.model.World;
+import net.scapeemulator.game.model.area.Area;
+import net.scapeemulator.game.model.area.QuadArea;
 import net.scapeemulator.game.model.mob.action.CombatAction;
 import net.scapeemulator.game.model.mob.combat.CombatHandler;
 import net.scapeemulator.game.model.mob.combat.HitType;
@@ -630,6 +632,10 @@ public abstract class Mob extends Entity {
         return clipped;
     }
 
+    public Area getBounds() {
+        return new QuadArea(position.getX(), position.getY(), position.getX() + size - 1, position.getY() + size - 1);
+    }
+    
     /**
      * Gets whether this {@link Mob} is running.
      * 

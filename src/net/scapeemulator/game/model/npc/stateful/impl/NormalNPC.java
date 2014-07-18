@@ -72,8 +72,8 @@ public final class NormalNPC extends StatefulNPC<State> {
 			return NONE;
 		}
 		
-		if(getBounds() != null) {
-			if(!getBounds().withinAreaPadding(position.getX(), position.getY(), getDefinition().getLeashRange())) {
+		if(getWalkingBounds() != null) {
+			if(!getWalkingBounds().withinArea(position.getX(), position.getY(), getDefinition().getLeashRange())) {
 				return WALK_TO_SPAWN;
 			}
 			/* 10% chance to randomly walk around, ~every 3 seconds */

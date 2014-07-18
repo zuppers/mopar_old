@@ -15,25 +15,25 @@ import org.slf4j.LoggerFactory;
 
 public final class GameMessageDecoder extends MessageToMessageDecoder<GameFrame> {
 
-	private static final Logger logger = LoggerFactory.getLogger(GameMessageDecoder.class);
+    private static final Logger logger = LoggerFactory.getLogger(GameMessageDecoder.class);
 
-	private final CodecRepository codecs;
+    private final CodecRepository codecs;
 
-	public GameMessageDecoder(CodecRepository codecs) {
-		this.codecs = codecs;
-	}
+    public GameMessageDecoder(CodecRepository codecs) {
+        this.codecs = codecs;
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public void decode(ChannelHandlerContext ctx, GameFrame frame, MessageBuf<Object> out) throws IOException {
-		MessageDecoder<Message> decoder = (MessageDecoder<Message>) codecs.get(frame.getOpcode());
+    @SuppressWarnings("unchecked")
+    @Override
+    public void decode(ChannelHandlerContext ctx, GameFrame frame, MessageBuf<Object> out) throws IOException {
+        MessageDecoder<Message> decoder = (MessageDecoder<Message>) codecs.get(frame.getOpcode());
 
-		if (decoder == null) {
-			logger.warn("No decoder for packet id " + frame.getOpcode() + ".");
-			return;
-		}
+        if (decoder == null) {
+            logger.warn("No decoder for packet id " + frame.getOpcode() + ".");
+            return;
+        }
 
-		out.add(decoder.decode(frame));
-	}
+        out.add(decoder.decode(frame));
+    }
 
 }

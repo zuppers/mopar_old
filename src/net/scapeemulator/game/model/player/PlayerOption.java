@@ -5,8 +5,8 @@ package net.scapeemulator.game.model.player;
  */
 public final class PlayerOption {
     
-    public static final int TRADE_OPTION  = 2;
-    public static final int FOLLOW_OPTION = 3;
+    public static final int FOLLOW_OPTION = 2;
+    public static final int TRADE_OPTION  = 3; 
     
     /**
      * The default option string.

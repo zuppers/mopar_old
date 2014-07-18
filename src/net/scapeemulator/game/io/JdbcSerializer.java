@@ -219,7 +219,7 @@ public final class JdbcSerializer extends Serializer implements Closeable {
                     int y0 = set.getInt("min_y");
                     int x1 = set.getInt("max_x");
                     int y1 = set.getInt("max_y");
-                    npc.setBounds(new QuadArea(x0, y0, x1, y1));
+                    npc.setWalkingBounds(new QuadArea(x0, y0, x1, y1));
                 }
                 count++;
                 World.getWorld().addNpc(npc);

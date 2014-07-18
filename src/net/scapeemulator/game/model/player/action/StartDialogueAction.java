@@ -9,10 +9,9 @@ import net.scapeemulator.game.task.MobInteractionAction;
 /**
  * Written by Hadyn Richard
  */
-public final class StartDialogueAction extends MobInteractionAction<Player> {
+public final class StartDialogueAction extends MobInteractionAction<Player, NPC> {
     
     private final Dialogue dialogue;
-    private final NPC target;
     private DialogueContext context;
     private boolean dialogueDisplayed;
     

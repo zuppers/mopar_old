@@ -4,16 +4,19 @@ import net.scapeemulator.game.model.mob.Mob;
 import net.scapeemulator.game.model.mob.action.FollowAction;
 
 /**
- * Written by Hadyn Richard
+ * This action executes when the mob target has been reached. Utilizes following.
+ * 
+ * @author Hayden
+ * @author David Insley
  */
-public abstract class MobInteractionAction<T extends Mob> extends Action<T> {
+public abstract class MobInteractionAction<T extends Mob, O extends Mob> extends Action<T> {
     
     private FollowAction followAction;
     private boolean reached;
-    protected int distance;
-    protected Mob target;
+    private int distance;
+    protected O target;
     
-    public MobInteractionAction(T mob, Mob target, int distance) {
+    public MobInteractionAction(T mob, O target, int distance) {
         super(mob, 1, true);
         followAction = new FollowAction(mob, target, false, distance);
         this.distance = distance;
@@ -28,14 +31,16 @@ public abstract class MobInteractionAction<T extends Mob> extends Action<T> {
 
     @Override
     public void execute() {        
-        if(!reached) {
+        if(reached) {
+            executeAction();
+            return;
+        } else if(mob.getWalkingQueue().isEmpty() && !target.getBounds().anyWithinArea(mob.getPosition(), mob.getSize(), distance)) {
             followAction.execute();
+        } else {
+            reached = true;
+            executeAction();
         }
         
-        if(mob.getPosition().getDistance(target.getPosition()) <= distance) {
-            executeAction(); // TODO: Delay?
-            reached = true;
-        }
     }
     
     public abstract void executeAction();

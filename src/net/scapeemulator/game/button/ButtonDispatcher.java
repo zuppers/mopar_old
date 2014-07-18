@@ -55,6 +55,9 @@ public final class ButtonDispatcher {
         int widgetId = Widget.getWidgetId(hash);
         int child = Widget.getComponentId(hash);
         System.out.println("button dispatcher - parent: " + widgetId + " " + ", child: " + child + ", dyn: " + dyn + ", option: " + option);
+        
+        // Check for correct interfaces open in the handler!
+        
         if (widgetId >= 75 && widgetId <= 93) {
             player.getPlayerCombatHandler().attackTabClick(widgetId, child);
             return;

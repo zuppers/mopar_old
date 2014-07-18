@@ -18,10 +18,15 @@ public final class QuadArea extends Area {
 	}
 
 	@Override
-	public boolean withinAreaPadding(int x, int y, int padding) {
+	public boolean withinArea(int x, int y, int padding) {
 		return x >= (minX - padding) && x <= (maxX + padding) && y >= (minY - padding) && y <= (maxY + padding);
 	}
 
+	@Override
+	public Position center() {
+	    return new Position(minX + ((maxX - minX) / 2), minY + ((maxY - minY) / 2));
+	}
+	
 	@Override
 	public Position randomPosition(int height) {
 		int x = minX + (int)(Math.random() * (maxX - minX + 1));
