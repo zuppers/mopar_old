@@ -10,6 +10,7 @@ import net.scapeemulator.game.model.mob.Mob;
 import net.scapeemulator.game.model.player.Item;
 import net.scapeemulator.game.model.player.Player;
 import net.scapeemulator.game.model.player.SlottedItem;
+import net.scapeemulator.game.util.math.BasicMath;
 
 public final class Inventory {
 
@@ -27,6 +28,11 @@ public final class Inventory {
      */
     private int weight;
 
+    /**
+     * If the inventory is locked, the items cannot be modified in any way.
+     */
+    private boolean locked;
+
     public Inventory(Player player, int slots) {
         this(player, slots, StackMode.STACKABLE_ONLY);
     }
@@ -41,6 +47,7 @@ public final class Inventory {
         this.stackMode = inventory.stackMode;
         this.items = inventory.toArray();
         this.player = inventory.player;
+        this.weight = inventory.weight;
     }
 
     public Item[] toArray() {
@@ -71,6 +78,9 @@ public final class Inventory {
     }
 
     public void set(int slot, Item item) {
+        if (locked) {
+            return;
+        }
         checkSlot(slot);
         if (items[slot] != null) {
             weight -= items[slot].getDefinition().getWeight();
@@ -83,6 +93,9 @@ public final class Inventory {
     }
 
     public void swap(int slot1, int slot2) {
+        if (locked) {
+            return;
+        }
         checkSlot(slot1);
         checkSlot(slot2);
 
@@ -103,6 +116,9 @@ public final class Inventory {
     }
 
     public Item add(Item item, int preferredSlot) {
+        if (locked) {
+            return item;
+        }
         int id = item.getId();
         boolean stackable = isStackable(item);
         if (stackable) {
@@ -110,17 +126,16 @@ public final class Inventory {
             int slot = slotOf(id);
             if (slot != -1) {
                 Item other = items[slot];
-                long total = (long) other.getAmount() + item.getAmount();
                 int amount;
-
                 /* check if there are too many items in the stack */
+                int overflow = BasicMath.integerOverflow(other.getAmount(), item.getAmount());
                 Item remaining = null;
-                if (total > Integer.MAX_VALUE) {
+                if (overflow != 0) {
                     amount = Integer.MAX_VALUE;
-                    remaining = new Item(id, (int) (total - amount));
+                    remaining = new Item(id, overflow);
                     fireCapacityExceeded();
                 } else {
-                    amount = (int) total;
+                    amount = other.getAmount() + item.getAmount();
                 }
 
                 /* update stack and return any remaining items */
@@ -198,6 +213,9 @@ public final class Inventory {
      * @return Item with amount value being the number actually removed
      */
     public Item remove(Item item, int preferredSlot) {
+        if (locked) {
+            return null;
+        }
         int id = item.getId();
         boolean stackable = isStackable(item);
 
@@ -246,6 +264,9 @@ public final class Inventory {
     }
 
     public void shift() {
+        if (locked) {
+            return;
+        }
         int destSlot = 0;
 
         for (int slot = 0; slot < items.length; slot++) {
@@ -262,6 +283,9 @@ public final class Inventory {
     }
 
     public void empty() {
+        if (locked) {
+            return;
+        }
         for (int slot = 0; slot < items.length; slot++)
             items[slot] = null;
 
@@ -358,7 +382,10 @@ public final class Inventory {
                 groundItemList.add(item.getId(), item.getAmount(), player.getPosition());
             }
         }
-        empty();
+        for (int slot = 0; slot < items.length; slot++)
+            items[slot] = null;
+
+        fireItemsChanged();
     }
 
     private void checkSlot(int slot) {
@@ -368,6 +395,14 @@ public final class Inventory {
 
     public int getWeight() {
         return weight;
+    }
+    
+    public void lock() {
+        locked = true;
+    }
+    
+    public void unlock() {
+        locked = false;
     }
 
 }

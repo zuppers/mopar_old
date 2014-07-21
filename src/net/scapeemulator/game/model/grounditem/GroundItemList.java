@@ -13,6 +13,7 @@ import net.scapeemulator.game.model.Position;
 import net.scapeemulator.game.model.World;
 import net.scapeemulator.game.model.definition.ItemDefinitions;
 import net.scapeemulator.game.model.player.Item;
+import net.scapeemulator.game.util.math.BasicMath;
 
 /**
  * Created by Hadyn Richard
@@ -92,10 +93,10 @@ public final class GroundItemList {
 					if (groundItem.getItemId() != itemId) {
 						continue;
 					}
-					long tAmt = (long) groundItem.getAmount() + amount;
-					if (tAmt > Integer.MAX_VALUE) {
-						continue;
+					if(BasicMath.integerOverflow(groundItem.getAmount(), amount) != 0) {
+					    continue;
 					}
+
 					/* update the ground item */
 					groundItem.setAmount(groundItem.getAmount() + amount);
 

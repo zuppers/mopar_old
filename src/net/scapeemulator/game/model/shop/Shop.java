@@ -2,6 +2,7 @@ package net.scapeemulator.game.model.shop;
 
 import net.scapeemulator.game.model.definition.ItemDefinitions;
 import net.scapeemulator.game.model.player.Item;
+import net.scapeemulator.game.util.math.BasicMath;
 
 /**
  * Represents an in-game Shop with a certain databaseId, name & shopId. A
@@ -381,16 +382,13 @@ public class Shop {
             return 0;
         }
         int index = getBestSlot(stock, itemId);
-        if (index <= -1) {
+        if (index < 0) {
             return 0;
         }
 
         Item[] itemsInStock = getStock(stock);
         if (itemsInStock[index] != null) {
-            long totalAmount = amount + itemsInStock[index].getAmount();
-            if (totalAmount > Integer.MAX_VALUE) {
-                amount = Integer.MAX_VALUE - itemsInStock[index].getAmount();
-            }
+            amount -= BasicMath.integerOverflow(amount, itemsInStock[index].getAmount());
             itemsInStock[index] = itemsInStock[index].add(new Item(itemId, amount));
         } else {
             itemsInStock[index] = new Item(itemId, amount);

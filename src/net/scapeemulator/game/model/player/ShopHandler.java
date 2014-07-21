@@ -13,32 +13,22 @@ import net.scapeemulator.game.msg.impl.ScriptMessage;
 import net.scapeemulator.game.msg.impl.inter.InterfaceAccessMessage;
 import net.scapeemulator.game.msg.impl.inter.InterfaceItemsMessage;
 import net.scapeemulator.game.msg.impl.inter.InterfaceVisibleMessage;
+import net.scapeemulator.game.util.math.BasicMath;
 
 public class ShopHandler extends ComponentListener {
 
     public final static HashMap<String, Shop> shops = new HashMap<String, Shop>();
-    private final static int[] amounts = {1, 5, 10, 50};
+    private final static int[] amounts = { 1, 5, 10, 50 };
 
     private final Player player;
     private Shop activeShop;
     private StockType activeStock;
+
     /*
-     * 520        Shopkeeper FALADOR
-     521        Shop assistant
-     522        Shopkeeper VARROCK
-     523        Shop assistant
-     524        Shopkeeper Al Kharid
-     525        Shop assistant
-     526        Shopkeeper LUMBRIDGE
-     527        Shop assistant
-     528        Shopkeeper
-     529        Shop assistant
-     530        Shopkeeper
-     531        Shop assistant
-     532        Shopkeeper
-     533        Shop assistant
-     534        Fairy shopkeeper
-     535        Fairy shop assistant
+     * 520 Shopkeeper FALADOR 521 Shop assistant 522 Shopkeeper VARROCK 523 Shop assistant 524
+     * Shopkeeper Al Kharid 525 Shop assistant 526 Shopkeeper LUMBRIDGE 527 Shop assistant 528
+     * Shopkeeper 529 Shop assistant 530 Shopkeeper 531 Shop assistant 532 Shopkeeper 533 Shop
+     * assistant 534 Fairy shopkeeper 535 Fairy shop assistant
      */
 
     public ShopHandler(Player player) {
@@ -46,30 +36,44 @@ public class ShopHandler extends ComponentListener {
     }
 
     public void sell(int itemId, int amount) {
-        if(activeShop == null) {
+        if (activeShop == null) {
             return;
         }
+
         int unnotedId = ItemDefinitions.forId(itemId).getUnnotedId();
         if (!activeShop.acceptsItem(unnotedId)) {
             player.sendMessage("You cannot sell that item to this shop.");
             return;
         }
+
+        int itemValue = ItemDefinitions.forId(unnotedId).getLowAlchemyValue();
+
+        // Compare the amount against the amount the player actually has
         int playerAmount = player.getInventory().getAmount(itemId);
-        Item toSell = new Item(itemId, ((amount > playerAmount) ? playerAmount : amount));
-        int payment = toSell.getAmount() * ItemDefinitions.forId(unnotedId).getLowAlchemyValue();
-        long tAmt = (long) player.getInventory().getAmount(995) + payment;
-        if (tAmt > Integer.MAX_VALUE) {
-            //TODO check for space for coins if selling stackable
-            player.sendMessage("Not enough space in your inventory.");
+        amount = amount > playerAmount ? playerAmount : amount;
+
+        // Compare the amount against the number of coins the player can hold
+        int maxAmount = (Integer.MAX_VALUE - player.getInventory().getAmount(995)) / itemValue;
+        amount = amount > maxAmount ? maxAmount : amount;
+
+        if (amount < 1) {
+            player.sendMessage("You cannot hold any more coins!");
             return;
         }
+
+        // Remove the items from the players inventory
+        Item toSell = new Item(itemId, amount);
         Item removed = player.getInventory().remove(toSell);
         if (removed == null || !removed.equals(toSell)) {
             return;
         }
-        player.getInventory().add(new Item(995, payment));
+
+        // Give the player coins
+        player.getInventory().add(new Item(995, amount * itemValue));
+
+        // Update the shop
         if (activeShop.add(unnotedId, toSell.getAmount()) > 0) {
-                updateShopGlobally();
+            updateShopGlobally();
         }
     }
 
@@ -77,13 +81,13 @@ public class ShopHandler extends ComponentListener {
         if (activeShop == null) {
             return;
         }
-        
+
         Item item = activeShop.getItemAtIndex(activeStock, index);
-        if(item == null) {
+        if (item == null) {
             return;
         }
         int itemId = item.getId();
-        
+
         // ---- Start amount check ----//
         ItemDefinition def = ItemDefinitions.forId(itemId);
         int cost = def.getValue();
@@ -101,27 +105,25 @@ public class ShopHandler extends ComponentListener {
         int freeSlots = player.getInventory().freeSlots() + (coinsGone ? 1 : 0);
         if (!def.isStackable()) {
             amount = amount > freeSlots ? freeSlots : amount;
-            if (amount < 1) {
-                player.sendMessage("You do not have any inventory space to buy that.");
-                return;
-            }
         } else {
             if (player.getInventory().contains(itemId)) {
-                int curAmount = player.getInventory().getAmount(itemId);
-                long tAmt = (long) curAmount + amount;
-                amount = tAmt > Integer.MAX_VALUE ? Integer.MAX_VALUE - curAmount : amount;
+                amount -= BasicMath.integerOverflow(player.getInventory().getAmount(itemId), amount);
             } else {
                 if (freeSlots < 1) {
                     amount = 0;
                 }
             }
         }
+        if (amount < 1) {
+            player.sendMessage("You do not have any inventory space to buy that.");
+            return;
+        }
         // ---- End amount check ----//
         if (!activeShop.contains(activeStock, itemId)) {
             return;
         }
         amount = activeShop.remove(activeStock, itemId, amount);
-        if(amount > 0) {
+        if (amount > 0) {
             updateShopGlobally();
         }
         player.getInventory().remove(new Item(995, cost * amount));
@@ -133,37 +135,37 @@ public class ShopHandler extends ComponentListener {
             return;
         }
         switch (childId) {
-            case 7:
-                player.getInterfaceSet().closeWindow();
+        case 7:
+            player.getInterfaceSet().closeWindow();
+            break;
+        case 23:
+        case 24:
+            switch (option) {
+            case ONE:
+                int value = value(activeShop.getItemAtIndex(activeStock, dynamicId).getId());
+                value = value < 1 ? 1 : value;
+                String name = name(activeShop.getItemAtIndex(activeStock, dynamicId).getId());
+                player.sendMessage(name + " costs " + value + " coin" + (value == 1 ? "" : "s") + ".");
                 break;
-            case 23:
-            case 24:
-                switch (option) {
-                    case ONE:
-                        int value = value(activeShop.getItemAtIndex(activeStock, dynamicId).getId());
-                        value = value < 1 ? 1 : value;
-                        String name = name(activeShop.getItemAtIndex(activeStock, dynamicId).getId());
-                        player.sendMessage(name + " costs " + value + " coin" + (value == 1 ? "" : "s") + ".");
-                        break;
-                    case TWO:
-                    case THREE:
-                    case FOUR:
-                    case FIVE:
-                        buy(dynamicId, amounts[option.toInteger() - 1]);
-                        break;
-                    case SIX:
-                        //TODO examine
-                        break;
-                    default:
-                        return;
-                }
+            case TWO:
+            case THREE:
+            case FOUR:
+            case FIVE:
+                buy(dynamicId, amounts[option.toInteger() - 1]);
                 break;
-            case 25:
-                openMainStock();
+            case SIX:
+                // TODO examine
                 break;
-            case 26:
-                openPlayerStock();
-                break;
+            default:
+                return;
+            }
+            break;
+        case 25:
+            openMainStock();
+            break;
+        case 26:
+            openPlayerStock();
+            break;
         }
     }
 
@@ -177,21 +179,21 @@ public class ShopHandler extends ComponentListener {
         }
         int unnotedId = item.getDefinition().getUnnotedId();
         switch (option) {
-            case ONE:
-                int value = (int) (value(unnotedId) * 0.4);
-                player.sendMessage(name(unnotedId) + " sells for " + value + " coin" + (value == 1 ? "" : "s") + ".");
-                break;
-            case TWO:
-            case THREE:
-            case FOUR:
-            case FIVE:
-                sell(item.getId(), amounts[option.toInteger() - 1]);
-                break;
-            case NINE:
-                //TODO examine
-                break;
-            default:
-                return;
+        case ONE:
+            int value = (int) (value(unnotedId) * 0.4);
+            player.sendMessage(name(unnotedId) + " sells for " + value + " coin" + (value == 1 ? "" : "s") + ".");
+            break;
+        case TWO:
+        case THREE:
+        case FOUR:
+        case FIVE:
+            sell(item.getId(), amounts[option.toInteger() - 1]);
+            break;
+        case NINE:
+            // TODO examine
+            break;
+        default:
+            return;
         }
     }
 
@@ -258,16 +260,16 @@ public class ShopHandler extends ComponentListener {
         player.send(new InterfaceVisibleMessage(620, 34, shop.hasStock(StockType.PLAYER)));
         player.getInterfaceSet().openWindow(620);
         player.getInterfaceSet().openInventory(621);
-        player.send(new ScriptMessage(150, "IviiiIsssssssss", new Object[]{"", "", "", "", "Sell 50", "Sell 10", "Sell 5", "Sell 1", "Value", -1, 0, 7, 4, 93, 621 << 16}));
-        player.send(new ScriptMessage(150, "IviiiIsssssssss", new Object[]{"", "", "", "", "Buy 50", "Buy 10", "Buy 5", "Buy 1", "Value", -1, 0, 4, 10, 31, (620 << 16) + 24}));
+        player.send(new ScriptMessage(150, "IviiiIsssssssss", new Object[] { "", "", "", "", "Sell 50", "Sell 10", "Sell 5", "Sell 1", "Value", -1, 0, 7, 4, 93, 621 << 16 }));
+        player.send(new ScriptMessage(150, "IviiiIsssssssss", new Object[] { "", "", "", "", "Buy 50", "Buy 10", "Buy 5", "Buy 1", "Value", -1, 0, 4, 10, 31, (620 << 16) + 24 }));
         player.send(new InterfaceAccessMessage(621, 0, 0, 27, 1278));
         player.send(new InterfaceAccessMessage(621, 34, 0, 27, 2360446));
-        player.send(new ScriptMessage(25, "vg", new Object[]{shop.getShopId(), 93}));
+        player.send(new ScriptMessage(25, "vg", new Object[] { shop.getShopId(), 93 }));
         openMainStock();
     }
 
     public void shopScript(int id) {
-        player.send(new ScriptMessage(25, "vg", new Object[]{id, 93}));
+        player.send(new ScriptMessage(25, "vg", new Object[] { id, 93 }));
     }
 
     public Shop getActiveShop() {
@@ -281,6 +283,7 @@ public class ShopHandler extends ComponentListener {
 
     @Override
     public void componentClosed(Component component) {
+        System.out.println("CLOSED!");
         component.removeListener();
         activeShop = null;
         activeStock = null;
