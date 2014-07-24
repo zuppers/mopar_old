@@ -28,6 +28,7 @@ import net.scapeemulator.game.model.player.skills.SkillMessageListener;
 import net.scapeemulator.game.model.player.skills.SkillSet;
 import net.scapeemulator.game.model.player.skills.magic.Spellbook;
 import net.scapeemulator.game.model.player.skills.prayer.Prayers;
+import net.scapeemulator.game.model.player.trade.TradeSession;
 import net.scapeemulator.game.msg.Message;
 import net.scapeemulator.game.msg.impl.ChatMessage;
 import net.scapeemulator.game.msg.impl.EnergyMessage;
@@ -69,6 +70,8 @@ public final class Player extends Mob {
     private final List<NPC> localNpcs = new ArrayList<>();
     private Appearance appearance = new Appearance(this);
     private int energy = 100;
+    private Player wantToTrade;
+    private TradeSession tradeSession;
     private final SkillSet skillSet = new SkillSet();
     private final InventorySet inventorySet = new InventorySet(this);
     private ChatMessage chatMessage;
@@ -292,6 +295,11 @@ public final class Player extends Mob {
 
     public void setPNPC(int pnpc) {
         this.pnpc = pnpc;
+        if (pnpc == -1) {
+            size = 0;
+        } else {
+            size = NPCDefinitions.forId(pnpc).getSize();
+        }
         appearanceUpdated();
     }
 
@@ -510,6 +518,22 @@ public final class Player extends Mob {
     @Override
     public void reduceHp(int amount) {
         skillSet.setCurrentLevel(Skill.HITPOINTS, getCurrentHitpoints() - amount);
+    }
+
+    public void setTradeRequest(Player other) {
+        wantToTrade = other;
+    }
+
+    public boolean wantsToTrade(Player other) {
+        return other == wantToTrade;
+    }
+
+    public void setTradeSession(TradeSession tradeSession) {
+        this.tradeSession = tradeSession;
+    }
+
+    public TradeSession getTradeSession() {
+        return tradeSession;
     }
 
     protected void onDeath() {

@@ -9,7 +9,7 @@ import net.scapeemulator.game.model.player.Player;
 import net.scapeemulator.game.player.handler.*;
 
 /**
- * Written by Hadyn Richard
+ * @author Hadyn Richard
  */
 public final class PlayerDispatcher {
 

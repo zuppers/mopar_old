@@ -1,7 +1,7 @@
-package net.scapeemulator.game.task;
+package net.scapeemulator.game.model.mob.action;
 
 import net.scapeemulator.game.model.mob.Mob;
-import net.scapeemulator.game.model.mob.action.FollowAction;
+import net.scapeemulator.game.task.Action;
 
 /**
  * This action executes when the mob target has been reached. Utilizes following.

@@ -260,7 +260,7 @@ public class ShopHandler extends ComponentListener {
         player.send(new InterfaceVisibleMessage(620, 34, shop.hasStock(StockType.PLAYER)));
         player.getInterfaceSet().openWindow(620);
         player.getInterfaceSet().openInventory(621);
-        player.send(new ScriptMessage(150, "IviiiIsssssssss", new Object[] { "", "", "", "", "Sell 50", "Sell 10", "Sell 5", "Sell 1", "Value", -1, 0, 7, 4, 93, 621 << 16 }));
+        player.send(new ScriptMessage(150, "IviiiIsssssssss", new Object[] { "", "", "", "", "Sell-50", "Sell-10", "Sell-5", "Sell-1", "Value", -1, 0, 7, 4, 93, 621 << 16 }));
         player.send(new ScriptMessage(150, "IviiiIsssssssss", new Object[] { "", "", "", "", "Buy 50", "Buy 10", "Buy 5", "Buy 1", "Value", -1, 0, 4, 10, 31, (620 << 16) + 24 }));
         player.send(new InterfaceAccessMessage(621, 0, 0, 27, 1278));
         player.send(new InterfaceAccessMessage(621, 34, 0, 27, 2360446));

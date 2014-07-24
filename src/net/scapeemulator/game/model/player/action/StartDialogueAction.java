@@ -2,9 +2,9 @@ package net.scapeemulator.game.model.player.action;
 
 import net.scapeemulator.game.dialogue.Dialogue;
 import net.scapeemulator.game.dialogue.DialogueContext;
+import net.scapeemulator.game.model.mob.action.MobInteractionAction;
 import net.scapeemulator.game.model.npc.NPC;
 import net.scapeemulator.game.model.player.Player;
-import net.scapeemulator.game.task.MobInteractionAction;
 
 /**
  * Written by Hadyn Richard

@@ -35,11 +35,14 @@ public final class OpenDoorAction extends DistancedAction<Player> {
     private final Door door;
     private final boolean open;
     private final Player player;
+    private final Position position;
+    
     private boolean executed;
 
     public OpenDoorAction(Player player, Position position, Door door, boolean open) {
         super(1, true, player, position, 1);
         this.player = player;
+        this.position = position;
         this.door = door;
         this.open = open;
     }

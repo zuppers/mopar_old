@@ -15,7 +15,8 @@ import net.scapeemulator.game.model.player.skills.magic.TeleportSpell;
 import net.scapeemulator.game.model.player.skills.prayer.Prayer;
 
 /**
- * Created by Hadyn Richard
+ * @author Hadyn Richard
+ * @author David Insley
  */
 public final class ButtonDispatcher {
 
@@ -55,9 +56,9 @@ public final class ButtonDispatcher {
         int widgetId = Widget.getWidgetId(hash);
         int child = Widget.getComponentId(hash);
         System.out.println("button dispatcher - parent: " + widgetId + " " + ", child: " + child + ", dyn: " + dyn + ", option: " + option);
-        
+
         // Check for correct interfaces open in the handler!
-        
+
         if (widgetId >= 75 && widgetId <= 93) {
             player.getPlayerCombatHandler().attackTabClick(widgetId, child);
             return;
@@ -87,6 +88,17 @@ public final class ButtonDispatcher {
             break;
         case 271:
             player.getPrayers().toggle(Prayer.forId(child));
+            break;
+        case 334:
+        case 335:
+            if (player.getTradeSession() != null) {
+                player.getTradeSession().handleInterfaceClick(widgetId, child, dyn, option);
+            }
+            break;
+        case 336:
+            if (player.getTradeSession() != null) {
+                player.getTradeSession().handleInventoryClick(dyn, option);
+            }
             break;
         case 387:
             if (child == 55) {
