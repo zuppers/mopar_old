@@ -65,7 +65,7 @@ public final class ItemOnObjectDispatcher {
         Inventory inventory = player.getInventorySet().get(hash);
 
         /* Validate the inventory */
-        if(inventory == null || !inventory.check(slot, itemId)) {
+        if(inventory == null || !inventory.verify(slot, itemId)) {
             return;
         }
 

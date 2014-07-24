@@ -20,7 +20,7 @@ public final class InventoryMessageListener implements InventoryListener {
     }
 
     @Override
-    public void itemChanged(Inventory inventory, int slot, Item item) {
+    public void itemChanged(Inventory inventory, int slot, Item item, Item oldItem) {
         SlottedItem[] items = new SlottedItem[] { new SlottedItem(slot, item) };
         player.send(new InterfaceSlottedItemsMessage(id, child, type, items));
     }

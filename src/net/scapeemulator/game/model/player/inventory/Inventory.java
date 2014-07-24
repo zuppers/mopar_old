@@ -33,6 +33,11 @@ public final class Inventory {
      */
     private boolean locked;
 
+    /**
+     * If the inventory is silent, the listeners are not called.
+     */
+    private boolean silent;
+
     public Inventory(Player player, int slots) {
         this(player, slots, StackMode.STACKABLE_ONLY);
     }
@@ -88,8 +93,9 @@ public final class Inventory {
         if (item != null) {
             weight += item.getDefinition().getWeight();
         }
+        Item old = items[slot];
         items[slot] = item;
-        fireItemChanged(slot);
+        fireItemChanged(slot, old);
     }
 
     public void swap(int slot1, int slot2) {
@@ -103,8 +109,8 @@ public final class Inventory {
         items[slot1] = items[slot2];
         items[slot2] = tmp;
 
-        fireItemChanged(slot1);
-        fireItemChanged(slot2);
+        fireItemChanged(slot1, items[slot2]);
+        fireItemChanged(slot2, items[slot1]);
     }
 
     public void reset(int slot) {
@@ -343,9 +349,51 @@ public final class Inventory {
         return slotOf(id) != -1;
     }
 
-    private void fireItemChanged(int slot) {
-        for (InventoryListener listener : listeners)
-            listener.itemChanged(this, slot, items[slot]);
+    /**
+     * Removes all given items from this inventory.
+     * 
+     * @param items the items to remove
+     * @return a collection of items that were NOT removed, empty means the operation completed
+     *         successfully
+     */
+    public List<Item> removeAll(Item... items) {
+        List<Item> notRemoved = new ArrayList<>();
+        for (Item toRemove : items) {
+            if (toRemove != null) {
+                Item removed = remove(toRemove);
+                if (!removed.equals(toRemove)) {
+                    notRemoved.add(new Item(toRemove.getId(), toRemove.getAmount() - removed.getAmount()));
+                }
+            }
+        }
+        return notRemoved;
+    }
+
+    /**
+     * Adds all given items to this inventory.
+     * 
+     * @param items the items to add
+     * @return a collection of items that were NOT added, empty means the operation completed
+     *         successfully
+     */
+    public List<Item> addAll(Item... items) {
+        List<Item> notAdded = new ArrayList<>();
+        for (Item toAdd : items) {
+            if (toAdd != null) {
+                Item overflow = add(toAdd);
+                if (overflow != null) {
+                    notAdded.add(overflow);
+                }
+            }
+        }
+        return notAdded;
+    }
+
+    private void fireItemChanged(int slot, Item oldItem) {
+        if (!silent) {
+            for (InventoryListener listener : listeners)
+                listener.itemChanged(this, slot, items[slot], oldItem);
+        }
     }
 
     private void fireItemsChanged() {
@@ -355,13 +403,17 @@ public final class Inventory {
                 weight += item.getDefinition().getWeight();
             }
         }
-        for (InventoryListener listener : listeners)
-            listener.itemsChanged(this);
+        if (!silent) {
+            for (InventoryListener listener : listeners)
+                listener.itemsChanged(this);
+        }
     }
 
     public void fireCapacityExceeded() {
-        for (InventoryListener listener : listeners)
-            listener.capacityExceeded(this);
+        if (!silent) {
+            for (InventoryListener listener : listeners)
+                listener.capacityExceeded(this);
+        }
     }
 
     private boolean isStackable(Item item) {
@@ -371,7 +423,7 @@ public final class Inventory {
         return item.getDefinition().isStackable();
     }
 
-    public boolean check(int slot, int itemId) {
+    public boolean verify(int slot, int itemId) {
         return get(slot) != null && get(slot).getId() == itemId;
     }
 
@@ -396,11 +448,15 @@ public final class Inventory {
     public int getWeight() {
         return weight;
     }
-    
+
+    public void setSilent(boolean silent) {
+        this.silent = silent;
+    }
+
     public void lock() {
         locked = true;
     }
-    
+
     public void unlock() {
         locked = false;
     }

@@ -12,7 +12,7 @@ public final class InventoryAppearanceListener implements InventoryListener {
 	}
 
 	@Override
-	public void itemChanged(Inventory inventory, int slot, Item item) {
+	public void itemChanged(Inventory inventory, int slot, Item item, Item oldItem) {
 		player.setAppearance(player.getAppearance());
 	}
 

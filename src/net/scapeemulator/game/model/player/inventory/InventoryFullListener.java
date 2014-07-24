@@ -14,7 +14,7 @@ public final class InventoryFullListener implements InventoryListener {
 	}
 
 	@Override
-	public void itemChanged(Inventory inventory, int slot, Item item) {
+	public void itemChanged(Inventory inventory, int slot, Item item, Item oldItem) {
 		/* ignore */
 	}
 

@@ -5,8 +5,8 @@ import java.nio.ByteBuffer;
 import net.scapeemulator.cache.util.ByteBufferUtils;
 
 /**
- * A class that loads item/model information from the cache.
- * TODO Finish some of the opcodes.
+ * A class that loads item/model information from the cache. TODO Finish some of the opcodes.
+ * 
  * @author Graham
  * @author `Discardedx2
  */
@@ -15,6 +15,7 @@ public final class ItemDefinition {
     private String name;
 
     private int id;
+    private String examine;
     private int inventoryModelId;
     private int modelZoom;
     private int modelRotation1;
@@ -69,9 +70,10 @@ public final class ItemDefinition {
                 break;
             if (opcode == 1)
                 def.inventoryModelId = buffer.getShort() & 0xFFFFF;
-            else if (opcode == 2)
+            else if (opcode == 2) {
                 def.name = ByteBufferUtils.getJagexString(buffer);
-            else if (opcode == 4)
+                def.examine = def.name + " " + id;
+            } else if (opcode == 4)
                 def.modelZoom = buffer.getShort() & 0xFFFFF;
             else if (opcode == 5)
                 def.modelRotation1 = buffer.getShort() & 0xFFFFF;
@@ -220,6 +222,10 @@ public final class ItemDefinition {
         return name;
     }
 
+    public String getExamine() {
+        return examine;
+    }
+
     public int getInventoryModelId() {
         return inventoryModelId;
     }
@@ -355,7 +361,7 @@ public final class ItemDefinition {
     public int getWeight() {
         return weight;
     }
-    
+
     public int getLendTemplateId() {
         return lendTemplateId;
     }
