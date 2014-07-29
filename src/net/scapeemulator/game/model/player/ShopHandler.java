@@ -25,10 +25,22 @@ public class ShopHandler extends ComponentListener {
     private StockType activeStock;
 
     /*
-     * 520 Shopkeeper FALADOR 521 Shop assistant 522 Shopkeeper VARROCK 523 Shop assistant 524
-     * Shopkeeper Al Kharid 525 Shop assistant 526 Shopkeeper LUMBRIDGE 527 Shop assistant 528
-     * Shopkeeper 529 Shop assistant 530 Shopkeeper 531 Shop assistant 532 Shopkeeper 533 Shop
-     * assistant 534 Fairy shopkeeper 535 Fairy shop assistant
+     * 520 Shopkeeper FALADOR 
+     * 521 Shop assistant 
+     * 522 Shopkeeper VARROCK 
+     * 523 Shop assistant 
+     * 524 Shopkeeper Al Kharid 
+     * 525 Shop assistant 
+     * 526 Shopkeeper LUMBRIDGE 
+     * 527 Shop assistant 
+     * 528 Shopkeeper 
+     * 529 Shop assistant 
+     * 530 Shopkeeper 
+     * 531 Shop assistant 
+     * 532 Shopkeeper 
+     * 533 Shop assistant 
+     * 534 Fairy shopkeeper 
+     * 535 Fairy shop assistant
      */
 
     public ShopHandler(Player player) {
@@ -39,8 +51,8 @@ public class ShopHandler extends ComponentListener {
         if (activeShop == null) {
             return;
         }
+        int unnotedId = ItemDefinitions.forId(itemId).getUnnoted();
 
-        int unnotedId = ItemDefinitions.forId(itemId).getUnnotedId();
         if (!activeShop.acceptsItem(unnotedId)) {
             player.sendMessage("You cannot sell that item to this shop.");
             return;
@@ -64,6 +76,8 @@ public class ShopHandler extends ComponentListener {
         // Remove the items from the players inventory
         Item toSell = new Item(itemId, amount);
         Item removed = player.getInventory().remove(toSell);
+        
+        // Triple check that everything worked
         if (removed == null || !removed.equals(toSell)) {
             return;
         }
@@ -122,6 +136,7 @@ public class ShopHandler extends ComponentListener {
         if (!activeShop.contains(activeStock, itemId)) {
             return;
         }
+
         amount = activeShop.remove(activeStock, itemId, amount);
         if (amount > 0) {
             updateShopGlobally();
@@ -140,12 +155,12 @@ public class ShopHandler extends ComponentListener {
             break;
         case 23:
         case 24:
+            ItemDefinition def = activeShop.getItemAtIndex(activeStock, dynamicId).getDefinition();
             switch (option) {
             case ONE:
-                int value = value(activeShop.getItemAtIndex(activeStock, dynamicId).getId());
+                int value = def.getLowAlchemyValue();
                 value = value < 1 ? 1 : value;
-                String name = name(activeShop.getItemAtIndex(activeStock, dynamicId).getId());
-                player.sendMessage(name + " costs " + value + " coin" + (value == 1 ? "" : "s") + ".");
+                player.sendMessage(def.getName() + " costs " + value + " coin" + (value == 1 ? "" : "s") + ".");
                 break;
             case TWO:
             case THREE:
@@ -154,7 +169,7 @@ public class ShopHandler extends ComponentListener {
                 buy(dynamicId, amounts[option.toInteger() - 1]);
                 break;
             case SIX:
-                // TODO examine
+                player.sendMessage(def.getExamine());
                 break;
             default:
                 return;
@@ -177,11 +192,11 @@ public class ShopHandler extends ComponentListener {
         if (item == null) {
             return;
         }
-        int unnotedId = item.getDefinition().getUnnotedId();
+        ItemDefinition def = ItemDefinitions.forId(item.getDefinition().getUnnoted());
         switch (option) {
         case ONE:
-            int value = (int) (value(unnotedId) * 0.4);
-            player.sendMessage(name(unnotedId) + " sells for " + value + " coin" + (value == 1 ? "" : "s") + ".");
+            int value = (int) (def.getLowAlchemyValue());
+            player.sendMessage(def.getName() + " sells for " + value + " coin" + (value == 1 ? "" : "s") + ".");
             break;
         case TWO:
         case THREE:
@@ -190,19 +205,11 @@ public class ShopHandler extends ComponentListener {
             sell(item.getId(), amounts[option.toInteger() - 1]);
             break;
         case NINE:
-            // TODO examine
+            player.sendMessage(def.getExamine());
             break;
         default:
             return;
         }
-    }
-
-    private int value(int itemId) {
-        return ItemDefinitions.forId(itemId).getValue();
-    }
-
-    private String name(int itemId) {
-        return ItemDefinitions.forId(itemId).getName();
     }
 
     public void updateShopGlobally() {
@@ -283,7 +290,6 @@ public class ShopHandler extends ComponentListener {
 
     @Override
     public void componentClosed(Component component) {
-        System.out.println("CLOSED!");
         component.removeListener();
         activeShop = null;
         activeStock = null;
