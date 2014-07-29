@@ -13,29 +13,29 @@ import net.scapeemulator.game.net.game.GameFrameBuilder;
 
 public final class ScriptMessageEncoder extends MessageEncoder<ScriptMessage> {
 
-	public ScriptMessageEncoder() {
-		super(ScriptMessage.class);
-	}
+    public ScriptMessageEncoder() {
+        super(ScriptMessage.class);
+    }
 
-	@Override
-	public GameFrame encode(ByteBufAllocator alloc, ScriptMessage message) throws IOException {
-		String types = message.getTypes();
-		Object[] parameters = message.getParameters();
+    @Override
+    public GameFrame encode(ByteBufAllocator alloc, ScriptMessage message) throws IOException {
+        String types = message.getTypes();
+        Object[] parameters = message.getParameters();
+        GameFrameBuilder builder = new GameFrameBuilder(alloc, 115, Type.VARIABLE_SHORT);
+        builder.put(DataType.SHORT, message.getId2());
+        builder.putString(types);
+        if (parameters.length > 0) {
+            for (int i = types.length() - 1; i >= 0; i--) {
+                if (types.charAt(i) == 's') {
+                    builder.putString((String) parameters[types.length() - 1 - i]);
+                } else {
+                    builder.put(DataType.INT, ((Integer) parameters[types.length() - 1 - i]));
+                }
+            }
 
-		GameFrameBuilder builder = new GameFrameBuilder(alloc, 115, Type.VARIABLE_SHORT);
-		builder.put(DataType.SHORT, 0);
-		builder.putString(types);
-		if (!message.blank()) {
-			for (int i = types.length() - 1; i >= 0; i--) {
-				if (types.charAt(i) == 's') {
-					builder.putString((String) parameters[types.length() - 1 - i]);
-				} else {
-					builder.put(DataType.INT, ((Integer) parameters[types.length() - 1 - i]));
-				}
-			}
-		}
-		builder.put(DataType.INT, message.getId());
-		return builder.toGameFrame();
-	}
+        }
+        builder.put(DataType.INT, message.getId());
+        return builder.toGameFrame();
+    }
 
 }
