@@ -21,6 +21,7 @@ public final class Inventory {
     private final Player player;
     private final StackMode stackMode;
     private final Item[] items;
+    private final boolean weighted;
     private final List<InventoryListener> listeners = new ArrayList<>();
 
     /**
@@ -39,13 +40,14 @@ public final class Inventory {
     private boolean silent;
 
     public Inventory(Player player, int slots) {
-        this(player, slots, StackMode.STACKABLE_ONLY);
+        this(player, slots, StackMode.STACKABLE_ONLY, true);
     }
 
-    public Inventory(Player player, int slots, StackMode stackMode) {
+    public Inventory(Player player, int slots, StackMode stackMode, boolean weighted) {
         this.player = player;
         this.stackMode = stackMode;
         this.items = new Item[slots];
+        this.weighted = weighted;
     }
 
     public Inventory(Inventory inventory) {
@@ -53,6 +55,7 @@ public final class Inventory {
         this.items = inventory.toArray();
         this.player = inventory.player;
         this.weight = inventory.weight;
+        this.weighted = inventory.weighted;
     }
 
     public Item[] toArray() {
@@ -82,22 +85,38 @@ public final class Inventory {
         return items[slot];
     }
 
-    public void set(int slot, Item item) {
+    /**
+     * Sets the item at the specified slot to the specified item.
+     * 
+     * @param slot the slot id to set
+     * @param item the item to set
+     * @return the item that was in the slot before changing it, if any
+     */
+    public Item set(int slot, Item item) {
         if (locked) {
-            return;
+            return null;
         }
         checkSlot(slot);
-        if (items[slot] != null) {
-            weight -= items[slot].getDefinition().getWeight();
-        }
-        if (item != null) {
-            weight += item.getDefinition().getWeight();
+        if (weighted) {
+            if (items[slot] != null) {
+                weight -= items[slot].getDefinition().getWeight();
+            }
+            if (item != null) {
+                weight += item.getDefinition().getWeight();
+            }
         }
         Item old = items[slot];
         items[slot] = item;
         fireItemChanged(slot, old);
+        return old;
     }
 
+    /**
+     * Swaps the position of two items in the inventory.
+     * 
+     * @param slot1 original slot
+     * @param slot2 destination slot
+     */
     public void swap(int slot1, int slot2) {
         if (locked) {
             return;
@@ -113,10 +132,6 @@ public final class Inventory {
         fireItemChanged(slot2, items[slot1]);
     }
 
-    public void reset(int slot) {
-        set(slot, null);
-    }
-
     public Item add(Item item) {
         return add(item, -1);
     }
@@ -128,11 +143,13 @@ public final class Inventory {
         int id = item.getId();
         boolean stackable = isStackable(item);
         if (stackable) {
+
             /* try to add this item to an existing stack */
             int slot = slotOf(id);
             if (slot != -1) {
                 Item other = items[slot];
                 int amount;
+
                 /* check if there are too many items in the stack */
                 int overflow = BasicMath.integerOverflow(other.getAmount(), item.getAmount());
                 Item remaining = null;
@@ -306,6 +323,15 @@ public final class Inventory {
         return true;
     }
 
+    public int freeSlot() {
+        for (int slot = 0; slot < items.length; slot++) {
+            if (items[slot] == null) {
+                return slot;
+            }
+        }
+        return -1;
+    }
+
     public int freeSlots() {
         int slots = 0;
         for (int slot = 0; slot < items.length; slot++)
@@ -339,10 +365,10 @@ public final class Inventory {
 
     public int getAmountNotedAndUnnoted(int id) {
         ItemDefinition def = ItemDefinitions.forId(id);
-        if (def.isStackable() && def.isUnnoted()) {
+        if (def.isStackable() || !def.canSwap()) {
             return getAmount(id);
         }
-        return getAmount(id) + getAmount(def.isNoted() ? def.getUnnotedId() : def.getNotedId());
+        return getAmount(id) + getAmount(def.swap());
     }
 
     public boolean contains(int id) {
@@ -397,10 +423,12 @@ public final class Inventory {
     }
 
     private void fireItemsChanged() {
-        weight = 0;
-        for (Item item : items) {
-            if (item != null) {
-                weight += item.getDefinition().getWeight();
+        if (weighted) {
+            weight = 0;
+            for (Item item : items) {
+                if (item != null) {
+                    weight += item.getDefinition().getWeight();
+                }
             }
         }
         if (!silent) {
@@ -440,17 +468,25 @@ public final class Inventory {
         fireItemsChanged();
     }
 
-    private void checkSlot(int slot) {
+    public void checkSlot(int slot) {
         if (slot < 0 || slot >= items.length)
-            throw new IndexOutOfBoundsException("slot out of range");
+            throw new IndexOutOfBoundsException("slot out of range: " + slot);
     }
 
     public int getWeight() {
         return weight;
     }
 
-    public void setSilent(boolean silent) {
-        this.silent = silent;
+    public void silence() {
+        silent = true;
+    }
+
+    public boolean locked() {
+        return locked;
+    }
+
+    public void unsilence() {
+        silent = false;
     }
 
     public void lock() {
