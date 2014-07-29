@@ -272,6 +272,7 @@ public class TradeSession extends ComponentListener {
         player.getInterfaceSet().getWindow().removeListener();
         player.getInterfaceSet().closeInventory();
         player.getInterfaceSet().closeWindow();
+        player.getScriptInput().reset();
         player.getInventory().unlock();
         player.getInventory().refresh();
         player.setTradeSession(null);
