@@ -21,6 +21,8 @@ import net.scapeemulator.game.model.npc.NPC;
 import net.scapeemulator.game.model.object.GroundObjectSynchronizer;
 import net.scapeemulator.game.model.player.action.PlayerDeathAction;
 import net.scapeemulator.game.model.player.appearance.Appearance;
+import net.scapeemulator.game.model.player.bank.BankSession;
+import net.scapeemulator.game.model.player.bank.BankSettings;
 import net.scapeemulator.game.model.player.inventory.Inventory;
 import net.scapeemulator.game.model.player.skills.Skill;
 import net.scapeemulator.game.model.player.skills.SkillAppearanceListener;
@@ -73,6 +75,8 @@ public final class Player extends Mob {
     private Player wantToTrade;
     private TradeSession tradeSession;
     private final SkillSet skillSet = new SkillSet();
+    private BankSession bankSession;
+    private final BankSettings bankSettings = new BankSettings();
     private final InventorySet inventorySet = new InventorySet(this);
     private ChatMessage chatMessage;
     private final Friends friends = new Friends(this);
@@ -281,6 +285,10 @@ public final class Player extends Mob {
         return inventorySet.getEquipment();
     }
 
+    public Inventory getBank() {
+        return inventorySet.getBank();
+    }
+
     public int getStance() {
         if (pnpc > -1) {
             return NPCDefinitions.forId(pnpc).getStance();
@@ -383,13 +391,11 @@ public final class Player extends Mob {
     }
 
     public void refreshGroundObjects() {
-        // TODO: Make this cleaner?
         groundObjSync.purge();
         World.getWorld().getGroundObjects().fireEvents(groundObjSync);
     }
 
     public void refreshGroundItems() {
-        // TODO: Make this cleaner?
         groundItemSync.purge();
         World.getWorld().getGroundItems().fireEvents(groundItemSync);
         groundItems.fireEvents(groundItemSync);
@@ -469,6 +475,12 @@ public final class Player extends Mob {
         }
     }
 
+    @Override
+    public void teleport(Position position) {
+        interfaceSet.resetAll();
+        super.teleport(position);
+    }
+
     private String addPlus(int bonus) {
         return bonus > 0 ? "+" + bonus : "" + bonus;
     }
@@ -526,6 +538,23 @@ public final class Player extends Mob {
 
     public boolean wantsToTrade(Player other) {
         return other == wantToTrade;
+    }
+
+    public void startBankSession() {
+        bankSession = new BankSession(this);
+        bankSession.init();
+    }
+
+    public void endBankSession() {
+        bankSession = null;
+    }
+
+    public BankSession getBankSession() {
+        return bankSession;
+    }
+
+    public BankSettings getBankSettings() {
+        return bankSettings;
     }
 
     public void setTradeSession(TradeSession tradeSession) {

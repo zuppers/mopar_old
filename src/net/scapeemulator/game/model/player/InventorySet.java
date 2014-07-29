@@ -1,37 +1,17 @@
-/**
- * Copyright (c) 2012, Hadyn Richard
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy 
- * of this software and associated documentation files (the "Software"), to deal 
- * in the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
- * of the Software, and to permit persons to whom the Software is furnished to do
- * so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in 
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
- * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN 
- * THE SOFTWARE.
- */
-
 package net.scapeemulator.game.model.player;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import net.scapeemulator.game.model.player.bank.BankSession;
 import net.scapeemulator.game.model.player.inventory.Inventory;
+import net.scapeemulator.game.model.player.inventory.Inventory.StackMode;
 import net.scapeemulator.game.model.player.inventory.InventoryAppearanceListener;
 import net.scapeemulator.game.model.player.inventory.InventoryFullListener;
 import net.scapeemulator.game.model.player.inventory.InventoryMessageListener;
 
 /**
- * Created by Hadyn Richard
+ * @author Hadyn Richard
  */
 public final class InventorySet {
 
@@ -44,6 +24,11 @@ public final class InventorySet {
      * The inventory container hash.
      */
     public static final int INVENTORY_HASH = Interface.INVENTORY << 16 | Interface.INVENTORY_CONTAINER;
+
+    /**
+     * The bank container hash.
+     */
+    public static final int BANK_HASH = Interface.BANK << 16 | Interface.BANK_CONTAINER;
 
     /**
      * Each of the inventories registered to the inventory set.
@@ -67,10 +52,17 @@ public final class InventorySet {
         inventory.addListener(new InventoryMessageListener(player, Interface.INVENTORY, Interface.INVENTORY_CONTAINER, 93));
         inventory.addListener(new InventoryFullListener(player, "inventory"));
         register(inventory, INVENTORY_HASH);
+
+        Inventory bank = new Inventory(player, BankSession.BANK_SLOTS, StackMode.ALWAYS, false);
+        bank.addListener(new InventoryMessageListener(player, -1, -1, 95));
+        bank.addListener(new InventoryFullListener(player, "bank"));
+        bank.lock();
+        register(bank, BANK_HASH);
     }
 
     /**
      * Registers an inventory to the inventory set.
+     * 
      * @param inventory The inventory to register.
      * @param parent The parent widget id.
      * @param child The child widget id.
@@ -81,19 +73,21 @@ public final class InventorySet {
 
     /**
      * Registers an inventory to the inventory set.
+     * 
      * @param inventory The inventory to register.
      * @param hash The hash of the inventory.
      */
     public void register(Inventory inventory, int hash) {
         inventories.put(hash, inventory);
     }
-    
+
     public Inventory get(int hash) {
         return inventories.get(hash);
     }
 
     /**
      * Gets the inventory container.
+     * 
      * @return The inventory.
      */
     public Inventory getInventory() {
@@ -102,6 +96,7 @@ public final class InventorySet {
 
     /**
      * Gets the equipment inventory.
+     * 
      * @return The equipment.
      */
     public Inventory getEquipment() {
@@ -109,7 +104,17 @@ public final class InventorySet {
     }
 
     /**
+     * Gets the bank inventory.
+     * 
+     * @return the players bank
+     */
+    public Inventory getBank() {
+        return inventories.get(BANK_HASH);
+    }
+
+    /**
      * Calculates a widget hash.
+     * 
      * @param parent The parent id.
      * @param child The child id.
      * @return The calculated hash.

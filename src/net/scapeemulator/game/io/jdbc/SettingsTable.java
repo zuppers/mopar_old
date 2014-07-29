@@ -70,6 +70,10 @@ public final class SettingsTable extends Table<Player> {
 					player.getSettings().setTradeRequests(value, false);
 					break;
 					
+				case "bank_x":
+				    player.getBankSettings().setLastX(value);
+				    break;
+					
 				default:
 					throw new IOException("unknown setting: " + setting);
 				}
@@ -121,7 +125,11 @@ public final class SettingsTable extends Table<Player> {
 		saveStatement.setString(2, "trade_requests");
 		saveStatement.setInt(3, player.getSettings().getTradeRequests());
 		saveStatement.addBatch();
-
+		
+        saveStatement.setString(2, "bank_x");
+        saveStatement.setInt(3, player.getBankSettings().getLastX());
+        saveStatement.addBatch();
+        
 		saveStatement.executeBatch();
 	}
 

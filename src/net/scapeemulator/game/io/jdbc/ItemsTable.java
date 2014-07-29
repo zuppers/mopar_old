@@ -31,6 +31,9 @@ public abstract class ItemsTable extends Table<Player> {
 		loadStatement.setString(2, type);
 
 		Inventory inventory = getInventory(player);
+		boolean locked = inventory.locked();
+		inventory.unlock();
+		inventory.silence();
 		try (ResultSet set = loadStatement.executeQuery()) {
 			while (set.next()) {
 				int slot = set.getInt("slot");
@@ -44,6 +47,10 @@ public abstract class ItemsTable extends Table<Player> {
 				}
 			}
 		}
+		if(locked) {
+		    inventory.lock();
+		}
+		inventory.unsilence();
 	}
 
 	@Override

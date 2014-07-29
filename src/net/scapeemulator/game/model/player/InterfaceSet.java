@@ -243,6 +243,9 @@ public final class InterfaceSet {
          * Sets the current widget id.
          */
         public Component set(int id) {
+            if(currentId != id) {
+                forceComponentClosed(); // TODO replace with a changed listener?
+            }
             currentId = id;
             return this;
         }

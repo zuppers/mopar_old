@@ -99,10 +99,6 @@ bind :cmd, :name => 'gfx' do
   player.play_spot_animation(SpotAnimation.new(args[0].to_i, d, h))
 end
 
-bind :cmd, :name => 'reload' do
-  GameServer::getInstance().reloadPlugins()
-end
-
 bind :cmd, :name => 'proj' do
   player.get_combat_handler.send_projectile(args[0].to_i, args[1].to_i, args[2].to_i, args[3].to_i, args[4].to_i)
 end
@@ -151,6 +147,14 @@ end
 
 bind :cmd, :name => 'shop' do
   player.get_shop_handler.open_shop 'Lumbridge General Store'
+end
+
+bind :cmd, :name => 'bank' do
+  player.start_bank_session
+end
+
+bind :cmd, :name => 'clear' do
+  player.get_bank_session.clear_search
 end
 
 bind :cmd, :name => 'shopid' do

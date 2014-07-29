@@ -61,14 +61,17 @@ public final class JdbcSerializer extends Serializer implements Closeable {
                     public Inventory getInventory(Player player) {
                         return player.getInventory();
                     }
-                },
-
-                new ItemsTable(connection, "equipment") {
+                }, new ItemsTable(connection, "equipment") {
                     @Override
                     public Inventory getInventory(Player player) {
                         return player.getEquipment();
                     }
-                }, };
+                }, new ItemsTable(connection, "bank") {
+                    @Override
+                    public Inventory getInventory(Player player) {
+                        return player.getBank();
+                    }
+                } };
         geTable = new GrandExchangeTable(connection);
         geOfferTable = new GrandExchangeOfferTable(connection);
         try {

@@ -8,7 +8,9 @@ import java.util.Map;
 import net.scapeemulator.game.model.ExtendedOption;
 import net.scapeemulator.game.model.Widget;
 import net.scapeemulator.game.model.player.Equipment;
+import net.scapeemulator.game.model.player.Interface;
 import net.scapeemulator.game.model.player.Player;
+import net.scapeemulator.game.model.player.bank.BankSession;
 import net.scapeemulator.game.model.player.skills.magic.AutoCastHandler;
 import net.scapeemulator.game.model.player.skills.magic.Spell;
 import net.scapeemulator.game.model.player.skills.magic.TeleportSpell;
@@ -110,6 +112,16 @@ public final class ButtonDispatcher {
         case 388:
         case 406:
             AutoCastHandler.handleSpellSelection(player, widgetId, child);
+            break;
+        case Interface.BANK:
+            if(player.getBankSession() != null) {
+                player.getBankSession().handleInterfaceClick(child, dyn, option);
+            }
+            break;
+        case BankSession.BANK_INVENTORY:
+            if(player.getBankSession() != null) {
+                player.getBankSession().handleInventoryClick(child, dyn, option);
+            }
             break;
         case 771:
             player.getAppearance().handle(child);

@@ -33,10 +33,12 @@ public final class Interface {
 	/* windows */
 	public static final int DISPLAY_SETTINGS = 742;
 	public static final int AUDIO_SETTINGS = 743;
-
+	public static final int BANK = 762;
+	
     /* child container ids */
     public static final int EQUIPMENT_CONAINER = 28;
     public static final int INVENTORY_CONTAINER = 0;
+    public static final int BANK_CONTAINER = 73;
 
 	private Interface() {
 
