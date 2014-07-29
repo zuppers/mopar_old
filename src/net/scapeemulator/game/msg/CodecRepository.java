@@ -65,6 +65,7 @@ public final class CodecRepository {
         bind(new ItemInteractMessageDecoder());
         bind(new ItemDropMessageDecoder());
         bind(new SwapItemsMessageDecoder());
+        bind(new SwapItemsTwoMessageDecoder());
         bind(new ItemOnItemMessageDecoder());
         bind(new ItemOnObjectMessageDecoder());
         bind(new MagicOnItemMessageDecoder());
