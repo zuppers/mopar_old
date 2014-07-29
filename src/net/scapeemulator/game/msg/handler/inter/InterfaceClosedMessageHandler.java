@@ -8,7 +8,7 @@ public final class InterfaceClosedMessageHandler extends MessageHandler<Interfac
 
 	@Override
 	public void handle(Player player, InterfaceClosedMessage message) {
-		player.getInterfaceSet().closeWindow();
+		player.getInterfaceSet().resetAll();
 	}
 
 }
