@@ -12,9 +12,8 @@ import net.scapeemulator.cache.util.ByteBufferUtils;
  */
 public final class ItemDefinition {
 
-    private String name;
-
     private int id;
+    private String name;
     private String examine;
     private int inventoryModelId;
     private int modelZoom;
@@ -43,8 +42,7 @@ public final class ItemDefinition {
 
     private int colourEquip1;
     private int colourEquip2;
-    private int unnotedId;
-    private int notedId;
+    private int swapId;
     private int notedTemplateId;
     private int[] stackableIds;
     private int[] stackableAmounts;
@@ -62,8 +60,10 @@ public final class ItemDefinition {
     public static ItemDefinition decode(int id, ByteBuffer buffer) {
         ItemDefinition def = new ItemDefinition();
         def.id = id;
+        def.swapId = id;
         def.groundOptions = new String[] { null, null, "take", null, null };
         def.inventoryOptions = new String[] { null, null, null, null, "drop" };
+
         while (true) {
             int opcode = buffer.get() & 0xFF;
             if (opcode == 0)
@@ -95,9 +95,9 @@ public final class ItemDefinition {
                 def.value = buffer.getInt();
             else if (opcode == 16)
                 def.membersOnly = true;
-            else if (opcode == 18) {
-                int i = buffer.getShort() & 0xFFFF;
-            } else if (opcode == 23)
+            else if (opcode == 18)
+                buffer.getShort();
+            else if (opcode == 23)
                 def.maleWearModel1 = buffer.getShort() & 0xFFFFF;
             else if (opcode == 24)
                 def.femaleWearModel1 = buffer.getShort() & 0xFFFFF;
@@ -149,13 +149,7 @@ public final class ItemDefinition {
             } else if (opcode == 96) {
                 int i = buffer.get() & 0xFF;
             } else if (opcode == 97) {
-                if (def.isNoted()) {
-                    def.unnotedId = buffer.getShort() & 0xFFFFF;
-                    def.notedId = id;
-                } else {
-                    def.notedId = buffer.getShort() & 0xFFFFF;
-                    def.unnotedId = id;
-                }
+                def.swapId = buffer.getShort() & 0xFFFFF;
             } else if (opcode == 98) {
                 def.notedTemplateId = buffer.getShort() & 0xFFFFF;
             } else if (opcode >= 100 && opcode < 110) {
@@ -251,7 +245,7 @@ public final class ItemDefinition {
     }
 
     public boolean isStackable() {
-        return stackable || !unnoted;
+        return stackable || (!unnoted && swapId != id);
     }
 
     public int getValue() {
@@ -259,11 +253,11 @@ public final class ItemDefinition {
     }
 
     public int getHighAlchemyValue() {
-        return (int) (getValue() * 0.6);
+        return (int) (value * 0.6);
     }
 
     public int getLowAlchemyValue() {
-        return (int) (getValue() * 0.4);
+        return (int) (value * 0.4);
     }
 
     public boolean isMembersOnly() {
@@ -326,18 +320,22 @@ public final class ItemDefinition {
         return colourEquip2;
     }
 
-    public int getUnnotedId() {
-        if (stackable)
-            return id;
-        return unnotedId;
+    public boolean canSwap() {
+        return id != swapId;
     }
-
-    public int getNotedId() {
-        if (stackable)
-            return id;
-        return notedId;
+    
+    public int swap() {
+        return swapId;
     }
-
+    
+    public int getNoted() {
+        return (!unnoted || swapId == -1) ? id : swapId;
+    }
+    
+    public int getUnnoted() {
+        return (unnoted || swapId == -1) ? id : swapId;
+    }
+    
     public int getNotedTemplateId() {
         return notedTemplateId;
     }
@@ -364,6 +362,10 @@ public final class ItemDefinition {
 
     public int getLendTemplateId() {
         return lendTemplateId;
+    }
+
+    public boolean canBank() {
+        return true;
     }
 
 }
