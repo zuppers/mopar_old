@@ -1,11 +1,11 @@
 package net.scapeemulator.game.model.player.trade;
 
 import net.scapeemulator.game.model.ExtendedOption;
-import net.scapeemulator.game.model.player.ComponentListener;
 import net.scapeemulator.game.model.player.IntegerScriptInputListener;
 import net.scapeemulator.game.model.player.Item;
 import net.scapeemulator.game.model.player.Player;
-import net.scapeemulator.game.model.player.InterfaceSet.Component;
+import net.scapeemulator.game.model.player.interfaces.ComponentListener;
+import net.scapeemulator.game.model.player.interfaces.InterfaceSet.Component;
 import net.scapeemulator.game.model.player.inventory.*;
 import net.scapeemulator.game.msg.impl.ScriptMessage;
 import net.scapeemulator.game.msg.impl.inter.InterfaceAccessMessage;

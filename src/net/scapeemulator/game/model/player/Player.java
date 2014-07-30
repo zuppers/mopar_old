@@ -23,6 +23,8 @@ import net.scapeemulator.game.model.player.action.PlayerDeathAction;
 import net.scapeemulator.game.model.player.appearance.Appearance;
 import net.scapeemulator.game.model.player.bank.BankSession;
 import net.scapeemulator.game.model.player.bank.BankSettings;
+import net.scapeemulator.game.model.player.interfaces.AccessSet;
+import net.scapeemulator.game.model.player.interfaces.InterfaceSet;
 import net.scapeemulator.game.model.player.inventory.Inventory;
 import net.scapeemulator.game.model.player.skills.Skill;
 import net.scapeemulator.game.model.player.skills.SkillAppearanceListener;

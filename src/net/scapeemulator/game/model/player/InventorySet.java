@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.scapeemulator.game.model.player.bank.BankSession;
+import net.scapeemulator.game.model.player.interfaces.Interface;
 import net.scapeemulator.game.model.player.inventory.Inventory;
 import net.scapeemulator.game.model.player.inventory.Inventory.StackMode;
 import net.scapeemulator.game.model.player.inventory.InventoryAppearanceListener;

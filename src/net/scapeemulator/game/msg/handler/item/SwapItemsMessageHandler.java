@@ -1,8 +1,8 @@
 package net.scapeemulator.game.msg.handler.item;
 
-import net.scapeemulator.game.model.player.Interface;
 import net.scapeemulator.game.model.player.Player;
 import net.scapeemulator.game.model.player.bank.BankSession;
+import net.scapeemulator.game.model.player.interfaces.Interface;
 import net.scapeemulator.game.msg.MessageHandler;
 import net.scapeemulator.game.msg.impl.SwapItemsMessage;
 

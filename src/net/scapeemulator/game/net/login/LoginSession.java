@@ -12,7 +12,7 @@ import java.security.SecureRandom;
 import net.burtleburtle.bob.rand.IsaacRandom;
 import net.scapeemulator.cache.ChecksumTable;
 import net.scapeemulator.game.GameServer;
-import net.scapeemulator.game.model.player.InterfaceSet.DisplayMode;
+import net.scapeemulator.game.model.player.interfaces.InterfaceSet.DisplayMode;
 import net.scapeemulator.game.model.player.Player;
 import net.scapeemulator.game.net.RsChannelHandler;
 import net.scapeemulator.game.net.Session;

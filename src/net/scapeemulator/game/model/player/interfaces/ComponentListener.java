@@ -1,6 +1,6 @@
-package net.scapeemulator.game.model.player;
+package net.scapeemulator.game.model.player.interfaces;
 
-import net.scapeemulator.game.model.player.InterfaceSet.Component;
+import net.scapeemulator.game.model.player.interfaces.InterfaceSet.Component;
 
 
 /**

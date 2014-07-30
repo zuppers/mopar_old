@@ -2,7 +2,7 @@ package net.scapeemulator.game.model.player.skills;
 
 import net.scapeemulator.game.model.SpotAnimation;
 import net.scapeemulator.game.model.player.Player;
-import net.scapeemulator.game.model.player.inter.CloseOnInputComponentListener;
+import net.scapeemulator.game.model.player.interfaces.CloseOnInputComponentListener;
 import net.scapeemulator.game.msg.impl.SkillMessage;
 import net.scapeemulator.game.util.StringUtils;
 

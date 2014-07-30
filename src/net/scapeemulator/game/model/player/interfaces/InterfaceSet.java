@@ -1,4 +1,4 @@
-package net.scapeemulator.game.model.player;
+package net.scapeemulator.game.model.player.interfaces;
 
 import static net.scapeemulator.game.msg.impl.inter.InterfaceOpenMessage.CLOSABLE;
 import static net.scapeemulator.game.msg.impl.inter.InterfaceOpenMessage.STATIC;
@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import net.scapeemulator.game.model.player.Player;
 import net.scapeemulator.game.msg.impl.inter.InterfaceCloseMessage;
 import net.scapeemulator.game.msg.impl.inter.InterfaceOpenMessage;
 import net.scapeemulator.game.msg.impl.inter.InterfaceRootMessage;

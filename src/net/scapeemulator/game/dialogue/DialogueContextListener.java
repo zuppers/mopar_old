@@ -1,7 +1,7 @@
 package net.scapeemulator.game.dialogue;
 
-import net.scapeemulator.game.model.player.ComponentListenerAdapter;
-import net.scapeemulator.game.model.player.InterfaceSet.Component;
+import net.scapeemulator.game.model.player.interfaces.ComponentListenerAdapter;
+import net.scapeemulator.game.model.player.interfaces.InterfaceSet.Component;
 
 /**
  * Written by Hadyn Richard

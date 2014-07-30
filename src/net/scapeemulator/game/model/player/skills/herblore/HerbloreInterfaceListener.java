@@ -1,7 +1,7 @@
 package net.scapeemulator.game.model.player.skills.herblore;
 
-import net.scapeemulator.game.model.player.ComponentListener;
-import net.scapeemulator.game.model.player.InterfaceSet.Component;
+import net.scapeemulator.game.model.player.interfaces.ComponentListener;
+import net.scapeemulator.game.model.player.interfaces.InterfaceSet.Component;
 import net.scapeemulator.game.model.player.Player;
 
 /**

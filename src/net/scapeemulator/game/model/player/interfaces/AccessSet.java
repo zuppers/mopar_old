@@ -1,9 +1,10 @@
-package net.scapeemulator.game.model.player;
+package net.scapeemulator.game.model.player.interfaces;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import net.scapeemulator.game.model.Widget;
+import net.scapeemulator.game.model.player.Player;
 import net.scapeemulator.game.msg.impl.inter.InterfaceAccessMessage;
 
 /**

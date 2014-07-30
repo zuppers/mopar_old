@@ -1,6 +1,6 @@
 package net.scapeemulator.game.msg.handler.inter;
 
-import net.scapeemulator.game.model.player.InterfaceSet.Component;
+import net.scapeemulator.game.model.player.interfaces.InterfaceSet.Component;
 import net.scapeemulator.game.model.player.Player;
 import net.scapeemulator.game.msg.MessageHandler;
 import net.scapeemulator.game.msg.impl.inter.InterfaceInputMessage;

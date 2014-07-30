@@ -1,4 +1,4 @@
-package net.scapeemulator.game.model.player;
+package net.scapeemulator.game.model.player.interfaces;
 
 /**
  * Written by Hadyn Richard

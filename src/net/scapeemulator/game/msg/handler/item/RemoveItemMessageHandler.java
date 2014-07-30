@@ -1,9 +1,9 @@
 package net.scapeemulator.game.msg.handler.item;
 
 import net.scapeemulator.game.model.player.Equipment;
-import net.scapeemulator.game.model.player.Interface;
 import net.scapeemulator.game.model.player.Item;
 import net.scapeemulator.game.model.player.Player;
+import net.scapeemulator.game.model.player.interfaces.Interface;
 import net.scapeemulator.game.msg.MessageHandler;
 import net.scapeemulator.game.msg.impl.RemoveItemMessage;
 
