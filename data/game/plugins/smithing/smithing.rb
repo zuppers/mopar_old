@@ -11,7 +11,7 @@ java_import 'net.scapeemulator.game.task.Action'
 java_import 'net.scapeemulator.game.model.mob.Animation'
 java_import 'net.scapeemulator.game.model.SpotAnimation'
 java_import 'net.scapeemulator.game.task.DistancedAction'
-java_import 'net.scapeemulator.game.model.player.ComponentListenerAdapter'
+java_import 'net.scapeemulator.game.model.player.interfaces.ComponentListenerAdapter'
 java_import 'net.scapeemulator.game.msg.impl.ScriptMessage'
 java_import 'net.scapeemulator.game.model.player.IntegerScriptInputListener'
 

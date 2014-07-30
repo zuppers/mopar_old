@@ -1,6 +1,6 @@
 require 'java'
 
-java_import 'net.scapeemulator.game.model.player.Interface'
+java_import 'net.scapeemulator.game.model.player.interfaces.Interface'
 java_import 'net.scapeemulator.game.model.player.skills.Skill'
 
 LEVEL_UP_WINDOW       = 741

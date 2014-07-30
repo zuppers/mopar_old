@@ -7,7 +7,7 @@
 
 require 'java'
 
-java_import 'net.scapeemulator.game.model.player.ComponentListenerAdapter'
+java_import 'net.scapeemulator.game.model.player.interfaces.ComponentListenerAdapter'
 java_import 'net.scapeemulator.game.msg.impl.ScriptMessage'
 java_import 'net.scapeemulator.game.model.player.IntegerScriptInputListener'
 
