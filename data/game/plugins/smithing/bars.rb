@@ -22,8 +22,8 @@ module Smithing
         @smelt_lvl_req = 1
         @smelt_xp = 6.2
         @bar_id = 2349
-        @primary_ore = Mining::ORES[:copper].item_id
-        @secondary_ore = Mining::ORES[:tin].item_id
+        @primary_ore = 436
+        @secondary_ore = 438
         @secondary_amt = 1
         @smith_xp = 12.5
       end
@@ -31,26 +31,26 @@ module Smithing
         @smelt_lvl_req = 8
         @smelt_xp = 8
         @bar_id = 9467
-        @primary_ore = Mining::ORES[:blurite].item_id
+        @primary_ore = 668
       end
       create_bar :iron do
         @smelt_lvl_req = 15
         @smelt_xp = 12.5
         @bar_id = 2351
-        @primary_ore = Mining::ORES[:iron].item_id
+        @primary_ore = 440
         @smith_xp = 25
       end
       create_bar :silver do
         @smelt_lvl_req = 20
         @smelt_xp = 13.7
         @bar_id = 2355
-        @primary_ore = Mining::ORES[:silver].item_id
+        @primary_ore = 442
       end
       create_bar :steel do
         @smelt_lvl_req = 30
         @smelt_xp = 17.5
         @bar_id = 2353
-        @primary_ore = Mining::ORES[:iron].item_id
+        @primary_ore = 440
         @secondary_amt = 2
         @smith_xp = 37.5
       end
@@ -58,13 +58,13 @@ module Smithing
         @smelt_lvl_req = 40
         @smelt_xp = 22.5
         @bar_id = 2357
-        @primary_ore = Mining::ORES[:gold].item_id
+        @primary_ore = 444
       end
       create_bar :mithril do
         @smelt_lvl_req = 50
         @smelt_xp = 17.5
         @bar_id = 2359
-        @primary_ore = Mining::ORES[:mithril].item_id
+        @primary_ore = 447
         @secondary_amt = 4
         @smith_xp = 50
       end
@@ -72,7 +72,7 @@ module Smithing
         @smelt_lvl_req = 70
         @smelt_xp = 37.5
         @bar_id = 2361
-        @primary_ore = Mining::ORES[:adamant].item_id
+        @primary_ore = 449
         @secondary_amt = 6
         @smith_xp = 62.5
       end
@@ -80,7 +80,7 @@ module Smithing
         @smelt_lvl_req = 85
         @smelt_xp = 50
         @bar_id = 2363
-        @primary_ore = Mining::ORES[:runite].item_id
+        @primary_ore = 451
         @secondary_amt = 8
         @smith_xp = 75
       end
@@ -96,7 +96,7 @@ module Smithing
       @bar_id = 0
       @primary_ore = nil
       @primary_amt = 1
-      @secondary_ore = Mining::ORES[:coal].item_id
+      @secondary_ore = 453
       @secondary_amt = 0
       @smith_xp = 0
       instance_eval(&block)
