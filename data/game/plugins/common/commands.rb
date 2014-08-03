@@ -133,6 +133,15 @@ bind :cmd, :name => 'teleto' do
   end
 end
 
+bind :cmd, :name => 'teletome' do
+  target = World::get_world.get_player_by_name args[0].sub('_', ' ')
+  if !target.nil?
+    target.teleport(player.get_position)
+  else
+    player.send_message 'No player found by that name. Remember to use underscores instead of spaces!'
+  end
+end
+
 bind :cmd, :name => 'npc' do
   create_npc :normal, :id => args[0].to_i, :position => player.get_position do |npc| npc.turn_to_target player end
 end
