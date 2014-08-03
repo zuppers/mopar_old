@@ -7,11 +7,8 @@ import net.scapeemulator.game.net.game.GameFrameBuilder;
 
 public final class TeleportPlayerDescriptor extends PlayerDescriptor {
 
-	private final boolean regionChanging;
-
 	public TeleportPlayerDescriptor(Player player, int[] tickets) {
 		super(player, tickets);
-		this.regionChanging = player.isRegionChanging();
 	}
 
 	@Override
@@ -26,7 +23,7 @@ public final class TeleportPlayerDescriptor extends PlayerDescriptor {
 		builder.putBits(1, 1);
 		builder.putBits(2, 3);
 		builder.putBits(7, y);
-		builder.putBits(1, regionChanging ? 1 : 0);
+		builder.putBits(1, 1);
 		builder.putBits(2, height);
 		builder.putBits(1, isBlockUpdatedRequired() ? 1 : 0);
 		builder.putBits(7, x);

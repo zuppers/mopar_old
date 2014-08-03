@@ -1,10 +1,12 @@
 package net.scapeemulator.game.model.player.skills.herblore;
 
-import net.scapeemulator.game.item.ItemInteractHandler;
+import net.scapeemulator.game.dispatcher.item.ItemInteractHandler;
 import net.scapeemulator.game.model.definition.ItemDefinitions;
 import net.scapeemulator.game.model.player.Item;
 import net.scapeemulator.game.model.player.Player;
 import net.scapeemulator.game.model.player.SlottedItem;
+import net.scapeemulator.game.model.player.interfaces.Interface;
+import net.scapeemulator.game.model.player.inventory.Inventory;
 import net.scapeemulator.game.model.player.skills.Skill;
 
 /**
@@ -20,7 +22,10 @@ public class GrimyHerbHandler extends ItemInteractHandler {
     }
 
     @Override
-    public void handle(Player player, SlottedItem item) {
+    public void handle(Inventory inventory, Player player, SlottedItem item) {
+        if(inventory != player.getInventory() || player.getInterfaceSet().getInventory().getCurrentId() != Interface.INVENTORY) {
+            return;
+        }
         if (player.getSkillSet().getCurrentLevel(Skill.HERBLORE) < herb.getLevel()) {
             player.sendMessage("You need level " + herb.getLevel() + " Herblore to clean that herb.");
             return;

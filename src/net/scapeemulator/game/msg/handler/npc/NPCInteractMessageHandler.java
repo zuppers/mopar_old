@@ -1,9 +1,9 @@
 package net.scapeemulator.game.msg.handler.npc;
 
+import net.scapeemulator.game.dispatcher.npc.NPCDispatcher;
 import net.scapeemulator.game.model.player.Player;
 import net.scapeemulator.game.msg.MessageHandler;
 import net.scapeemulator.game.msg.impl.npc.NPCInteractMessage;
-import net.scapeemulator.game.npc.NPCDispatcher;
 
 public final class NPCInteractMessageHandler extends MessageHandler<NPCInteractMessage> {
 

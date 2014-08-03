@@ -22,7 +22,7 @@
 
 package net.scapeemulator.game.msg.handler.inter;
 
-import net.scapeemulator.game.button.ButtonDispatcher;
+import net.scapeemulator.game.dispatcher.button.ButtonDispatcher;
 import net.scapeemulator.game.model.player.Player;
 import net.scapeemulator.game.msg.MessageHandler;
 import net.scapeemulator.game.msg.impl.button.ButtonOptionMessage;

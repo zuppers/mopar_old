@@ -1,6 +1,6 @@
 package net.scapeemulator.game.model.player.skills.herblore;
 
-import net.scapeemulator.game.item.ItemOnItemHandler;
+import net.scapeemulator.game.dispatcher.item.ItemOnItemHandler;
 import net.scapeemulator.game.model.definition.ItemDefinitions;
 import net.scapeemulator.game.model.player.Player;
 import net.scapeemulator.game.model.player.SlottedItem;
@@ -19,7 +19,7 @@ public class HerbOnVialHandler extends ItemOnItemHandler {
     public HerbOnVialHandler(Herb herb) {
         super(herb.getCleanId(), VIAL_OF_WATER);
         String message = "You put the " + ItemDefinitions.forId(herb.getCleanId()).getName() + " into the vial of water.";
-        recipe = new HerbloreRecipe(herb.getCleanId(), VIAL_OF_WATER, herb.getLevel(), 0.0, herb.getUnfinishedId(), message, null, 2);
+        recipe = new HerbloreRecipe(herb.getCleanId(), VIAL_OF_WATER, herb.getLevel(), 0.0, herb.getUnfinishedId(), message, null, 1);
     }
 
     @Override

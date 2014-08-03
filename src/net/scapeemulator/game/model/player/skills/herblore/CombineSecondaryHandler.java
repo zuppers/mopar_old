@@ -1,6 +1,6 @@
 package net.scapeemulator.game.model.player.skills.herblore;
 
-import net.scapeemulator.game.item.ItemOnItemHandler;
+import net.scapeemulator.game.dispatcher.item.ItemOnItemHandler;
 import net.scapeemulator.game.model.definition.ItemDefinitions;
 import net.scapeemulator.game.model.mob.Animation;
 import net.scapeemulator.game.model.player.Player;

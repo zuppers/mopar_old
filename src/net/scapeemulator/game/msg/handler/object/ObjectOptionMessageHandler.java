@@ -22,11 +22,11 @@
 
 package net.scapeemulator.game.msg.handler.object;
 
+import net.scapeemulator.game.dispatcher.object.ObjectDispatcher;
 import net.scapeemulator.game.model.Position;
 import net.scapeemulator.game.model.player.Player;
 import net.scapeemulator.game.msg.MessageHandler;
 import net.scapeemulator.game.msg.impl.object.ObjectOptionMessage;
-import net.scapeemulator.game.object.ObjectDispatcher;
 
 /**
  * Created by Hadyn Richard

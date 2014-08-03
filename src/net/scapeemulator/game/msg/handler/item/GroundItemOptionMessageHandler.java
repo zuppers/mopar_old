@@ -22,7 +22,7 @@
 
 package net.scapeemulator.game.msg.handler.item;
 
-import net.scapeemulator.game.grounditem.GroundItemDispatcher;
+import net.scapeemulator.game.dispatcher.grounditem.GroundItemDispatcher;
 import net.scapeemulator.game.model.Position;
 import net.scapeemulator.game.model.player.Player;
 import net.scapeemulator.game.msg.MessageHandler;

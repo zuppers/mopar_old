@@ -3,10 +3,13 @@ package net.scapeemulator.game.msg;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.scapeemulator.game.button.ButtonDispatcher;
-import net.scapeemulator.game.command.CommandDispatcher;
-import net.scapeemulator.game.grounditem.GroundItemDispatcher;
-import net.scapeemulator.game.item.*;
+import net.scapeemulator.game.dispatcher.button.ButtonDispatcher;
+import net.scapeemulator.game.dispatcher.command.CommandDispatcher;
+import net.scapeemulator.game.dispatcher.grounditem.GroundItemDispatcher;
+import net.scapeemulator.game.dispatcher.item.*;
+import net.scapeemulator.game.dispatcher.npc.NPCDispatcher;
+import net.scapeemulator.game.dispatcher.object.ObjectDispatcher;
+import net.scapeemulator.game.dispatcher.player.PlayerDispatcher;
 import net.scapeemulator.game.model.player.Player;
 import net.scapeemulator.game.msg.handler.*;
 import net.scapeemulator.game.msg.handler.inter.*;
@@ -24,9 +27,6 @@ import net.scapeemulator.game.msg.impl.npc.*;
 import net.scapeemulator.game.msg.impl.object.ObjectExamineMessage;
 import net.scapeemulator.game.msg.impl.object.ObjectOptionMessage;
 import net.scapeemulator.game.msg.impl.player.PlayerOptionMessage;
-import net.scapeemulator.game.npc.NPCDispatcher;
-import net.scapeemulator.game.object.ObjectDispatcher;
-import net.scapeemulator.game.player.PlayerDispatcher;
 import net.scapeemulator.game.plugin.ScriptContext;
 
 import org.slf4j.Logger;

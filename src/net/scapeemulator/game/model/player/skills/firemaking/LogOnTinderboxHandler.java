@@ -1,6 +1,6 @@
 package net.scapeemulator.game.model.player.skills.firemaking;
 
-import net.scapeemulator.game.item.ItemOnItemHandler;
+import net.scapeemulator.game.dispatcher.item.ItemOnItemHandler;
 import net.scapeemulator.game.model.player.Player;
 import net.scapeemulator.game.model.player.SlottedItem;
 import net.scapeemulator.game.model.player.inventory.Inventory;

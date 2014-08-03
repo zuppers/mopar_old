@@ -1,9 +1,9 @@
 package net.scapeemulator.game.model.player.skills.mining;
 
+import net.scapeemulator.game.dispatcher.object.ObjectHandler;
 import net.scapeemulator.game.model.Option;
 import net.scapeemulator.game.model.object.GroundObjectList.GroundObject;
 import net.scapeemulator.game.model.player.Player;
-import net.scapeemulator.game.object.ObjectHandler;
 import net.scapeemulator.game.util.HandlerContext;
 
 /**
