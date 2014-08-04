@@ -81,6 +81,7 @@ public final class Player extends Mob {
     private final BankSettings bankSettings = new BankSettings();
     private final InventorySet inventorySet = new InventorySet(this);
     private ChatMessage chatMessage;
+    private final PlayerTimers timers = new PlayerTimers();
     private final Friends friends = new Friends(this);
     private final Prayers prayers = new Prayers(this);
     private final ScriptInput scriptInput = new ScriptInput(this);
@@ -105,331 +106,20 @@ public final class Player extends Mob {
     private Position min;
     private Position max;
 
-    public void setMin() {
-        min = position;
-        sendMessage("Bottom left bounds set to " + min);
-    }
-
-    public void setMax() {
-        max = position;
-        sendMessage("Top right bounds set to " + max);
-    }
-
-    public void setSpawnPos(int id) {
-        sendMessage("Spawn for " + NPCDefinitions.forId(id).getName() + " sent to console.");
-        System.out.println("INSERT INTO `npcspawns`(`type`, `x`, `y`, `height`, `roam`, `min_x`, `min_y`, `max_x`, `max_y`) " + "VALUES (" + id + "," + position.getX() + "," + position.getY() + ","
-                + position.getHeight() + "," + 1 + "," + min.getX() + "," + min.getY() + "," + max.getX() + "," + max.getY() + ");");
-    }
-
-    // TODO end remove
-
     public Player() {
         init();
-    }
-
-    private void init() {
-        combatHandler = new PlayerCombatHandler(this);
-        skillSet.addListener(new SkillMessageListener(this));
-        skillSet.addListener(new SkillAppearanceListener(this));
-        World.getWorld().getGroundObjects().addListener(groundObjSync);
-        World.getWorld().getGroundItems().addListener(groundItemSync);
-        groundItems.addListener(groundItemSync);
-
-        /* Initialize all the player options */
-        for (int i = 0; i < options.length; i++) {
-            options[i] = new PlayerOption();
-        }
-    }
-
-    public int getDatabaseId() {
-        return databaseId;
-    }
-
-    public void setDatabaseId(int databaseId) {
-        this.databaseId = databaseId;
-    }
-
-    public void setUsername(String username) {
-        this.username = username.replaceAll(" ", "_").toLowerCase();
-        displayName = StringUtils.capitalize(username);
-        longUsername = Base37Utils.encodeBase37(username);
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    public long getLongUsername() {
-        return longUsername;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public int getRights() {
-        return rights;
-    }
-
-    public void setRights(int rights) {
-        this.rights = rights;
-    }
-
-    public GameSession getSession() {
-        return session;
-    }
-
-    public void setSession(GameSession session) {
-        this.session = session;
-    }
-
-    public ChannelFuture send(Message message) {
-        if (session != null) {
-            return session.send(message);
-        } else {
-            return null;
-        }
-    }
-
-    public void setInterfaceText(int widgetId, int componentId, String text) {
-        send(new InterfaceTextMessage(widgetId, componentId, text));
-    }
-
-    public void sendMessage(String text) {
-        send(new ServerMessage(text));
-    }
-
-    public boolean isRegionChanging() {
-        return regionChanging;
-    }
-
-    public Position getLastKnownRegion() {
-        return lastKnownRegion;
-    }
-
-    public void setLastKnownRegion(Position lastKnownRegion) {
-        this.lastKnownRegion = lastKnownRegion;
-        World.getWorld().getGroundObjects().removeListener(groundObjSync);
-
-        GameServer.getInstance().getMapLoader().load(lastKnownRegion.getX() / 64, lastKnownRegion.getY() / 64);
-
-        World.getWorld().getGroundObjects().addListener(groundObjSync);
-        this.regionChanging = true;
-    }
-
-    public List<Player> getLocalPlayers() {
-        return localPlayers;
-    }
-
-    public List<NPC> getLocalNpcs() {
-        return localNpcs;
-    }
-
-    public int getAppearanceTicket() {
-        return appearanceTicket;
-    }
-
-    public int[] getAppearanceTickets() {
-        return appearanceTickets;
-    }
-
-    public Appearance getAppearance() {
-        return appearance;
-    }
-
-    public void setAppearance(Appearance appearance) {
-        this.appearance = appearance;
-        appearanceUpdated();
-    }
-
-    public void appearanceUpdated() {
-        appearanceTicket = nextAppearanceTicket();
-    }
-
-    public int getEnergy() {
-        return energy;
-    }
-
-    public void setEnergy(int energy) {
-        this.energy = energy;
-        this.send(new EnergyMessage(energy));
-    }
-
-    public ChatMessage getChatMessage() {
-        return chatMessage;
-    }
-
-    public void setChatMessage(ChatMessage message) {
-        this.chatMessage = message;
-    }
-
-    public boolean isChatUpdated() {
-        return chatMessage != null;
-    }
-
-    public InventorySet getInventorySet() {
-        return inventorySet;
-    }
-
-    public Inventory getInventory() {
-        return inventorySet.getInventory();
-    }
-
-    public Inventory getEquipment() {
-        return inventorySet.getEquipment();
-    }
-
-    public Inventory getBank() {
-        return inventorySet.getBank();
-    }
-
-    public int getStance() {
-        if (pnpc > -1) {
-            return NPCDefinitions.forId(pnpc).getStance();
-        }
-        Item weapon = inventorySet.getEquipment().get(Equipment.WEAPON);
-        if (weapon != null) {
-            return EquipmentDefinition.forId(weapon.getId()).getStance();
-        } else {
-            return 1426;
-        }
-    }
-
-    public void setPNPC(int pnpc) {
-        this.pnpc = pnpc;
-        if (pnpc == -1) {
-            size = 0;
-        } else {
-            size = NPCDefinitions.forId(pnpc).getSize();
-        }
-        appearanceUpdated();
-    }
-
-    public int getPNPC() {
-        return pnpc;
-    }
-
-    public PlayerSettings getSettings() {
-        return settings;
-    }
-
-    public StateSet getStateSet() {
-        return stateSet;
-    }
-
-    public InterfaceSet getInterfaceSet() {
-        return interfaceSet;
-    }
-
-    public GrandExchangeHandler getGrandExchangeHandler() {
-        return grandExchangeHandler;
-    }
-
-    public ShopHandler getShopHandler() {
-        return shopHandler;
-    }
-
-    public AccessSet getAccessSet() {
-        return accessSet;
-    }
-
-    public Spellbook getSpellbook() {
-        return spellbook;
-    }
-
-    public void setSpellbook(Spellbook spellbook) {
-        this.spellbook = spellbook;
-    }
-
-    public GroundItemList getGroundItems() {
-        return groundItems;
-    }
-
-    public ScriptInput getScriptInput() {
-        return scriptInput;
-    }
-
-    public void setUpdateModelLists(boolean updateModelLists) {
-        this.updateModelLists = updateModelLists;
-    }
-
-    public boolean getUpdateModelLists() {
-        return updateModelLists;
-    }
-
-    public void toggleClipping() {
-        clipped = !clipped;
     }
 
     public boolean actionsBlocked() {
         return blockActions || !alive();
     }
 
-    public void setActionsBlocked(boolean blockActions) {
-        this.blockActions = blockActions;
+    private String addPlus(int bonus) {
+        return bonus > 0 ? "+" + bonus : "" + bonus;
     }
 
-    public PlayerCombatHandler getPlayerCombatHandler() {
-        return (PlayerCombatHandler) combatHandler;
-    }
-
-    public void refreshOptions() {
-        for (int i = 0; i < options.length; i++) {
-            PlayerOption option = options[i];
-            send(new PlayerMenuOptionMessage(i + 1, option.atTop(), option.getText()));
-        }
-    }
-
-    public PlayerOption getOption(int id) {
-        return options[id];
-    }
-
-    public void refreshGroundObjects() {
-        groundObjSync.purge();
-        World.getWorld().getGroundObjects().fireEvents(groundObjSync);
-    }
-
-    public void refreshGroundItems() {
-        groundItemSync.purge();
-        World.getWorld().getGroundItems().fireEvents(groundItemSync);
-        groundItems.fireEvents(groundItemSync);
-    }
-
-    public void unregister() {
-        World.getWorld().getGroundItems().removeListener(groundItemSync);
-        World.getWorld().getGroundObjects().removeListener(groundObjSync);
-        friends.logout();
-        stopAction();
-    }
-
-    /**
-     * Forces the player to logout. Only call from logout button.
-     */
-    public void logout() {
-        ChannelFuture future = send(new LogoutMessage());
-        if (future != null) {
-            future.addListener(ChannelFutureListener.CLOSE);
-        }
-    }
-
-    public Prayers getPrayers() {
-        return prayers;
-    }
-
-    public Friends getFriends() {
-        return friends;
-    }
-
-    public SkillSet getSkillSet() {
-        return skillSet;
+    public void appearanceUpdated() {
+        appearanceTicket = nextAppearanceTicket();
     }
 
     public void calculateEquipmentBonuses() {
@@ -477,14 +167,308 @@ public final class Player extends Mob {
         }
     }
 
-    @Override
-    public void teleport(Position position) {
-        interfaceSet.resetAll();
-        super.teleport(position);
+    public void endBankSession() {
+        bankSession = null;
     }
 
-    private String addPlus(int bonus) {
-        return bonus > 0 ? "+" + bonus : "" + bonus;
+    public AccessSet getAccessSet() {
+        return accessSet;
+    }
+
+    public Appearance getAppearance() {
+        return appearance;
+    }
+
+    public int getAppearanceTicket() {
+        return appearanceTicket;
+    }
+
+    public int[] getAppearanceTickets() {
+        return appearanceTickets;
+    }
+
+    public Inventory getBank() {
+        return inventorySet.getBank();
+    }
+
+    public BankSession getBankSession() {
+        return bankSession;
+    }
+
+    public BankSettings getBankSettings() {
+        return bankSettings;
+    }
+
+    public ChatMessage getChatMessage() {
+        return chatMessage;
+    }
+
+    @Override
+    public int getCurrentHitpoints() {
+        return skillSet.getCurrentLevel(Skill.HITPOINTS);
+    }
+
+    public int getDatabaseId() {
+        return databaseId;
+    }
+
+    public Animation getDeathAnimation() {
+        return DEATH_ANIMATION;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public int getEnergy() {
+        return energy;
+    }
+
+    public Inventory getEquipment() {
+        return inventorySet.getEquipment();
+    }
+
+    public EquipmentBonuses getEquipmentBonuses() {
+        return equipmentBonuses;
+    }
+
+    public Friends getFriends() {
+        return friends;
+    }
+
+    public PlayerTimers getTimers() {
+        return timers;
+    }
+    
+    public GrandExchangeHandler getGrandExchangeHandler() {
+        return grandExchangeHandler;
+    }
+
+    public GroundItemList getGroundItems() {
+        return groundItems;
+    }
+
+    @Override
+    public int getHealthRegen() {
+        int regen = prayers.prayerActive(HEAL) ? 2 : 1;
+        // Regen brace
+        if (getEquipment().get(Equipment.HANDS) != null) {
+            regen += getEquipment().get(Equipment.HANDS).getId() == 11133 ? 1 : 0;
+        }
+        return regen;
+    }
+
+    public Position getHomeLocation() {
+        return HOME_LOCATIONS[homeId];
+    }
+
+    public InterfaceSet getInterfaceSet() {
+        return interfaceSet;
+    }
+
+    public Inventory getInventory() {
+        return inventorySet.getInventory();
+    }
+
+    public InventorySet getInventorySet() {
+        return inventorySet;
+    }
+
+    public Position getLastKnownRegion() {
+        return lastKnownRegion;
+    }
+
+    public List<NPC> getLocalNpcs() {
+        return localNpcs;
+    }
+
+    public List<Player> getLocalPlayers() {
+        return localPlayers;
+    }
+
+    public long getLongUsername() {
+        return longUsername;
+    }
+
+    @Override
+    public int getMaximumHitpoints() {
+        return skillSet.getLevel(Skill.HITPOINTS);
+    }
+
+    public PlayerOption getOption(int id) {
+        return options[id];
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public PlayerCombatHandler getPlayerCombatHandler() {
+        return (PlayerCombatHandler) combatHandler;
+    }
+
+    public int getPNPC() {
+        return pnpc;
+    }
+
+    public int getPrayerPoints() {
+        return skillSet.getCurrentLevel(Skill.PRAYER);
+    }
+
+    public Prayers getPrayers() {
+        return prayers;
+    }
+
+    public int getRights() {
+        return rights;
+    }
+
+    public ScriptInput getScriptInput() {
+        return scriptInput;
+    }
+
+    public GameSession getSession() {
+        return session;
+    }
+
+    public PlayerSettings getSettings() {
+        return settings;
+    }
+
+    public ShopHandler getShopHandler() {
+        return shopHandler;
+    }
+
+    public SkillSet getSkillSet() {
+        return skillSet;
+    }
+
+    public Spellbook getSpellbook() {
+        return spellbook;
+    }
+
+    public int getStance() {
+        if (pnpc > -1) {
+            return NPCDefinitions.forId(pnpc).getStance();
+        }
+        Item weapon = inventorySet.getEquipment().get(Equipment.WEAPON);
+        if (weapon != null) {
+            return EquipmentDefinition.forId(weapon.getId()).getStance();
+        } else {
+            return 1426;
+        }
+    }
+
+    public StateSet getStateSet() {
+        return stateSet;
+    }
+
+    public int getTotalWeight() {
+        return getInventory().getWeight() + getEquipment().getWeight();
+    }
+
+    public TradeSession getTradeSession() {
+        return tradeSession;
+    }
+
+    public boolean getUpdateModelLists() {
+        return updateModelLists;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    @Override
+    public void heal(int amount) {
+        int temp = getCurrentHitpoints() + amount;
+        temp = temp > getMaximumHitpoints() ? getMaximumHitpoints() : temp;
+        skillSet.setCurrentLevel(Skill.HITPOINTS, temp);
+    }
+
+    private void init() {
+        combatHandler = new PlayerCombatHandler(this);
+        skillSet.addListener(new SkillMessageListener(this));
+        skillSet.addListener(new SkillAppearanceListener(this));
+        World.getWorld().getGroundObjects().addListener(groundObjSync);
+        World.getWorld().getGroundItems().addListener(groundItemSync);
+        groundItems.addListener(groundItemSync);
+
+        /* Initialize all the player options */
+        for (int i = 0; i < options.length; i++) {
+            options[i] = new PlayerOption();
+        }
+    }
+
+    public boolean isChatUpdated() {
+        return chatMessage != null;
+    }
+
+    public boolean isRegionChanging() {
+        return regionChanging;
+    }
+
+    @Override
+    public boolean isRunning() {
+        return settings.isRunning();
+    }
+
+    /**
+     * Forces the player to logout. Only call from logout button.
+     */
+    public void logout() {
+        ChannelFuture future = send(new LogoutMessage());
+        if (future != null) {
+            future.addListener(ChannelFutureListener.CLOSE);
+        }
+    }
+
+    protected void onDeath() {
+        reset();
+        startAction(new PlayerDeathAction(this));
+    }
+
+    @Override
+    public void reduceHp(int amount) {
+        skillSet.setCurrentLevel(Skill.HITPOINTS, getCurrentHitpoints() - amount);
+    }
+
+    public void reducePrayerPoints(int amount) {
+        skillSet.setCurrentLevel(Skill.PRAYER, getPrayerPoints() - amount);
+    }
+
+    public void refreshGroundItems() {
+        groundItemSync.purge();
+        World.getWorld().getGroundItems().fireEvents(groundItemSync);
+        groundItems.fireEvents(groundItemSync);
+    }
+
+    public void refreshGroundObjects() {
+        groundObjSync.purge();
+        World.getWorld().getGroundObjects().fireEvents(groundObjSync);
+    }
+
+    public void refreshOptions() {
+        for (int i = 0; i < options.length; i++) {
+            PlayerOption option = options[i];
+            send(new PlayerMenuOptionMessage(i + 1, option.atTop(), option.getText()));
+        }
+    }
+
+    @Override
+    public void reset() {
+        super.reset();
+        updateModelLists = false;
+        regionChanging = false;
+        chatMessage = null;
+    }
+
+    public ChannelFuture send(Message message) {
+        if (session != null) {
+            return session.send(message);
+        } else {
+            return null;
+        }
     }
 
     public void sendEquipmentBonuses() {
@@ -504,80 +488,30 @@ public final class Player extends Mob {
         setInterfaceText(667, 49, "Prayer: " + addPlus(equipmentBonuses.getPrayerBonus()));
     }
 
-    @Override
-    public void reset() {
-        super.reset();
-        updateModelLists = false;
-        regionChanging = false;
-        chatMessage = null;
+    public void sendMessage(String text) {
+        send(new ServerMessage(text));
     }
 
-    public EquipmentBonuses getEquipmentBonuses() {
-        return equipmentBonuses;
+    public void setActionsBlocked(boolean blockActions) {
+        this.blockActions = blockActions;
     }
 
-    public int getPrayerPoints() {
-        return skillSet.getCurrentLevel(Skill.PRAYER);
+    public void setAppearance(Appearance appearance) {
+        this.appearance = appearance;
+        appearanceUpdated();
     }
 
-    public void reducePrayerPoints(int amount) {
-        skillSet.setCurrentLevel(Skill.PRAYER, getPrayerPoints() - amount);
+    public void setChatMessage(ChatMessage message) {
+        this.chatMessage = message;
     }
 
-    @Override
-    public int getCurrentHitpoints() {
-        return skillSet.getCurrentLevel(Skill.HITPOINTS);
+    public void setDatabaseId(int databaseId) {
+        this.databaseId = databaseId;
     }
 
-    @Override
-    public void reduceHp(int amount) {
-        skillSet.setCurrentLevel(Skill.HITPOINTS, getCurrentHitpoints() - amount);
-    }
-
-    public void setTradeRequest(Player other) {
-        wantToTrade = other;
-    }
-
-    public boolean wantsToTrade(Player other) {
-        return other == wantToTrade;
-    }
-
-    public void startBankSession() {
-        bankSession = new BankSession(this);
-        bankSession.init();
-    }
-
-    public void endBankSession() {
-        bankSession = null;
-    }
-
-    public BankSession getBankSession() {
-        return bankSession;
-    }
-
-    public BankSettings getBankSettings() {
-        return bankSettings;
-    }
-
-    public void setTradeSession(TradeSession tradeSession) {
-        this.tradeSession = tradeSession;
-    }
-
-    public TradeSession getTradeSession() {
-        return tradeSession;
-    }
-
-    protected void onDeath() {
-        reset();
-        startAction(new PlayerDeathAction(this));
-    }
-
-    public Position getHomeLocation() {
-        return HOME_LOCATIONS[homeId];
-    }
-
-    public int getTotalWeight() {
-        return getInventory().getWeight() + getEquipment().getWeight();
+    public void setEnergy(int energy) {
+        this.energy = energy;
+        this.send(new EnergyMessage(energy));
     }
 
     @Override
@@ -586,34 +520,103 @@ public final class Player extends Mob {
         appearanceUpdated();
     }
 
-    @Override
-    public boolean isRunning() {
-        return settings.isRunning();
+    public void setInterfaceText(int widgetId, int componentId, String text) {
+        send(new InterfaceTextMessage(widgetId, componentId, text));
     }
 
-    public Animation getDeathAnimation() {
-        return DEATH_ANIMATION;
+    public void setLastKnownRegion(Position lastKnownRegion) {
+        this.lastKnownRegion = lastKnownRegion;
+        World.getWorld().getGroundObjects().removeListener(groundObjSync);
+
+        GameServer.getInstance().getMapLoader().load(lastKnownRegion.getX() / 64, lastKnownRegion.getY() / 64);
+
+        World.getWorld().getGroundObjects().addListener(groundObjSync);
+        this.regionChanging = true;
     }
 
-    @Override
-    public int getMaximumHitpoints() {
-        return skillSet.getLevel(Skill.HITPOINTS);
+    public void setMax() {
+        max = position;
+        sendMessage("Top right bounds set to " + max);
     }
 
-    @Override
-    protected void heal(int amount) {
-        int temp = getCurrentHitpoints() + amount;
-        temp = temp > getMaximumHitpoints() ? getMaximumHitpoints() : temp;
-        skillSet.setCurrentLevel(Skill.HITPOINTS, temp);
+    public void setMin() {
+        min = position;
+        sendMessage("Bottom left bounds set to " + min);
     }
 
-    @Override
-    public int getHealthRegen() {
-        int regen = prayers.prayerActive(HEAL) ? 2 : 1;
-        // Regen brace
-        if (getEquipment().get(Equipment.HANDS) != null) {
-            regen += getEquipment().get(Equipment.HANDS).getId() == 11133 ? 1 : 0;
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setPNPC(int pnpc) {
+        this.pnpc = pnpc;
+        if (pnpc == -1) {
+            size = 0;
+        } else {
+            size = NPCDefinitions.forId(pnpc).getSize();
         }
-        return regen;
+        appearanceUpdated();
+    }
+
+    public void setRights(int rights) {
+        this.rights = rights;
+    }
+
+    public void setSession(GameSession session) {
+        this.session = session;
+    }
+
+    public void setSpawnPos(int id) {
+        sendMessage("Spawn for " + NPCDefinitions.forId(id).getName() + " sent to console.");
+        System.out.println("INSERT INTO `npcspawns`(`type`, `x`, `y`, `height`, `roam`, `min_x`, `min_y`, `max_x`, `max_y`) " + "VALUES (" + id + "," + position.getX() + "," + position.getY() + ","
+                + position.getHeight() + "," + 1 + "," + min.getX() + "," + min.getY() + "," + max.getX() + "," + max.getY() + ");");
+    }
+
+    public void setSpellbook(Spellbook spellbook) {
+        this.spellbook = spellbook;
+    }
+
+    public void setTradeRequest(Player other) {
+        wantToTrade = other;
+    }
+
+    public void setTradeSession(TradeSession tradeSession) {
+        this.tradeSession = tradeSession;
+    }
+
+    public void setUpdateModelLists(boolean updateModelLists) {
+        this.updateModelLists = updateModelLists;
+    }
+
+    public void setUsername(String username) {
+        this.username = username.replaceAll(" ", "_").toLowerCase();
+        displayName = StringUtils.capitalize(username);
+        longUsername = Base37Utils.encodeBase37(username);
+    }
+
+    public void startBankSession() {
+        bankSession = new BankSession(this);
+        bankSession.init();
+    }
+
+    @Override
+    public void teleport(Position position) {
+        interfaceSet.resetAll();
+        super.teleport(position);
+    }
+
+    public void toggleClipping() {
+        clipped = !clipped;
+    }
+
+    public void unregister() {
+        World.getWorld().getGroundItems().removeListener(groundItemSync);
+        World.getWorld().getGroundObjects().removeListener(groundObjSync);
+        friends.logout();
+        stopAction();
+    }
+
+    public boolean wantsToTrade(Player other) {
+        return other == wantToTrade;
     }
 }

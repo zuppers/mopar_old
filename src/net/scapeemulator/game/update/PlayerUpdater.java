@@ -54,6 +54,8 @@ public final class PlayerUpdater {
             player.setLastKnownRegion(position);
             player.send(new RegionChangeMessage(position));
         }
+        
+        player.getTimers().tick();
         player.getPrayers().tick();
         player.getSkillSet().tick(player.getHealthRegen(), player.getPrayers().prayerActive(Prayer.RESTORE) ? 2 : 1);
         player.getGroundItems().tick();
