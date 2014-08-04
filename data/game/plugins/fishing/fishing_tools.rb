@@ -9,7 +9,6 @@ require 'java'
 
 java_import 'net.scapeemulator.game.model.mob.Animation'
 java_import 'net.scapeemulator.game.model.player.skills.Skill'
-java_import 'net.scapeemulator.game.item.ItemOnItemDispatcher'
 
 module Fishing
 

@@ -70,7 +70,7 @@ class HandlerType
 	def setup
 
 		# Import the java class for the specified target handler.
-		java_import "net.scapeemulator.game.#{@package_prefix}.#{@class_name}"
+		java_import "net.scapeemulator.game.dispatcher.#{@package_prefix}.#{@class_name}"
 
 		# Get the target class to inherit.
 		inherit = Class.new(Object.const_get(class_name))

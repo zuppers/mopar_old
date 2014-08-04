@@ -10,7 +10,7 @@ require 'java'
 java_import 'net.scapeemulator.game.model.mob.Animation'
 java_import 'net.scapeemulator.game.model.player.skills.Skill'
 java_import 'net.scapeemulator.game.model.player.Item'
-java_import 'net.scapeemulator.game.item.ItemOnItemDispatcher'
+java_import 'net.scapeemulator.game.dispatcher.item.ItemOnItemDispatcher'
 
 module Fletching
 
