@@ -13,6 +13,8 @@ java_import 'net.scapeemulator.game.msg.impl.inter.InterfaceItemsMessage'
 java_import 'net.scapeemulator.game.msg.impl.inter.InterfaceVisibleMessage'
 java_import 'net.scapeemulator.game.msg.impl.inter.InterfaceOpenMessage'
 java_import 'net.scapeemulator.game.msg.impl.ConfigMessage'
+java_import 'net.scapeemulator.game.msg.impl.CameraMoveMessage'
+java_import 'net.scapeemulator.game.msg.impl.CameraResetMessage'
 
 # Common administrator commands
 bind :cmd, :name => 'looks' do
@@ -73,6 +75,14 @@ end
 
 bind :cmd, :name => 'config' do
   player.send ConfigMessage.new(args[0].to_i, args[1].to_i);
+end
+
+bind :cmd, :name => 'cam' do
+  player.send CameraMoveMessage.new(args[0].to_i, args[1].to_i, args[2].to_i, args[3].to_i, args[4].to_i);
+end
+
+bind :cmd, :name => 'resetcam' do
+  player.send CameraResetMessage.new;
 end
 
 bind :cmd, :name => 'visible' do

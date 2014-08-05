@@ -1,39 +1,39 @@
 package net.scapeemulator.game.model.player.skills.herblore;
 
-import net.scapeemulator.game.dispatcher.item.ItemInteractHandler;
+import net.scapeemulator.game.dispatcher.item.ItemHandler;
+import net.scapeemulator.game.model.Option;
 import net.scapeemulator.game.model.definition.ItemDefinitions;
 import net.scapeemulator.game.model.player.Item;
 import net.scapeemulator.game.model.player.Player;
 import net.scapeemulator.game.model.player.SlottedItem;
-import net.scapeemulator.game.model.player.interfaces.Interface;
 import net.scapeemulator.game.model.player.inventory.Inventory;
 import net.scapeemulator.game.model.player.skills.Skill;
+import net.scapeemulator.game.util.HandlerContext;
 
 /**
  * @author David Insley
  */
-public class GrimyHerbHandler extends ItemInteractHandler {
+public class GrimyHerbHandler extends ItemHandler {
 
-    private final Herb herb;
-
-    public GrimyHerbHandler(Herb herb) {
-        super(herb.getGrimyId());
-        this.herb = herb;
+    public GrimyHerbHandler() {
+        super(Option.ONE);
     }
 
     @Override
-    public void handle(Inventory inventory, Player player, SlottedItem item) {
-        if(inventory != player.getInventory() || player.getInterfaceSet().getInventory().getCurrentId() != Interface.INVENTORY) {
-            return;
+    public void handle(Player player, Inventory inventory, SlottedItem item, String optionName, HandlerContext context) {
+        Herb herb = Herb.forGrimyId(item.getItem().getId());
+        if (herb != null) {
+            context.stop();
+            if (player.getSkillSet().getCurrentLevel(Skill.HERBLORE) < herb.getLevel()) {
+                player.sendMessage("You need level " + herb.getLevel() + " Herblore to clean that herb.");
+                return;
+            }
+            player.getInventory().remove(item);
+            player.getInventory().add(new Item(herb.getCleanId()));
+            player.getSkillSet().addExperience(Skill.HERBLORE, herb.getXp());
+            player.sendMessage("You clean dirt from the " + ItemDefinitions.forId(item.getItem().getId()).getName().toLowerCase() + ".");
         }
-        if (player.getSkillSet().getCurrentLevel(Skill.HERBLORE) < herb.getLevel()) {
-            player.sendMessage("You need level " + herb.getLevel() + " Herblore to clean that herb.");
-            return;
-        }
-        player.getInventory().remove(item);
-        player.getInventory().add(new Item(herb.getCleanId()));
-        player.getSkillSet().addExperience(Skill.HERBLORE, herb.getXp());
-        player.sendMessage("You clean dirt from the " + ItemDefinitions.forId(item.getItem().getId()).getName().toLowerCase() + ".");
+
     }
 
 }

@@ -13,12 +13,13 @@ public class Herblore {
                 GameServer.getInstance().getMessageDispatcher().getItemOnItemDispatcher().bind(new GrindingHandler(secondary));
             }
         }
+        
+        GameServer.getInstance().getMessageDispatcher().getItemDispatcher().bind(new GrimyHerbHandler());
+        
         for (Herb herb : Herb.values()) {
-            if (herb != Herb.STAR_FLOWER) {
-                GameServer.getInstance().getMessageDispatcher().getItemInteractDispatcher().bind(new GrimyHerbHandler(herb));
-            }
             GameServer.getInstance().getMessageDispatcher().getItemOnItemDispatcher().bind(new HerbOnVialHandler(herb));
         }
+        
         for (Potion potion : Potion.values()) {
             GameServer.getInstance().getMessageDispatcher().getItemOnItemDispatcher().bind(new CombineSecondaryHandler(potion));
         }

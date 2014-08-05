@@ -60,9 +60,9 @@ public final class CodecRepository {
         bind(new GrandExchangeSearchMessageDecoder());
 
         /* Bind all the item decoders */
+        bind(new ItemOptionOneMessageDecoder());
         bind(new ItemOptionTwoMessageDecoder());
-        bind(new ItemExamineMessageDecoder());
-        bind(new ItemInteractMessageDecoder());
+        bind(new ItemExamineMessageDecoder()); 
         bind(new ItemDropMessageDecoder());
         bind(new SwapItemsMessageDecoder());
         bind(new SwapItemsTwoMessageDecoder());
@@ -102,6 +102,8 @@ public final class CodecRepository {
         bind(new InterfaceTextMessageEncoder());
         bind(new ServerMessageEncoder());
         bind(new LogoutMessageEncoder());
+        bind(new CameraMoveMessageEncoder());
+        bind(new CameraResetMessageEncoder());
         bind(new PlayerUpdateMessageEncoder());
         bind(new PrivacySettingsUpdateMessageEncoder());
         bind(new PrivateChatSentMessageEncoder());

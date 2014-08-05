@@ -8,12 +8,8 @@ import net.scapeemulator.game.GameServer;
 public class PrayerSkill {
 
     public static void initialize() {
-        
-        // TODO bone on altar
-        
-        for (Bone bone : Bone.values()) {
-            GameServer.getInstance().getMessageDispatcher().getItemInteractDispatcher().bind(new BuryBoneHandler(bone));
-        }
-    }
 
+        // TODO bone on altar
+        GameServer.getInstance().getMessageDispatcher().getItemDispatcher().bind(new BuryBoneHandler());
+    }
 }

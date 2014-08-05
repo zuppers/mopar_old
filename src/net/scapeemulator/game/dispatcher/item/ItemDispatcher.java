@@ -31,6 +31,7 @@ import net.scapeemulator.game.model.Option;
 import net.scapeemulator.game.model.definition.ItemDefinitions;
 import net.scapeemulator.game.model.player.Player;
 import net.scapeemulator.game.model.player.SlottedItem;
+import net.scapeemulator.game.model.player.interfaces.Interface;
 import net.scapeemulator.game.model.player.inventory.Inventory;
 import net.scapeemulator.game.util.HandlerContext;
 
@@ -48,8 +49,8 @@ public final class ItemDispatcher {
      * Constructs a new {@link ItemDispatcher};
      */
     public ItemDispatcher() {
-        for(Option option : Option.values()) {
-            if(option.equals(Option.ALL)) {
+        for (Option option : Option.values()) {
+            if (option.equals(Option.ALL)) {
                 continue;
             }
             handlerLists.put(option, new LinkedList<ItemHandler>());
@@ -59,11 +60,12 @@ public final class ItemDispatcher {
 
     /**
      * Binds a handler to this dispatcher.
+     * 
      * @param handler The handler to bind.
      */
     public void bind(ItemHandler handler) {
-        if(handler.getOption().equals(Option.ALL)) {
-            for(Map.Entry<Option, List<ItemHandler>> entry : handlerLists.entrySet()) {
+        if (handler.getOption().equals(Option.ALL)) {
+            for (Map.Entry<Option, List<ItemHandler>> entry : handlerLists.entrySet()) {
                 entry.getValue().add(handler);
             }
         } else {
@@ -71,20 +73,21 @@ public final class ItemDispatcher {
             list.add(handler);
         }
     }
-    
+
     public void unbindAll() {
-        for(List<?> list : handlerLists.values()) {
+        for (List<?> list : handlerLists.values()) {
             list.clear();
         }
     }
-    
+
     private static boolean validateInventory(Inventory inventory, int id, int slot) {
         return inventory.get(slot) != null && inventory.get(slot).getId() == id;
     }
 
     /**
      * Gets the name of the option for an item.
-     * @param id  The item id.
+     * 
+     * @param id The item id.
      * @param option The option.
      * @return The option name.
      */
@@ -94,28 +97,28 @@ public final class ItemDispatcher {
     }
 
     public void handle(Player player, int id, int slot, int hash, Option option) {
-		if(player.actionsBlocked()) {
-			return;
-		}
+        if (player.actionsBlocked() || player.getInterfaceSet().getInventory().getCurrentId() != Interface.INVENTORY) {
+            return;
+        }
         List<ItemHandler> handlers = handlerLists.get(option);
-        if(handlers != null) {
+        if (handlers != null) {
 
             Inventory inventory = player.getInventorySet().get(hash);
-            if(inventory == null || !validateInventory(inventory, id, slot)) {
+            if (inventory != player.getInventory() || !validateInventory(inventory, id, slot)) {
                 return;
             }
 
             SlottedItem slottedItem = new SlottedItem(slot, inventory.get(slot));
             String optionName = getOptionName(id, option);
-            
+
             HandlerContext context = new HandlerContext();
 
-            for(ItemHandler handler : handlers) {
+            for (ItemHandler handler : handlers) {
 
                 /* Handle the message parameters */
                 handler.handle(player, inventory, slottedItem, optionName, context);
-                
-                if(context.doStop()) {
+
+                if (context.doStop()) {
                     break;
                 }
             }

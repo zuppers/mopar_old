@@ -1,29 +1,28 @@
 package net.scapeemulator.game.model.player.skills.prayer;
 
-import net.scapeemulator.game.dispatcher.item.ItemInteractHandler;
+import net.scapeemulator.game.dispatcher.item.ItemHandler;
+import net.scapeemulator.game.model.Option;
 import net.scapeemulator.game.model.player.Player;
 import net.scapeemulator.game.model.player.SlottedItem;
-import net.scapeemulator.game.model.player.interfaces.Interface;
 import net.scapeemulator.game.model.player.inventory.Inventory;
+import net.scapeemulator.game.util.HandlerContext;
 
 /**
  * @author David Insley
  */
-public class BuryBoneHandler extends ItemInteractHandler {
+public class BuryBoneHandler extends ItemHandler {
 
-    private final Bone bone;
-
-    public BuryBoneHandler(Bone bone) {
-        super(bone.getItemId());
-        this.bone = bone;
+    public BuryBoneHandler() {
+        super(Option.ONE);
     }
 
     @Override
-    public void handle(Inventory inventory, Player player, SlottedItem item) {
-        if(inventory != player.getInventory() || player.getInterfaceSet().getInventory().getCurrentId() != Interface.INVENTORY) {
-            return;
+    public void handle(Player player, Inventory inventory, SlottedItem item, String option, HandlerContext context) {
+        Bone bone = Bone.forId(item.getItem().getId());
+        if (bone != null) {
+            context.stop();
+            player.startAction(new BuryBoneAction(player, bone, item));
         }
-        player.startAction(new BuryBoneAction(player, bone, item));
     }
 
 }

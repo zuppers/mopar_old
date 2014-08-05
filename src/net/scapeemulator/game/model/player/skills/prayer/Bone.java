@@ -30,6 +30,15 @@ public enum Bone {
         this.itemId = itemId;
     }
 
+    public static Bone forId(int itemId) {
+        for (Bone bone : values()) {
+            if (bone.itemId == itemId) {
+                return bone;
+            }
+        }
+        return null;
+    }
+    
     public double getXp() {
         return xp;
     }

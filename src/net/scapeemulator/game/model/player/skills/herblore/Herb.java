@@ -4,7 +4,7 @@ package net.scapeemulator.game.model.player.skills.herblore;
  * @author David Insley
  */
 public enum Herb {
-    
+
     GUAM(199, 249, 3, 2.5, 91),
     MARRENTILL(201, 251, 5, 3.8, 93),
     TARROMIN(203, 253, 11, 5, 95),
@@ -21,13 +21,13 @@ public enum Herb {
     DWARF_WEED(217, 267, 70, 13.8, 109),
     TORSTOL(219, 269, 75, 15, 111),
     STAR_FLOWER(-1, 9017, 57, 0, 9019);
-    
-    private final int grimyId; 
+
+    private final int grimyId;
     private final int cleanId;
     private final int level;
     private final double xp;
     private final int unfinishedId;
-        
+
     private Herb(int grimyId, int cleanId, int level, double xp, int unfinishedId) {
         this.grimyId = grimyId;
         this.cleanId = cleanId;
@@ -35,7 +35,16 @@ public enum Herb {
         this.xp = xp;
         this.unfinishedId = unfinishedId;
     }
-        
+
+    public static Herb forGrimyId(int grimyId) {
+        for (Herb herb : values()) {
+            if (herb.grimyId == grimyId && herb.grimyId > -1) {
+                return herb;
+            }
+        }
+        return null;
+    }
+
     public int getGrimyId() {
         return grimyId;
     }
@@ -55,5 +64,5 @@ public enum Herb {
     public int getUnfinishedId() {
         return unfinishedId;
     }
-    
+
 }
