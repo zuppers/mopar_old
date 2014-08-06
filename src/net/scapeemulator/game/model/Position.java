@@ -70,7 +70,7 @@ public final class Position {
     }
 
     public int getLocalY() {
-        return getLocalY(getCentralRegionX());
+        return getLocalY(getCentralRegionY());
     }
 
     public int getLocalX(int centralRegionX) {
@@ -208,6 +208,6 @@ public final class Position {
      */
     @Override
     public String toString() {
-        return "position[x: " + x + ", y: " + y + ", height: " + height + "]";
+        return "position[x: " + x + ", y: " + y + ", height: " + height + "] local[" + getLocalX() + ", " + getLocalY() + "]" ;
     }
 }
