@@ -111,7 +111,9 @@ public final class EquipmentDumper {
     }
 
     private static boolean isEquipment(int id, ItemDefinition definition) {
-        return definition.getMaleWearModel1() >= 0 || getSlot(id, definition) == Equipment.AMMO;
+        int slot = getSlot(id, definition);
+        // If the slot is not a ring or ammo, make sure it has a model.
+        return definition.getMaleWearModel1() >= 0 || slot == Equipment.AMMO || slot == Equipment.RING;
     }
 
     private static int getSlot(int id, ItemDefinition definition) {
@@ -1184,8 +1186,8 @@ public final class EquipmentDumper {
     } };
 
     private static int getRangeStrengthBonus(int id) {
-        for(int i = 0; i < RANGE_STRENGTH_BONUS[0].length; i++) {
-            if(RANGE_STRENGTH_BONUS[0][i] == id) {
+        for (int i = 0; i < RANGE_STRENGTH_BONUS[0].length; i++) {
+            if (RANGE_STRENGTH_BONUS[0][i] == id) {
                 return RANGE_STRENGTH_BONUS[1][i];
             }
         }
