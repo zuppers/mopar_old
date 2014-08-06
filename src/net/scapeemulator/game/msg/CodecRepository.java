@@ -62,7 +62,7 @@ public final class CodecRepository {
         /* Bind all the item decoders */
         bind(new ItemOptionOneMessageDecoder());
         bind(new ItemOptionTwoMessageDecoder());
-        bind(new ItemExamineMessageDecoder()); 
+        bind(new ItemExamineMessageDecoder());
         bind(new ItemDropMessageDecoder());
         bind(new SwapItemsMessageDecoder());
         bind(new SwapItemsTwoMessageDecoder());
@@ -103,6 +103,7 @@ public final class CodecRepository {
         bind(new ServerMessageEncoder());
         bind(new LogoutMessageEncoder());
         bind(new CameraMoveMessageEncoder());
+        bind(new CameraAngleMessageEncoder());
         bind(new CameraResetMessageEncoder());
         bind(new PlayerUpdateMessageEncoder());
         bind(new PrivacySettingsUpdateMessageEncoder());

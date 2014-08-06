@@ -78,11 +78,11 @@ bind :cmd, :name => 'config' do
 end
 
 bind :cmd, :name => 'cam' do
-  player.send CameraMoveMessage.new(args[0].to_i, args[1].to_i, args[2].to_i, args[3].to_i, args[4].to_i);
+  player.send CameraMoveMessage.new(args[0].to_i, args[1].to_i, args[2].to_i, args[3].to_i, args[4].to_i)
 end
 
 bind :cmd, :name => 'resetcam' do
-  player.send CameraResetMessage.new;
+  player.send CameraResetMessage.new
 end
 
 bind :cmd, :name => 'visible' do
