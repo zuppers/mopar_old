@@ -41,7 +41,7 @@ public final class CodecRepository {
         bind(new RegionChangedMessageDecoder());
         bind(new ClickMessageDecoder());
         bind(new FocusMessageDecoder());
-        bind(new CameraMessageDecoder());
+        bind(new CameraAngleMessageDecoder());
         bind(new FlagsMessageDecoder());
         bind(new SequenceNumberMessageDecoder());
         bind(new InterfaceClosedMessageDecoder());

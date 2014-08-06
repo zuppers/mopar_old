@@ -17,13 +17,13 @@ public final class CameraMoveMessageEncoder extends MessageEncoder<CameraMoveMes
 
 	@Override
 	public GameFrame encode(ByteBufAllocator alloc, CameraMoveMessage message) throws IOException {
-		GameFrameBuilder builder = new GameFrameBuilder(alloc, 125);
-		builder.put(DataType.SHORT, -1);
-		builder.put(DataType.BYTE, message.getX());
-		builder.put(DataType.BYTE, message.getY());
-		builder.put(DataType.SHORT, message.data[0]);
-		builder.put(DataType.BYTE, message.data[1]);
-		builder.put(DataType.BYTE, message.data[2]);
+	    GameFrameBuilder builder = new GameFrameBuilder(alloc, 154);
+        builder.put(DataType.SHORT, -1);
+        builder.put(DataType.BYTE, message.getX());
+        builder.put(DataType.BYTE, message.getY());
+        builder.put(DataType.SHORT, message.getHeight());       
+        builder.put(DataType.BYTE, message.getConstantSpeed());
+        builder.put(DataType.BYTE, message.getVariableSpeed());
 		return builder.toGameFrame();
 	}
 

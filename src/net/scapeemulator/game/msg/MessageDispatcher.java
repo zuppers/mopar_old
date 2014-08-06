@@ -60,7 +60,7 @@ public final class MessageDispatcher {
         bind(ClickMessage.class, new ClickMessageHandler());
         bind(FocusMessage.class, new FocusMessageHandler());
         bind(GrandExchangeSearchMessage.class, new GrandExchangeSearchMessageHandler());
-        bind(CameraMessage.class, new CameraMessageHandler());
+        bind(CameraAngleMessage.class, new CameraAngleMessageHandler());
         bind(FlagsMessage.class, new FlagsMessageHandler());
         bind(PrivacySettingsUpdateMessage.class, new PrivacySettingsUpdateMessageHandler());
         bind(PrivateChatSentMessage.class, new PrivateChatSentMessageHandler());
