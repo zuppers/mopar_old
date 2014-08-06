@@ -23,9 +23,9 @@ public final class CameraAngleMessageEncoder extends MessageEncoder<CameraAngleM
     @Override
     public GameFrame encode(ByteBufAllocator alloc, CameraAngleMessage message) throws IOException {
         GameFrameBuilder builder = new GameFrameBuilder(alloc, 187);
-        builder.put(DataType.SHORT, DataOrder.LITTLE, message.getPitch());
+        builder.put(DataType.SHORT, DataOrder.LITTLE, message.getYaw());
         builder.put(DataType.SHORT, -1);
-        builder.put(DataType.SHORT, message.getYaw());
+        builder.put(DataType.SHORT, message.getPitch());
         return builder.toGameFrame();
     }
 
