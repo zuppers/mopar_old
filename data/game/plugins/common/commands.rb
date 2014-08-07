@@ -16,6 +16,7 @@ java_import 'net.scapeemulator.game.msg.impl.ConfigMessage'
 java_import 'net.scapeemulator.game.msg.impl.CameraMoveMessage'
 java_import 'net.scapeemulator.game.msg.impl.CameraResetMessage'
 java_import 'net.scapeemulator.game.msg.impl.CameraAngleMessage'
+java_import 'net.scapeemulator.game.msg.impl.CameraFaceMessage'
 
 # Common administrator commands
 bind :cmd, :name => 'looks' do
@@ -84,6 +85,10 @@ end
 
 bind :cmd, :name => 'resetcam' do
   player.send CameraResetMessage.new
+end
+
+bind :cmd, :name => 'camface' do
+  player.send CameraFaceMessage.new(args[0].to_i, args[1].to_i, args[2].to_i, args[3].to_i, args[4].to_i)
 end
 
 bind :cmd, :name => 'camangle' do
