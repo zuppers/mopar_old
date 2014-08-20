@@ -247,6 +247,7 @@ public final class InterfaceSet {
             if(currentId != id) {
                 forceComponentClosed(); // TODO replace with a changed listener?
             }
+            listener = null;
             currentId = id;
             return this;
         }
@@ -306,6 +307,7 @@ public final class InterfaceSet {
                     }
                     break;
             }
+            listener = null;
         }
     }
     
