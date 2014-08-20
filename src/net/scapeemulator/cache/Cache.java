@@ -181,9 +181,12 @@ public final class Cache implements Closeable {
 	 * @return The file.
 	 * @throws IOException if an I/O error occurred.
 	 */
-	public ByteBuffer read(int type, int file, int member) throws IOException {
+	public ByteBuffer read(int type, int file, int member, boolean archived) throws IOException {
 		/* grab the container and the reference table */
 		Container container = read(type, file);
+		if(!archived) {
+		    return container.getData();
+		}
 		Container tableContainer = Container.decode(store.read(255, type));
 		ReferenceTable table = ReferenceTable.decode(tableContainer.getData());
 
@@ -198,7 +201,6 @@ public final class Cache implements Closeable {
 			if (entry.getEntry(i) != null)
 				nonSparseMember++;
 		}
-
 		/* extract the entry from the archive */
 		Archive archive = Archive.decode(container.getData(), entry.size());
 		return archive.getEntry(nonSparseMember);
