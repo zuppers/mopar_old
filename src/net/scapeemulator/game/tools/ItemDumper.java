@@ -17,7 +17,7 @@ public final class ItemDumper {
         ItemDefinitions.init(cache);
 
         System.out.println("Dumping cache item data...");
-        try (BufferedWriter output = new BufferedWriter(new FileWriter("data/game/cache_item_defs", false))) {
+        try (BufferedWriter output = new BufferedWriter(new FileWriter("data/game/dumps/cache_item_defs", false))) {
             for (int id = 0; id < ItemDefinitions.count(); id++) {
                 ItemDefinition def = ItemDefinitions.forId(id);
                 if (def != null) {
