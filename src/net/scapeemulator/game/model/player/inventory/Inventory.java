@@ -376,11 +376,11 @@ public final class Inventory {
     }
 
     public boolean contains(int id, int amount) {
-        return slotOf(id) != -1 && getAmount(id) >= amount;
+        return getAmount(id) >= amount;
     }
 
     public boolean contains(Item item) {
-        return slotOf(item.getId()) != -1 && getAmount(item.getId()) >= item.getAmount();
+        return getAmount(item.getId()) >= item.getAmount();
     }
 
     /**
