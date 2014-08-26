@@ -375,6 +375,14 @@ public final class Inventory {
         return slotOf(id) != -1;
     }
 
+    public boolean contains(int id, int amount) {
+        return slotOf(id) != -1 && getAmount(id) >= amount;
+    }
+
+    public boolean contains(Item item) {
+        return slotOf(item.getId()) != -1 && getAmount(item.getId()) >= item.getAmount();
+    }
+
     /**
      * Removes all given items from this inventory.
      * 

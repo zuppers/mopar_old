@@ -231,88 +231,123 @@ public final class TraversalMap {
         }
     }
 
-    // TODO add impenetrable unset
     public void unmarkWall(int rotation, int plane, int x, int y, ObjectType type, boolean impenetrable) {
         switch (type) {
-        case TYPE_0:
-            if (rotation == WEST) {
-                unset(plane, x, y, WALL_WEST);
-                unset(plane, x - 1, y, WALL_EAST);
-                if (impenetrable) {
-                    unset(plane, x, y, IMPENETRABLE_WALL_WEST);
-                    unset(plane, x - 1, y, IMPENETRABLE_WALL_EAST);
+            case TYPE_0:
+                if (rotation == WEST) {
+                    unset(plane, x, y, WALL_WEST);
+                    unset(plane, x - 1, y, WALL_EAST);
+                    if (impenetrable) {
+                        unset(plane, x, y, IMPENETRABLE_WALL_WEST);
+                        unset(plane, x - 1, y, IMPENETRABLE_WALL_EAST);
+                    }
                 }
-            }
-            if (rotation == NORTH) {
-                unset(plane, x, y, WALL_NORTH);
-                unset(plane, x, y + 1, WALL_SOUTH);
-                if (impenetrable) {
-                    unset(plane, x, y, IMPENETRABLE_WALL_NORTH);
-                    unset(plane, x, y + 1, IMPENETRABLE_WALL_SOUTH);
+                if (rotation == NORTH) {
+                    unset(plane, x, y, WALL_NORTH);
+                    unset(plane, x, y + 1, WALL_SOUTH);
+                    if (impenetrable) {
+                        unset(plane, x, y, IMPENETRABLE_WALL_NORTH);
+                        unset(plane, x, y + 1, IMPENETRABLE_WALL_SOUTH);
+                    }
                 }
-            }
-            if (rotation == EAST) {
-                unset(plane, x, y, WALL_EAST);
-                unset(plane, x + 1, y, WALL_WEST);
-                if (impenetrable) {
-                    unset(plane, x, y, IMPENETRABLE_WALL_EAST);
-                    unset(plane, x + 1, y, IMPENETRABLE_WALL_WEST);
+                if (rotation == EAST) {
+                    unset(plane, x, y, WALL_EAST);
+                    unset(plane, x + 1, y, WALL_WEST);
+                    if (impenetrable) {
+                        unset(plane, x, y, IMPENETRABLE_WALL_EAST);
+                        unset(plane, x + 1, y, IMPENETRABLE_WALL_WEST);
+                    }
                 }
-            }
-            if (rotation == SOUTH) {
-                unset(plane, x, y, WALL_SOUTH);
-                unset(plane, x, y - 1, WALL_NORTH);
-                if (impenetrable) {
-                    unset(plane, x, y, IMPENETRABLE_WALL_SOUTH);
-                    unset(plane, x, y - 1, IMPENETRABLE_WALL_NORTH);
+                if (rotation == SOUTH) {
+                    unset(plane, x, y, WALL_SOUTH);
+                    unset(plane, x, y - 1, WALL_NORTH);
+                    if (impenetrable) {
+                        unset(plane, x, y, IMPENETRABLE_WALL_SOUTH);
+                        unset(plane, x, y - 1, IMPENETRABLE_WALL_NORTH);
+                    }
                 }
-            }
-            break;
+                break;
 
-        case TYPE_2:
-            if (rotation == WEST) {
-                unset(plane, x, y, WALL_WEST | WALL_NORTH);
-                unset(plane, x - 1, y, WALL_EAST);
-                unset(plane, x, y + 1, WALL_SOUTH);
-            }
-            if (rotation == NORTH) {
-                unset(plane, x, y, WALL_EAST | WALL_NORTH);
-                unset(plane, x, y + 1, WALL_SOUTH);
-                unset(plane, x + 1, y, WALL_WEST);
-            }
-            if (rotation == EAST) {
-                unset(plane, x, y, WALL_EAST | WALL_SOUTH);
-                unset(plane, x + 1, y, WALL_WEST);
-                unset(plane, x, y - 1, WALL_NORTH);
-            }
-            if (rotation == SOUTH) {
-                unset(plane, x, y, WALL_EAST | WALL_SOUTH);
-                unset(plane, x, y - 1, WALL_WEST);
-                unset(plane, x - 1, y, WALL_NORTH);
-            }
-            break;
+            case TYPE_2:
+                if (rotation == WEST) {
+                    unset(plane, x, y, WALL_WEST | WALL_NORTH);
+                    unset(plane, x - 1, y, WALL_EAST);
+                    unset(plane, x, y + 1, WALL_SOUTH);
+                    if (impenetrable) {
+                        unset(plane, x, y, IMPENETRABLE_WALL_WEST | IMPENETRABLE_WALL_NORTH);
+                        unset(plane, x - 1, y, IMPENETRABLE_WALL_EAST);
+                        unset(plane, x, y + 1, IMPENETRABLE_WALL_SOUTH);
+                    }
+                }
+                if (rotation == NORTH) {
+                    unset(plane, x, y, WALL_EAST | WALL_NORTH);
+                    unset(plane, x, y + 1, WALL_SOUTH);
+                    unset(plane, x + 1, y, WALL_WEST);
+                    if (impenetrable) {
+                        unset(plane, x, y, IMPENETRABLE_WALL_EAST | IMPENETRABLE_WALL_NORTH);
+                        unset(plane, x, y + 1, IMPENETRABLE_WALL_SOUTH);
+                        unset(plane, x + 1, y, IMPENETRABLE_WALL_WEST);
+                    }
+                }
+                if (rotation == EAST) {
+                    unset(plane, x, y, WALL_EAST | WALL_SOUTH);
+                    unset(plane, x + 1, y, WALL_WEST);
+                    unset(plane, x, y - 1, WALL_NORTH);
+                    if (impenetrable) {
+                        unset(plane, x, y, IMPENETRABLE_WALL_EAST | IMPENETRABLE_WALL_SOUTH);
+                        unset(plane, x + 1, y, IMPENETRABLE_WALL_WEST);
+                        unset(plane, x, y - 1, IMPENETRABLE_WALL_NORTH);
+                    }
+                }
+                if (rotation == SOUTH) {
+                    unset(plane, x, y, WALL_EAST | WALL_SOUTH);
+                    unset(plane, x, y - 1, WALL_WEST);
+                    unset(plane, x - 1, y, WALL_NORTH);
+                    if (impenetrable) {
+                        unset(plane, x, y, IMPENETRABLE_WALL_EAST | IMPENETRABLE_WALL_SOUTH);
+                        unset(plane, x, y - 1, IMPENETRABLE_WALL_WEST);
+                        unset(plane, x - 1, y, IMPENETRABLE_WALL_NORTH);
+                    }
+                }
+                break;
 
-        case TYPE_1:
-        case TYPE_3:
-            if (rotation == WEST) {
-                unset(plane, x, y, WALL_NORTH_WEST);
-                unset(plane, x - 1, y + 1, WALL_SOUTH_EAST);
-            }
-            if (rotation == NORTH) {
-                unset(plane, x, y, WALL_NORTH_EAST);
-                unset(plane, x + 1, y + 1, WALL_SOUTH_WEST);
-            }
-            if (rotation == EAST) {
-                unset(plane, x, y, WALL_SOUTH_EAST);
-                unset(plane, x + 1, y - 1, WALL_NORTH_WEST);
-            }
-            if (rotation == SOUTH) {
-                unset(plane, x, y, WALL_SOUTH_WEST);
-                unset(plane, x - 1, y - 1, WALL_NORTH_EAST);
-            }
-            break;
-        default:
-            break;
+            case TYPE_1:
+            case TYPE_3:
+                if (rotation == WEST) {
+                    unset(plane, x, y, WALL_NORTH_WEST);
+                    unset(plane, x - 1, y + 1, WALL_SOUTH_EAST);
+                    if (impenetrable) {
+                        unset(plane, x, y, IMPENETRABLE_WALL_NORTH_WEST);
+                        unset(plane, x - 1, y + 1, IMPENETRABLE_WALL_SOUTH_EAST);
+                    }
+                }
+                if (rotation == NORTH) {
+                    unset(plane, x, y, WALL_NORTH_EAST);
+                    unset(plane, x + 1, y + 1, WALL_SOUTH_WEST);
+                    if (impenetrable) {
+                        unset(plane, x, y, IMPENETRABLE_WALL_NORTH_EAST);
+                        unset(plane, x + 1, y + 1, IMPENETRABLE_WALL_SOUTH_WEST);
+                    }
+                }
+                if (rotation == EAST) {
+                    unset(plane, x, y, WALL_SOUTH_EAST);
+                    unset(plane, x + 1, y - 1, WALL_NORTH_WEST);
+                    if (impenetrable) {
+                        unset(plane, x, y, IMPENETRABLE_WALL_SOUTH_EAST);
+                        unset(plane, x + 1, y - 1, IMPENETRABLE_WALL_NORTH_WEST);
+                    }
+                }
+                if (rotation == SOUTH) {
+                    unset(plane, x, y, WALL_SOUTH_WEST);
+                    unset(plane, x - 1, y - 1, WALL_NORTH_EAST);
+                    if (impenetrable) {
+                        unset(plane, x, y, IMPENETRABLE_WALL_SOUTH_WEST);
+                        unset(plane, x - 1, y - 1, IMPENETRABLE_WALL_NORTH_EAST);
+                    }
+                }
+                break;
+            default:
+                break;
         }
     }
 
