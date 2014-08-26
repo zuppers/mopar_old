@@ -6,12 +6,21 @@ import static net.scapeemulator.game.model.player.bank.BankTab.TAB_TWO;
 
 public class BankSettings {
 
+    private BankTab openTab = TAB_ALL;
     private int[] tabStarts;
     private int lastX;
 
     public BankSettings() {
         tabStarts = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
         lastX = 1;
+    }
+
+    public BankTab getOpenTab() {
+        return openTab;
+    }
+
+    public void setOpenTab(BankTab openTab) {
+        this.openTab = openTab;
     }
 
     public void setTabStarts(int[] tabStarts) {

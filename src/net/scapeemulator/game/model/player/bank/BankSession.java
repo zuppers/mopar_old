@@ -10,9 +10,7 @@ import net.scapeemulator.game.model.player.interfaces.ComponentListener;
 import net.scapeemulator.game.model.player.interfaces.InterfaceSet.Component;
 import net.scapeemulator.game.model.player.inventory.Inventory;
 import net.scapeemulator.game.msg.impl.ConfigMessage;
-import net.scapeemulator.game.msg.impl.ScriptMessage;
 import net.scapeemulator.game.msg.impl.inter.InterfaceAccessMessage;
-import net.scapeemulator.game.msg.impl.inter.InterfaceVisibleMessage;
 
 /**
  * @author David Insley
@@ -22,21 +20,20 @@ public class BankSession extends ComponentListener {
     public static final int BANK_SLOTS = 400;
     public static final int BANK_INVENTORY = 763;
     private static final int[] AMOUNTS = { 1, 5, 10 };
-    private static final int[] HIDDEN_COMPONENTS = { 18, 19, 23 }; // burden inv, help
 
     private final Player player;
     private final Inventory inventory;
     private final Inventory bank;
     private final BankSettings settings;
 
-    private BankTab openTab;
-
     /**
      * If true, items will attempt to be withdrawn as notes instead of their normal id. Move to
-     * BankSettings to have this persist across sessions.
+     * BankSettings to have this persist across bank sessions, and add to the serializer as well to
+     * have it persist across login sessions.
      */
     private boolean noteWithdrawal;
-
+    private boolean insert;
+    
     public BankSession(Player player) {
         this.player = player;
         this.inventory = player.getInventory();
@@ -45,28 +42,27 @@ public class BankSession extends ComponentListener {
     }
 
     public void init() {
-        openTab = TAB_ALL;
         sendOpenTab();
         bank.unlock();
-        
-        // Set the deposit/withdraw-x default value
-        player.send(new ConfigMessage(1249, settings.getLastX()));
+
+        // Set the deposit/withdraw-x default value and button configs
+        player.getStateSet().setState(1249, settings.getLastX());
+        player.getStateSet().setState(105, noteWithdrawal ? 1 : 0);
+        player.getStateSet().setState(304, insert ? 1 : 0);
 
         // Configure player inventory
         player.send(new InterfaceAccessMessage(BANK_INVENTORY, 0, 0, 27, 2360446));
         player.getInterfaceSet().openInventory(BANK_INVENTORY);
         inventory.refresh();
 
-        player.send(new ConfigMessage(563, 4194304));
-        player.send(new ScriptMessage(1451, 239, ""));
+        // TODO what do these do?
+        // player.send(new ConfigMessage(563, 4194304));
+        // player.send(new ScriptMessage(1451, 239, ""));
 
         sendTabSizes();
 
         // Configure bank screen
         player.send(new InterfaceAccessMessage(BANK, 73, 0, BANK_SLOTS - 1, 2360446));
-        for (int hide : HIDDEN_COMPONENTS) {
-            player.send(new InterfaceVisibleMessage(BANK, hide, false));
-        }
         player.getInterfaceSet().openWindow(BANK, this);
 
         bank.refresh();
@@ -75,12 +71,17 @@ public class BankSession extends ComponentListener {
     public void handleInterfaceClick(int childId, final int dyn, ExtendedOption option) {
         BankTab tab = BankTab.forChildId(childId);
         if (tab != null) {
-            openTab = tab;
+            settings.setOpenTab(tab);
             return;
         }
         switch (childId) {
+        case 14:
+            insert = !insert;
+            player.getStateSet().setState(304, insert ? 1 : 0);
+            break;
         case 16:
             noteWithdrawal = !noteWithdrawal;
+            player.getStateSet().setState(105, noteWithdrawal ? 1 : 0);
             break;
         case 73:
             switch (option) {
@@ -98,7 +99,7 @@ public class BankSession extends ComponentListener {
                     public void inputReceived(int value) {
                         withdraw(dyn, value);
                         settings.setLastX(value);
-                        player.send(new ConfigMessage(1249, value));
+                        player.getStateSet().setState(1249, value);
                         player.getScriptInput().reset();
                     }
                 });
@@ -136,7 +137,7 @@ public class BankSession extends ComponentListener {
                 public void inputReceived(int value) {
                     deposit(dyn, value);
                     settings.setLastX(value);
-                    player.send(new ConfigMessage(1249, value));
+                    player.getStateSet().setState(1249, value);
                     player.getScriptInput().reset();
                 }
             });
@@ -243,9 +244,8 @@ public class BankSession extends ComponentListener {
         if (withdrawn > 0) {
             bank.remove(new Item(originalItem.getId(), withdrawn), slot);
             if (bank.get(slot) == null) {
-                /*
-                 * Move all items one slot to fill the empty space.
-                 */
+                
+                // Move all items one slot to fill the empty space.
                 bank.silence();
                 for (int i = slot; i < BANK_SLOTS - 1; i++) {
                     bank.set(i, bank.get(i + 1));
@@ -254,7 +254,7 @@ public class BankSession extends ComponentListener {
                 bank.unsilence();
                 settings.decrementTabStarts(fromTab);
                 if (fromTab != BankTab.TAB_ALL && settings.getTabSize(fromTab) == 0) {
-                    openTab = BankTab.TAB_ALL;
+                    settings.setOpenTab(TAB_ALL);
                 }
                 sendTabSizes();
                 bank.refresh();
@@ -270,13 +270,40 @@ public class BankSession extends ComponentListener {
         }
         if (childId2 != 73) {
             BankTab tab = BankTab.forChildId(childId2);
-            if (tab != null && tab != openTab) {
+            if (tab != null && tab != settings.getOpenTab()) {
                 moveInsert(source, tab);
             }
         } else {
-            bank.swap(source, dest);
+            if (insert) {
+                swapInsert(source, dest);
+            } else {
+                bank.swap(source, dest);
+            }
         }
         sendOpenTab();
+    }
+
+    /**
+     * Called when the player attempts to swap two items but has the 'insert' option selected. Moves
+     * the source item to the slot after the destination item. Should only be called if the items
+     * are in the same tab.
+     * 
+     * @param source the slot of the item to move
+     * @param dest the slot of the item to insert after
+     */
+    private void swapInsert(int source, int dest) {
+        Item temp = bank.get(source);
+        bank.silence();
+        if (dest < source) {
+            dest += 1;
+        }
+        int delta = dest > source ? 1 : -1;
+        for (int i = source; Math.abs(i - dest) > 0; i += delta) {
+            bank.set(i, bank.get(i + delta));
+        }
+        bank.set(dest, temp);
+        bank.unsilence();
+        bank.refresh();
     }
 
     /**
@@ -354,7 +381,7 @@ public class BankSession extends ComponentListener {
          * Calculate the destination slot at the end of the open tab, using the banks next free slot
          * if the destination is the 'all' tab.
          */
-        int dest = openTab == BankTab.TAB_ALL ? last : settings.getTabStart(openTab) + settings.getTabSize(openTab);
+        int dest = settings.getOpenTab() == BankTab.TAB_ALL ? last : settings.getTabStart(settings.getOpenTab()) + settings.getTabSize(settings.getOpenTab());
 
         /*
          * Move all items one slot to make room for the new one.
@@ -370,7 +397,7 @@ public class BankSession extends ComponentListener {
          * Increase the tab start slot of everything greater than the destination tab because we
          * inserted a new item there.
          */
-        settings.incrementTabStarts(openTab);
+        settings.incrementTabStarts(settings.getOpenTab());
         sendTabSizes();
 
         bank.refresh();
@@ -392,7 +419,7 @@ public class BankSession extends ComponentListener {
     }
 
     private void sendOpenTab() {
-        player.getStateSet().setBitState(4893, openTab.getTabId());
+        player.getStateSet().setBitState(4893, settings.getOpenTab().getTabId());
     }
 
     @Override
