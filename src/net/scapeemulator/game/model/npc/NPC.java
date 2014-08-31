@@ -19,6 +19,7 @@ public abstract class NPC extends Mob {
     private Position spawnPosition;
     private int type;
     private int currentHp;
+    private int changingType;
     private Area walkingBounds;
     private NPCDefinition definition;
 
@@ -66,24 +67,46 @@ public abstract class NPC extends Mob {
     public int getHealthRegen() {
         return 2;
     }
-    
+
+    public void setChangingType(int type) {
+        changingType = type;
+        this.type = type;
+        definition = NPCDefinitions.forId(type);
+        size = definition.getSize();
+        combatHandler = new NPCCombatHandler(this);
+    }
+
+    public int getChangingType() {
+        return changingType;
+    }
+
+    public boolean isChangingType() {
+        return changingType != -1;
+    }
+
+    @Override
+    public void reset() {
+        super.reset();
+        changingType = -1;
+    }
+
     protected void reduceHp(int amount) {
         currentHp -= amount;
     }
 
     public void heal(int amount) {
         currentHp += amount;
-        if(currentHp > getMaximumHitpoints()) {
+        if (currentHp > getMaximumHitpoints()) {
             currentHp = getMaximumHitpoints();
         }
     }
-    
+
     public void healToFull() {
         currentHp = definition.getBaseHitpoints();
     }
 
     public void drop(Mob receiver) {
-        if(NPCDropTable.DROP_TABLES[type] == null) {
+        if (NPCDropTable.DROP_TABLES[type] == null) {
             return;
         }
         GroundItemList groundItemList = receiver instanceof Player ? ((Player) receiver).getGroundItems() : World.getWorld().getGroundItems();
@@ -97,12 +120,12 @@ public abstract class NPC extends Mob {
         reset();
         startAction(new NPCDeathAction(this));
     }
-    
+
     @Override
     public int getMaximumHitpoints() {
         return definition.getBaseHitpoints();
     }
-    
+
     @Override
     public int getCurrentHitpoints() {
         return currentHp;

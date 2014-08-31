@@ -12,79 +12,83 @@ import net.scapeemulator.game.net.game.GameFrameBuilder;
 
 public abstract class NpcDescriptor {
 
-	public static NpcDescriptor create(NPC npc) {
-		Direction firstDirection = npc.getFirstDirection();
-		Direction secondDirection = npc.getSecondDirection();
+    public static NpcDescriptor create(NPC npc) {
+        Direction firstDirection = npc.getFirstDirection();
+        Direction secondDirection = npc.getSecondDirection();
 
-		if (firstDirection == Direction.NONE)
-			return new IdleNpcDescriptor(npc);
-		else if (secondDirection == Direction.NONE)
-			return new WalkNpcDescriptor(npc);
-		else
-			return new RunNpcDescriptor(npc);
-	}
+        if (firstDirection == Direction.NONE)
+            return new IdleNpcDescriptor(npc);
+        else if (secondDirection == Direction.NONE)
+            return new WalkNpcDescriptor(npc);
+        else
+            return new RunNpcDescriptor(npc);
+    }
 
-	private final Map<Class<? extends NpcBlock>, NpcBlock> blocks = new HashMap<>();
+    private final Map<Class<? extends NpcBlock>, NpcBlock> blocks = new HashMap<>();
 
-	public NpcDescriptor(NPC npc) {
-		
-		if (npc.isHitOneUpdated())
-			addBlock(new HitOneNpcBlock(npc));
-		
-		if (npc.isHitTwoUpdated())
-			addBlock(new HitTwoNpcBlock(npc));
-		
-		if (npc.isAnimationUpdated())
-			addBlock(new AnimationNpcBlock(npc));
+    public NpcDescriptor(NPC npc) {
 
-		if (npc.isSpotAnimationUpdated())
-			addBlock(new SpotAnimationNpcBlock(npc));
+        if (npc.isHitOneUpdated())
+            addBlock(new HitOneNpcBlock(npc));
 
-		if (npc.isTurnToTargetUpdated())
-			addBlock(new TurnToMobNpcBlock(npc));
-		
-		if (npc.isTurnToPositionUpdated())
-			addBlock(new TurnToPositionNpcBlock(npc));
-	}
+        if (npc.isHitTwoUpdated())
+            addBlock(new HitTwoNpcBlock(npc));
 
-	private void addBlock(NpcBlock block) {
-		blocks.put(block.getClass(), block);
-	}
+        if (npc.isAnimationUpdated())
+            addBlock(new AnimationNpcBlock(npc));
 
-	public boolean isBlockUpdatedRequired() {
-		return !blocks.isEmpty();
-	}
+        if (npc.isTurnToTargetUpdated())
+            addBlock(new TurnToMobNpcBlock(npc));
 
-	public void encode(NpcUpdateMessage message, GameFrameBuilder builder, GameFrameBuilder blockBuilder) {
-		encodeDescriptor(message, builder, blockBuilder);
+        if (npc.isSpotAnimationUpdated())
+            addBlock(new SpotAnimationNpcBlock(npc));
 
-		if (isBlockUpdatedRequired()) {
-			int flags = 0;
-			for (NpcBlock block : blocks.values())
-				flags |= block.getFlag();
+        if (npc.isChangingType())
+            addBlock(new ChangeTypeNpcBlock(npc));
 
-			if (flags > 0xFF) {
-				flags |= 0x8;
-				blockBuilder.put(DataType.SHORT, DataOrder.LITTLE, flags);
-			} else {
-				blockBuilder.put(DataType.BYTE, flags);
-			}
-			encodeBlock(message, blockBuilder, HitOneNpcBlock.class);
-			encodeBlock(message, blockBuilder, HitTwoNpcBlock.class);
-			encodeBlock(message, blockBuilder, AnimationNpcBlock.class);
-			encodeBlock(message, blockBuilder, TurnToMobNpcBlock.class);
-			encodeBlock(message, blockBuilder, SpotAnimationNpcBlock.class);
-			//encodeBlock(message, blockBuilder, ForceTextNpcBlock.class); //0x20
-			encodeBlock(message, blockBuilder, TurnToPositionNpcBlock.class);
-		}
-	}
+        if (npc.isTurnToPositionUpdated())
+            addBlock(new TurnToPositionNpcBlock(npc));
+    }
 
-	private void encodeBlock(NpcUpdateMessage message, GameFrameBuilder builder, Class<? extends NpcBlock> type) {
-		NpcBlock block = blocks.get(type);
-		if (block != null)
-			block.encode(message, builder);
-	}
+    private void addBlock(NpcBlock block) {
+        blocks.put(block.getClass(), block);
+    }
 
-	public abstract void encodeDescriptor(NpcUpdateMessage message, GameFrameBuilder builder, GameFrameBuilder blockBuilder);
+    public boolean isBlockUpdatedRequired() {
+        return !blocks.isEmpty();
+    }
+
+    public void encode(NpcUpdateMessage message, GameFrameBuilder builder, GameFrameBuilder blockBuilder) {
+        encodeDescriptor(message, builder, blockBuilder);
+
+        if (isBlockUpdatedRequired()) {
+            int flags = 0;
+            for (NpcBlock block : blocks.values())
+                flags |= block.getFlag();
+
+            if (flags > 0xFF) {
+                flags |= 0x8;
+                blockBuilder.put(DataType.SHORT, DataOrder.LITTLE, flags);
+            } else {
+                blockBuilder.put(DataType.BYTE, flags);
+            }
+            encodeBlock(message, blockBuilder, HitOneNpcBlock.class);
+            encodeBlock(message, blockBuilder, HitTwoNpcBlock.class);
+            encodeBlock(message, blockBuilder, AnimationNpcBlock.class);
+            encodeBlock(message, blockBuilder, TurnToMobNpcBlock.class);
+            encodeBlock(message, blockBuilder, SpotAnimationNpcBlock.class);
+            encodeBlock(message, blockBuilder, ChangeTypeNpcBlock.class);
+            // encodeBlock(message, blockBuilder, ForceTextNpcBlock.class); //0x20
+            encodeBlock(message, blockBuilder, TurnToPositionNpcBlock.class);
+        }
+    }
+
+    private void encodeBlock(NpcUpdateMessage message, GameFrameBuilder builder, Class<? extends NpcBlock> type) {
+        NpcBlock block = blocks.get(type);
+        if (block != null)
+            block.encode(message, builder);
+    }
+
+    public abstract void encodeDescriptor(NpcUpdateMessage message, GameFrameBuilder builder, GameFrameBuilder blockBuilder);
 
 }
