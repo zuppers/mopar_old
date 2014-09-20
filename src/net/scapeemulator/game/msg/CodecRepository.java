@@ -62,6 +62,8 @@ import net.scapeemulator.game.msg.encoder.GroundItemRemoveMessageEncoder;
 import net.scapeemulator.game.msg.encoder.GroundItemUpdateMessageEncoder;
 import net.scapeemulator.game.msg.encoder.GroundObjectRemoveMessageEncoder;
 import net.scapeemulator.game.msg.encoder.GroundObjectUpdateMessageEncoder;
+import net.scapeemulator.game.msg.encoder.RegionConstructMessageEncoder;
+import net.scapeemulator.game.msg.encoder.RenameTileActionMessageEncoder;
 import net.scapeemulator.game.msg.encoder.InterfaceAccessMessageEncoder;
 import net.scapeemulator.game.msg.encoder.InterfaceAnimationMessageEncoder;
 import net.scapeemulator.game.msg.encoder.InterfaceCloseMessageEncoder;
@@ -166,6 +168,7 @@ public final class CodecRepository {
 
         /* encoders */
         bind(new RegionChangeMessageEncoder(table));
+        bind(new RegionConstructMessageEncoder(table));
         bind(new InterfaceRootMessageEncoder());
         bind(new InterfaceOpenMessageEncoder());
         bind(new InterfaceCloseMessageEncoder());
@@ -173,6 +176,7 @@ public final class CodecRepository {
         bind(new InterfaceItemMessageEncoder());
         bind(new InterfaceTextMessageEncoder());
         bind(new ServerMessageEncoder());
+        bind(new RenameTileActionMessageEncoder());
         bind(new LogoutMessageEncoder());
         bind(new CameraMoveMessageEncoder());
         bind(new CameraAngleMessageEncoder());

@@ -36,6 +36,7 @@ public abstract class Mob extends Entity {
     protected SpotAnimation spotAnimation;
     protected Position turnToPosition;
     protected Hits hits = new Hits(this);
+    protected String forcedChat;
     protected Mob currentTarget;
     protected int turnToTargetId = -1;
     protected int frozen;
@@ -147,6 +148,29 @@ public abstract class Mob extends Entity {
      */
     public boolean isTeleporting() {
         return teleporting;
+    }
+
+    /**
+     * Gets whether or not this Mob has forced overhead chat to send to all players during the
+     * update process.
+     * 
+     * @return if there is forced chat to be sent in the update blocks
+     */
+    public boolean isChatForced() {
+        return forcedChat != null;
+    }
+
+    public void setForcedChat(String forcedChat) {
+        this.forcedChat = forcedChat;
+    }
+
+    /**
+     * Gets the forced overhead chat of this Mob for the update blocks.
+     * 
+     * @return the chat text
+     */
+    public String getForcedChat() {
+        return forcedChat;
     }
 
     /**
@@ -595,6 +619,7 @@ public abstract class Mob extends Entity {
         spotAnimation = null;
         turnToPosition = null;
         teleporting = false;
+        forcedChat = null;
         turnToTargetId = -1;
         hits.reset();
         walkingQueue.setMinimapFlagReset(false);
@@ -635,7 +660,7 @@ public abstract class Mob extends Entity {
     public Area getBounds() {
         return new QuadArea(position.getX(), position.getY(), position.getX() + size - 1, position.getY() + size - 1);
     }
-    
+
     /**
      * Gets whether this {@link Mob} is running.
      * 

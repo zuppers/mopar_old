@@ -1,25 +1,3 @@
-/**
- * Copyright (c) 2012, Hadyn Richard
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy 
- * of this software and associated documentation files (the "Software"), to deal 
- * in the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
- * of the Software, and to permit persons to whom the Software is furnished to do
- * so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in 
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
- * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN 
- * THE SOFTWARE.
- */
-
 package net.scapeemulator.game.model.object;
 
 import java.util.HashSet;
@@ -35,7 +13,7 @@ import net.scapeemulator.game.msg.impl.grounditem.GroundObjectRemoveMessage;
 import net.scapeemulator.game.msg.impl.grounditem.GroundObjectUpdateMessage;
 
 /**
- * Created by Hadyn Richard
+ * @author Hadyn Richard
  */
 public final class GroundObjectSynchronizer extends GroundObjectListenerAdapter {
 
@@ -87,10 +65,9 @@ public final class GroundObjectSynchronizer extends GroundObjectListenerAdapter 
         }
     }
 
-
     @Override
     public void groundObjectAnimated(GroundObject object, int animationId) {
-        //TODO
+        // TODO
     }
 
     @Override
@@ -131,8 +108,8 @@ public final class GroundObjectSynchronizer extends GroundObjectListenerAdapter 
      * Sends a set of placement coords.
      */
     private void sendPlacementCoords(Position position) {
-        int localX = position.getLocalX(player.getLastKnownRegion().getCentralRegionX()) & 0xf8;
-        int localY = position.getLocalY(player.getLastKnownRegion().getCentralRegionY()) & 0xf8;
+        int localX = position.getLocalX(player.getLastKnownRegion().getRegionX()) & 0xf8;
+        int localY = position.getLocalY(player.getLastKnownRegion().getRegionY()) & 0xf8;
         player.send(new PlacementCoordsMessage(localX, localY));
     }
 }

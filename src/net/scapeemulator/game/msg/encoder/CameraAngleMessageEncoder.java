@@ -5,7 +5,7 @@ import io.netty.buffer.ByteBufAllocator;
 import java.io.IOException;
 
 import net.scapeemulator.game.msg.MessageEncoder;
-import net.scapeemulator.game.msg.impl.CameraAngleMessage;
+import net.scapeemulator.game.msg.impl.camera.CameraAngleMessage;
 import net.scapeemulator.game.net.game.DataOrder;
 import net.scapeemulator.game.net.game.DataType;
 import net.scapeemulator.game.net.game.GameFrame;

@@ -3,7 +3,7 @@ package net.scapeemulator.game.msg.decoder;
 import java.io.IOException;
 
 import net.scapeemulator.game.msg.MessageDecoder;
-import net.scapeemulator.game.msg.impl.CameraAngleMessage;
+import net.scapeemulator.game.msg.impl.camera.CameraAngleMessage;
 import net.scapeemulator.game.net.game.DataOrder;
 import net.scapeemulator.game.net.game.DataTransformation;
 import net.scapeemulator.game.net.game.DataType;

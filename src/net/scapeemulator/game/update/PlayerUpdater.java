@@ -12,6 +12,7 @@ import net.scapeemulator.game.model.player.skills.prayer.Prayer;
 import net.scapeemulator.game.msg.impl.NpcUpdateMessage;
 import net.scapeemulator.game.msg.impl.PlayerUpdateMessage;
 import net.scapeemulator.game.msg.impl.RegionChangeMessage;
+import net.scapeemulator.game.msg.impl.RegionConstructMessage;
 import net.scapeemulator.game.msg.impl.ResetMinimapFlagMessage;
 
 public final class PlayerUpdater {
@@ -52,9 +53,16 @@ public final class PlayerUpdater {
         if (isRegionChangeRequired(player)) {
             Position position = player.getPosition();
             player.setLastKnownRegion(position);
-            player.send(new RegionChangeMessage(position));
+            // TODO find a better way to do this?
+            if (player.getConstructedRegion() != null) {
+                player.send(new RegionConstructMessage(position, player.getConstructedRegion()));
+                player.setClipped(false);
+            } else {
+                player.send(new RegionChangeMessage(position));
+                player.setClipped(true);
+            }
         }
-        
+
         player.getTimers().tick();
         player.getPrayers().tick();
         player.getSkillSet().tick(player.getHealthRegen(), player.getPrayers().prayerActive(Prayer.RESTORE) ? 2 : 1);
@@ -157,11 +165,14 @@ public final class PlayerUpdater {
     }
 
     private boolean isRegionChangeRequired(Player player) {
+        if (player.getConstructedRegion() != null) {
+            return true;
+        }
         Position lastKnownRegion = player.getLastKnownRegion();
         Position position = player.getPosition();
 
-        int deltaX = position.getLocalX(lastKnownRegion.getCentralRegionX());
-        int deltaY = position.getLocalY(lastKnownRegion.getCentralRegionY());
+        int deltaX = position.getLocalX(lastKnownRegion.getRegionX());
+        int deltaY = position.getLocalY(lastKnownRegion.getRegionY());
 
         return deltaX < 16 || deltaX >= 88 || deltaY < 16 || deltaY >= 88;
     }

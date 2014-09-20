@@ -16,8 +16,8 @@ public final class TeleportPlayerDescriptor extends PlayerDescriptor {
 		Position lastKnownRegion = message.getLastKnownRegion();
 		Position position = message.getPosition();
 
-		int x = position.getLocalX(lastKnownRegion.getCentralRegionX());
-		int y = position.getLocalY(lastKnownRegion.getCentralRegionY());
+		int x = position.getLocalX(lastKnownRegion.getRegionX());
+		int y = position.getLocalY(lastKnownRegion.getRegionY());
 		int height = position.getHeight();
 
 		builder.putBits(1, 1);

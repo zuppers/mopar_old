@@ -19,6 +19,7 @@ import net.scapeemulator.game.msg.handler.object.ObjectExamineMessageHandler;
 import net.scapeemulator.game.msg.handler.object.ObjectOptionMessageHandler;
 import net.scapeemulator.game.msg.impl.*;
 import net.scapeemulator.game.msg.impl.button.ButtonOptionMessage;
+import net.scapeemulator.game.msg.impl.camera.CameraAngleMessage;
 import net.scapeemulator.game.msg.impl.grounditem.GroundItemOptionMessage;
 import net.scapeemulator.game.msg.impl.inter.InterfaceClosedMessage;
 import net.scapeemulator.game.msg.impl.inter.InterfaceInputMessage;

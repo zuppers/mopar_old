@@ -46,6 +46,9 @@ public abstract class NpcDescriptor {
         if (npc.isChangingType())
             addBlock(new ChangeTypeNpcBlock(npc));
 
+        if (npc.isChatForced())
+            addBlock(new ForceChatNpcBlock(npc));
+
         if (npc.isTurnToPositionUpdated())
             addBlock(new TurnToPositionNpcBlock(npc));
     }
@@ -78,7 +81,8 @@ public abstract class NpcDescriptor {
             encodeBlock(message, blockBuilder, TurnToMobNpcBlock.class);
             encodeBlock(message, blockBuilder, SpotAnimationNpcBlock.class);
             encodeBlock(message, blockBuilder, ChangeTypeNpcBlock.class);
-            // encodeBlock(message, blockBuilder, ForceTextNpcBlock.class); //0x20
+            encodeBlock(message, blockBuilder, ForceChatNpcBlock.class);
+            // encodeBlock(message, blockBuilder, ?????.class); // 0x100
             encodeBlock(message, blockBuilder, TurnToPositionNpcBlock.class);
         }
     }

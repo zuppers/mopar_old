@@ -30,6 +30,7 @@ import net.scapeemulator.game.model.player.skills.Skill;
 import net.scapeemulator.game.model.player.skills.SkillAppearanceListener;
 import net.scapeemulator.game.model.player.skills.SkillMessageListener;
 import net.scapeemulator.game.model.player.skills.SkillSet;
+import net.scapeemulator.game.model.player.skills.construction.House;
 import net.scapeemulator.game.model.player.skills.magic.Spellbook;
 import net.scapeemulator.game.model.player.skills.prayer.Prayers;
 import net.scapeemulator.game.model.player.trade.TradeSession;
@@ -76,11 +77,13 @@ public final class Player extends Mob {
     private int energy = 100;
     private Player wantToTrade;
     private TradeSession tradeSession;
+    private final House house = new House();
     private final SkillSet skillSet = new SkillSet();
     private BankSession bankSession;
     private final BankSettings bankSettings = new BankSettings();
     private final InventorySet inventorySet = new InventorySet(this);
     private ChatMessage chatMessage;
+    private RegionPalette constructedRegion;
     private final PlayerTimers timers = new PlayerTimers();
     private final Friends friends = new Friends(this);
     private final Prayers prayers = new Prayers(this);
@@ -239,7 +242,7 @@ public final class Player extends Mob {
     public PlayerTimers getTimers() {
         return timers;
     }
-    
+
     public GrandExchangeHandler getGrandExchangeHandler() {
         return grandExchangeHandler;
     }
@@ -337,6 +340,10 @@ public final class Player extends Mob {
 
     public ShopHandler getShopHandler() {
         return shopHandler;
+    }
+
+    public House getHouse() {
+        return house;
     }
 
     public SkillSet getSkillSet() {
@@ -461,6 +468,7 @@ public final class Player extends Mob {
         updateModelLists = false;
         regionChanging = false;
         chatMessage = null;
+        constructedRegion = null;
     }
 
     public ChannelFuture send(Message message) {
@@ -605,6 +613,10 @@ public final class Player extends Mob {
         super.teleport(position);
     }
 
+    public void setClipped(boolean clipped) {
+        this.clipped = clipped;
+    }
+
     public void toggleClipping() {
         clipped = !clipped;
     }
@@ -618,5 +630,13 @@ public final class Player extends Mob {
 
     public boolean wantsToTrade(Player other) {
         return other == wantToTrade;
+    }
+
+    public void setConstructedRegion(RegionPalette region) {
+        constructedRegion = region;
+    }
+
+    public RegionPalette getConstructedRegion() {
+        return constructedRegion;
     }
 }

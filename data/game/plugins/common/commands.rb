@@ -13,14 +13,35 @@ java_import 'net.scapeemulator.game.msg.impl.inter.InterfaceItemsMessage'
 java_import 'net.scapeemulator.game.msg.impl.inter.InterfaceVisibleMessage'
 java_import 'net.scapeemulator.game.msg.impl.inter.InterfaceOpenMessage'
 java_import 'net.scapeemulator.game.msg.impl.ConfigMessage'
-java_import 'net.scapeemulator.game.msg.impl.CameraMoveMessage'
-java_import 'net.scapeemulator.game.msg.impl.CameraResetMessage'
-java_import 'net.scapeemulator.game.msg.impl.CameraAngleMessage'
-java_import 'net.scapeemulator.game.msg.impl.CameraFaceMessage'
+java_import 'net.scapeemulator.game.msg.impl.camera.CameraMoveMessage'
+java_import 'net.scapeemulator.game.msg.impl.camera.CameraResetMessage'
+java_import 'net.scapeemulator.game.msg.impl.camera.CameraAngleMessage'
+java_import 'net.scapeemulator.game.msg.impl.camera.CameraFaceMessage'
+java_import 'net.scapeemulator.game.model.player.RegionPalette'
+java_import 'net.scapeemulator.game.msg.impl.RegionConstructMessage'
 
 # Common administrator commands
 bind :cmd, :name => 'looks' do
   player.get_appearance.show_appearance_interface
+end
+
+bind :cmd, :name => 'construct' do
+  h = player.get_position.height
+  h = args[2].to_i if args.length > 2
+  player.teleport(Position.new(args[0].to_i, args[1].to_i, h))
+  player.send RegionConstructMessage.new(player.position, RegionPalette::test)
+  player.set_last_known_region(player.position)
+end
+
+bind :cmd, :name => 'con' do
+  h = player.get_position.height
+  h = args[2].to_i if args.length > 2
+  player.teleport(Position.new(args[0].to_i, args[1].to_i, h))
+  player.set_constructed_region player.get_house.get_region_palette
+end
+
+bind :cmd, :name => 'chat' do
+  player.set_forced_chat '~HELLO how r u'
 end
 
 bind :cmd, :name => 'window' do

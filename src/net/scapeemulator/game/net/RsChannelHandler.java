@@ -65,7 +65,6 @@ public final class RsChannelHandler extends ChannelInboundMessageHandlerAdapter<
                 break;
 
             case HandshakeMessage.SERVICE_UPDATE:
-                System.out.println("Update Request");
                 session = new UpdateSession(server, ctx.channel());
                 break;
 
