@@ -84,7 +84,7 @@ Packet 80: size[0]
 Packet 81: size[V_B]
 Packet 82: size[0]
 Packet 83: size[0]
-Packet 84: size[6]
+Packet 84: size[6] something to do with varbits
 Packet 85: size[2]
 Packet 86: size[0] logout
 Packet 87: size[0]
@@ -160,7 +160,7 @@ Packet 156: size[0]
 Packet 157: size[0]
 Packet 158: size[0]
 Packet 159: size[2]
-Packet 160: size[V_B]
+Packet 160: size[V_B] set 'walk here' text
 Packet 161: size[0]
 Packet 162: size[V_S] region change (construct map region)
 Packet 163: size[0]

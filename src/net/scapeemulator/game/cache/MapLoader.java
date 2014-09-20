@@ -51,8 +51,14 @@ public final class MapLoader {
     }
 
     public void load(int mX, int mY) {
-        for (int x = mX - 4; x <= mX + 4; x++) {
-            for (int y = mY - 4; y <= mY + 4; y++) {
+        for (int x = mX - 4; x <= mX + 4 && x <= loaded.length; x++) {
+            if (x < 0) {
+                continue;
+            }
+            for (int y = mY - 4; y <= mY + 4 && y <= loaded[x].length; y++) {
+                if (y < 0) {
+                    continue;
+                }
                 if (loaded[x][y]) {
                     continue;
                 }
