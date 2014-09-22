@@ -1,25 +1,3 @@
-/**
- * Copyright (c) 2012, Hadyn Richard
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy 
- * of this software and associated documentation files (the "Software"), to deal 
- * in the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
- * of the Software, and to permit persons to whom the Software is furnished to do
- * so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in 
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
- * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN 
- * THE SOFTWARE.
- */
-
 package net.scapeemulator.game.model.object;
 
 import java.util.HashSet;
@@ -39,7 +17,8 @@ import net.scapeemulator.game.model.area.QuadArea;
 import net.scapeemulator.game.model.definition.ObjectDefinitions;
 
 /**
- * Created by Hadyn Richard
+ * @author Hadyn Richard
+ * @author David Insley
  */
 public final class GroundObjectList {
 
@@ -167,7 +146,7 @@ public final class GroundObjectList {
         /**
          * The data for the ground object.
          */
-        private int id, rotation, uid;
+        private int id, animationId, rotation, uid;
 
         /**
          * The flag for if the object is hidden.
@@ -182,9 +161,10 @@ public final class GroundObjectList {
         /**
          * Constructs a new {@link GroundObject};
          */
-        public GroundObject(Position position, int id, int rotation, ObjectType type) {
+        public GroundObject(Position position, int id, int animationId, int rotation, ObjectType type) {
             this.position = position;
             this.id = id;
+            this.animationId = animationId;
             this.rotation = rotation;
             this.type = type;
         }
@@ -207,6 +187,23 @@ public final class GroundObjectList {
 
                 /* Add to the updated objects list */
                 updatedObjects.add(this);
+            }
+        }
+
+        public void animate(int animationId) {
+            if (animationId == this.animationId) {
+                return;
+            }
+            this.animationId = animationId;
+            if (!isHidden) {
+                for (GroundObjectListener listener : listeners) {
+                    listener.groundObjectAnimated(this);
+                }
+                if (recordUpdates) {
+
+                    /* Add to the updated objects list */
+                    updatedObjects.add(this);
+                }
             }
         }
 
@@ -293,6 +290,10 @@ public final class GroundObjectList {
 
                 isHidden = false;
             }
+        }
+
+        public int getAnimationId() {
+            return animationId;
         }
 
         /**
@@ -451,6 +452,9 @@ public final class GroundObjectList {
             for (GroundObject object : entry.getValue().getObjects()) {
                 if (!object.isHidden) {
                     listener.groundObjectAdded(object);
+                    if (object.getAnimationId() != object.getDefinition().getAnimationId()) {
+                        listener.groundObjectAnimated(object);
+                    }
                 } else {
                     listener.groundObjectRemoved(object);
                 }
@@ -465,6 +469,9 @@ public final class GroundObjectList {
         for (GroundObject object : updatedObjects) {
             if (!object.isHidden) {
                 listener.groundObjectAdded(object);
+                if (object.getAnimationId() != object.getDefinition().getAnimationId()) {
+                    listener.groundObjectAnimated(object);
+                }
             } else {
                 listener.groundObjectRemoved(object);
             }
@@ -472,7 +479,11 @@ public final class GroundObjectList {
     }
 
     public GroundObject put(Position position, int objectId, int rotation, ObjectType type) {
-        GroundObject object = new GroundObject(position, objectId, rotation, type);
+        return put(position, objectId, ObjectDefinitions.forId(objectId).getAnimationId(), rotation, type);
+    }
+
+    public GroundObject put(Position position, int objectId, int animationId, int rotation, ObjectType type) {
+        GroundObject object = new GroundObject(position, objectId, animationId, rotation, type);
         Tile tile = tiles.get(position);
         if (tile == null) {
             tile = new Tile();

@@ -49,6 +49,10 @@ public final class GameFrameBuilder {
 		return new GameFrame(opcode, type, buffer);
 	}
 
+	public ByteBuf getBuffer() {
+	    return buffer;
+	}
+	
 	public ByteBufAllocator getAllocator() {
 		return alloc;
 	}

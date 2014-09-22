@@ -31,7 +31,7 @@ import io.netty.buffer.ByteBufAllocator;
 import java.io.IOException;
 
 import net.scapeemulator.game.msg.MessageEncoder;
-import net.scapeemulator.game.msg.impl.grounditem.GroundObjectUpdateMessage;
+import net.scapeemulator.game.msg.impl.object.GroundObjectUpdateMessage;
 import net.scapeemulator.game.net.game.DataTransformation;
 import net.scapeemulator.game.net.game.DataType;
 import net.scapeemulator.game.net.game.GameFrame;

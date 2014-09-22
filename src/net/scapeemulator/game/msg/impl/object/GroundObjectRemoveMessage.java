@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  */
 
-package net.scapeemulator.game.msg.impl.grounditem;
+package net.scapeemulator.game.msg.impl.object;
 
 import net.scapeemulator.game.model.Position;
 import net.scapeemulator.game.msg.Message;

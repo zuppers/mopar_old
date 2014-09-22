@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  */
 
-package net.scapeemulator.game.msg.impl.grounditem;
+package net.scapeemulator.game.msg.impl.object;
 
 import net.scapeemulator.game.model.Position;
 import net.scapeemulator.game.msg.Message;
@@ -28,14 +28,14 @@ import net.scapeemulator.game.msg.Message;
 /**
  * Created by Hadyn Richard
  */
-public final class GroundObjectAnimateMessage extends Message {
+public final class GroundObjectUpdateMessage extends Message {
 
     private final Position position;
-    private final int animationId, type, rotation;
+    private final int objectId, type, rotation;
 
-    public GroundObjectAnimateMessage(Position position, int animationId, int type, int rotation) {
+    public GroundObjectUpdateMessage(Position position, int objectId, int type, int rotation) {
         this.position = position;
-        this.animationId = animationId;
+        this.objectId = objectId;
         this.type = type;
         this.rotation = rotation;
     }
@@ -43,13 +43,12 @@ public final class GroundObjectAnimateMessage extends Message {
     public Position getPosition() {
         return position;
     }
-
-    public int getAnimationId() {
-        return animationId;
+    
+    public int getObjectId() {
+        return objectId;
     }
-
+    
     public int infoHash() {
         return type << 2 | (rotation & 0x3);
     }
 }
-

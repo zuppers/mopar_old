@@ -5,7 +5,7 @@ package net.scapeemulator.game.model.player.skills.construction;
  * @author David Insley
  */
 public enum RoomType {
-    DEFAULT(0, 1864, 5056),
+    GRASS(0, 1864, 5056),
     GARDEN(1, 1856, 5064),
     PARLOUR(1, 1856, 5112),
     KITCHEN(5, 1872, 5112),
@@ -23,13 +23,18 @@ public enum RoomType {
     CHAPEL(45, 1872, 5096),
     PORTAL_CHAMBER(50, 1864, 5088),
     FORMAL_GARDEN(55, 1872, 5064),
-    THRONE_ROOM(60, 1904, 5080),
+    THRONE_ROOM(60, 1904, 5096),
+    
+    DUNGEON_CLEAR(0, 1880, 5056),
     OUBLIETTE(65, 1904, 5080),
-
     DUNGEON_CORRIDOR(70, 1888, 5080),
     DUNGEON_JUNCTION(70, 1856, 5080),
     DUNGEON_STAIRS(70, 1872, 5080),
-    TREASURE_ROOM(75, 1912, 5088);
+    TREASURE_ROOM(75, 1912, 5088),
+    
+    ROOF(0, 1864, 5072),
+    ROOF_TRI(0, 1880, 5072),
+    ROOF_QUAD(0, 1896, 5072);
     
     private final int x;
     private final int y;

@@ -47,7 +47,7 @@ public abstract class GroundObjectListener {
     /**
      * Called when a ground object was animated.
      */
-    public abstract void groundObjectAnimated(GroundObject object, int animationId);
+    public abstract void groundObjectAnimated(GroundObject object);
 
     /**
      * Called when a ground object was removed.

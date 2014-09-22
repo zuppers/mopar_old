@@ -11,21 +11,15 @@ public enum HouseStyle {
     BASIC_STONE(10, 1),
     WHITEWASHED_STONE(20, 2),
     FREMENNIK_WOOD(30, 3),
-    TROPICAL_WOOD(40, 0, true),
-    FANCY_STONE(50, 1, true);
+    TROPICAL_WOOD(40, 4),
+    FANCY_STONE(50, 5);
 
     private final int level;
-    private final int height;
-    private final boolean xMod;
+    private final int id;
 
-    private HouseStyle(int level, int height) {
-        this(level, height, false);
-    }
-
-    private HouseStyle(int level, int height, boolean xMod) {
+    private HouseStyle(int level, int id) {
         this.level = level;
-        this.height = height;
-        this.xMod = xMod;
+        this.id = id;
     }
 
     public int getLevel() {
@@ -33,6 +27,6 @@ public enum HouseStyle {
     }
 
     public Position getRoomPosition(RoomType room) {
-        return new Position(room.getX() + (xMod ? 64 : 0), room.getY(), height);
-    }
+        return new Position(room.getX() + (id >= 4 ? 64 : 0), room.getY(), id % 4);
+    }  
 }

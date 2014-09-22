@@ -9,8 +9,9 @@ import net.scapeemulator.game.model.Position;
 import net.scapeemulator.game.model.object.GroundObjectList.GroundObject;
 import net.scapeemulator.game.model.player.Player;
 import net.scapeemulator.game.msg.impl.PlacementCoordsMessage;
-import net.scapeemulator.game.msg.impl.grounditem.GroundObjectRemoveMessage;
-import net.scapeemulator.game.msg.impl.grounditem.GroundObjectUpdateMessage;
+import net.scapeemulator.game.msg.impl.object.GroundObjectAnimateMessage;
+import net.scapeemulator.game.msg.impl.object.GroundObjectRemoveMessage;
+import net.scapeemulator.game.msg.impl.object.GroundObjectUpdateMessage;
 
 /**
  * @author Hadyn Richard
@@ -61,19 +62,22 @@ public final class GroundObjectSynchronizer extends GroundObjectListenerAdapter 
             uids.add(object.getUid());
             sendPlacementCoords(position);
             player.send(new GroundObjectUpdateMessage(object.getPosition(), object.getId(), object.getType().getId(), object.getRotation()));
-            return;
         }
     }
 
     @Override
-    public void groundObjectAnimated(GroundObject object, int animationId) {
-        // TODO
+    public void groundObjectAnimated(GroundObject object) {
+        Position position = object.getPosition();
+        boolean sameHeight = player.getPosition().getHeight() == position.getHeight();
+        if (sameHeight && player.getLastKnownRegion().isWithinScene(position)) {
+            sendPlacementCoords(position);
+            player.send(new GroundObjectAnimateMessage(position, object.getAnimationId(), object.getType().getId(), object.getRotation()));
+        }
     }
 
     @Override
     public void groundObjectRemoved(GroundObject object) {
         Position position = object.getPosition();
-
         boolean sameHeight = player.getPosition().getHeight() == position.getHeight();
         uids.remove(object.getUid());
         if (sameHeight && player.getPosition().isWithinScene(position)) {

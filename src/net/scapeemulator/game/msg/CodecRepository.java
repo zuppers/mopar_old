@@ -45,6 +45,7 @@ import net.scapeemulator.game.msg.decoder.npc.NPCOptionTwoMessageDecoder;
 import net.scapeemulator.game.msg.decoder.object.ObjectExamineMessageDecoder;
 import net.scapeemulator.game.msg.decoder.object.ObjectOptionOneMessageDecoder;
 import net.scapeemulator.game.msg.decoder.object.ObjectOptionTwoMessageDecoder;
+import net.scapeemulator.game.msg.decoder.object.UnknownObjectMessageDecoder;
 import net.scapeemulator.game.msg.decoder.player.PlayerOptionFourMessageDecoder;
 import net.scapeemulator.game.msg.decoder.player.PlayerOptionThreeMessageDecoder;
 import net.scapeemulator.game.msg.encoder.CameraAngleMessageEncoder;
@@ -60,6 +61,7 @@ import net.scapeemulator.game.msg.encoder.GrandExchangeUpdateMessageEncoder;
 import net.scapeemulator.game.msg.encoder.GroundItemCreateMessageEncoder;
 import net.scapeemulator.game.msg.encoder.GroundItemRemoveMessageEncoder;
 import net.scapeemulator.game.msg.encoder.GroundItemUpdateMessageEncoder;
+import net.scapeemulator.game.msg.encoder.GroundObjectAnimateMessageEncoder;
 import net.scapeemulator.game.msg.encoder.GroundObjectRemoveMessageEncoder;
 import net.scapeemulator.game.msg.encoder.GroundObjectUpdateMessageEncoder;
 import net.scapeemulator.game.msg.encoder.RegionConstructMessageEncoder;
@@ -130,6 +132,7 @@ public final class CodecRepository {
         bind(new FriendListOperationMessageDecoder(120));
         bind(new FriendListOperationMessageDecoder(213));
         bind(new PrivateChatSentMessageDecoder());
+        bind(new UnknownObjectMessageDecoder()); // TODO
         bind(new GroundItemOptionThreeMessageDecoder());
         bind(new GrandExchangeSearchMessageDecoder());
 
@@ -169,45 +172,55 @@ public final class CodecRepository {
         /* encoders */
         bind(new RegionChangeMessageEncoder(table));
         bind(new RegionConstructMessageEncoder(table));
+
         bind(new InterfaceRootMessageEncoder());
         bind(new InterfaceOpenMessageEncoder());
         bind(new InterfaceCloseMessageEncoder());
         bind(new InterfaceVisibleMessageEncoder());
         bind(new InterfaceItemMessageEncoder());
         bind(new InterfaceTextMessageEncoder());
+        bind(new InterfaceItemsMessageEncoder());
+        bind(new InterfaceSlottedItemsMessageEncoder());
+        bind(new InterfaceResetItemsMessageEncoder());
+        bind(new InterfaceAccessMessageEncoder());
+        bind(new InterfacePlayerHeadMessageEncoder());
+        bind(new InterfaceNPCHeadMessageEncoder());
+        bind(new InterfaceAnimationMessageEncoder());
+
         bind(new ServerMessageEncoder());
         bind(new RenameTileActionMessageEncoder());
         bind(new LogoutMessageEncoder());
+
         bind(new CameraMoveMessageEncoder());
         bind(new CameraAngleMessageEncoder());
         bind(new CameraResetMessageEncoder());
         bind(new CameraFaceMessageEncoder());
+
         bind(new PlayerUpdateMessageEncoder());
         bind(new PrivacySettingsUpdateMessageEncoder());
         bind(new PrivateChatSentMessageEncoder());
         bind(new PrivateChatReceivedMessageEncoder());
         bind(new SkillMessageEncoder());
         bind(new EnergyMessageEncoder());
-        bind(new InterfaceItemsMessageEncoder());
-        bind(new InterfaceSlottedItemsMessageEncoder());
-        bind(new InterfaceResetItemsMessageEncoder());
         bind(new ResetMinimapFlagMessageEncoder());
         bind(new ConfigMessageEncoder());
         bind(new ScriptMessageEncoder());
         bind(new NpcUpdateMessageEncoder());
+
         bind(new ScriptStringMessageEncoder());
         bind(new ScriptIntMessageEncoder());
+
         bind(new PlacementCoordsMessageEncoder());
+
         bind(new GroundItemCreateMessageEncoder());
         bind(new GroundItemUpdateMessageEncoder());
         bind(new GroundItemRemoveMessageEncoder());
+
         bind(new GroundObjectUpdateMessageEncoder());
         bind(new GroundObjectRemoveMessageEncoder());
+        bind(new GroundObjectAnimateMessageEncoder());
         bind(new PlayerOptionMessageEncoder());
-        bind(new InterfaceAccessMessageEncoder());
-        bind(new InterfacePlayerHeadMessageEncoder());
-        bind(new InterfaceNPCHeadMessageEncoder());
-        bind(new InterfaceAnimationMessageEncoder());
+
         bind(new CreateProjectileMessageEncoder());
         bind(new GrandExchangeUpdateMessageEncoder());
         bind(new SendIgnoresMessageEncoder());

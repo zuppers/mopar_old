@@ -20,7 +20,7 @@ Packet 16: size[15] create projectile
 Packet 17: size[6]
 Packet 18: size[0]
 Packet 19: size[0]
-Packet 20: size[4]
+Packet 20: size[4] maybe object animate?
 Packet 21: size[7]
 Packet 22: size[V_S]
 Packet 23: size[V_B]

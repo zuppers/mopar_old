@@ -186,7 +186,7 @@ public final class GameFrameDecoder extends ByteToMessageDecoder {
         SIZES[167] = -1;
         SIZES[168] = 6; // Interface option #6
         SIZES[169] = -3;
-        SIZES[170] = -3;
+        SIZES[170] = 6; // Object in construction, maybe something else?
         SIZES[171] = -3;
         SIZES[172] = -3;
         SIZES[173] = -3;
