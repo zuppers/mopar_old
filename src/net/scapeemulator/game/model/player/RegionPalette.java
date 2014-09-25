@@ -36,6 +36,10 @@ public class RegionPalette {
                 return id;
             }
 
+            public static Rotation random() {
+                return values()[(int) (Math.random() * values().length)];
+            }
+
         }
 
         private final int hash;
@@ -46,6 +50,10 @@ public class RegionPalette {
 
         public Tile(int x, int y, int height) {
             this(x, y, height, Rotation.NONE);
+        }
+
+        public Tile(Position position) {
+            this(position.getX(), position.getY(), position.getHeight(), Rotation.NONE);
         }
 
         public Tile(Position position, Rotation rotation) {
