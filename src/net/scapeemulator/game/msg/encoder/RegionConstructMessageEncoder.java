@@ -33,28 +33,24 @@ public final class RegionConstructMessageEncoder extends MessageEncoder<RegionCo
         builder.put(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD, position.getRegionX());
         builder.put(DataType.BYTE, DataTransformation.SUBTRACT, position.getHeight());
         builder.put(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD, position.getLocalY());
-        // builder.switchToBitAccess();
+
+        builder.switchToBitAccess();
+
         for (int height = 0; height < 4; height++) {
             for (int x = 0; x < 13; x++) {
                 for (int y = 0; y < 13; y++) {
-                    // System.out.print(x + ", " + y + ", " + height + ": ");
                     int hash = message.getPalette().getHash(height, x, y);
                     if (hash != -1) {
-                        // builder.putBit(1);
-                        // builder.putBits(26, hash);
-                        builder.put(DataType.BYTE, 1);
-                        builder.put(DataType.INT, hash);
-
+                        builder.putBit(1);
+                        builder.putBits(26, hash);
                     } else {
-                        // builder.putBit(0);
-                        builder.put(DataType.BYTE, 0);
-
+                        builder.putBit(0);
                     }
                 }
             }
         }
 
-        // builder.switchToByteAccess();
+        builder.switchToByteAccess();
 
         Set<Integer> sentKeys = new HashSet<>();
 
@@ -71,7 +67,6 @@ public final class RegionConstructMessageEncoder extends MessageEncoder<RegionCo
                     if (!sentKeys.add(region)) {
                         continue;
                     }
-
                     int[] keys = keyTable.getKeys(hashX, hashY);
                     for (int i = 0; i < 4; i++) {
                         builder.put(DataType.INT, DataOrder.INVERSED_MIDDLE, keys[i]);
