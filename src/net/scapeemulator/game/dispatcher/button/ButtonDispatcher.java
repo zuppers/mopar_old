@@ -11,6 +11,7 @@ import net.scapeemulator.game.model.player.Equipment;
 import net.scapeemulator.game.model.player.Player;
 import net.scapeemulator.game.model.player.bank.BankSession;
 import net.scapeemulator.game.model.player.interfaces.Interface;
+import static net.scapeemulator.game.model.player.skills.construction.Construction.ROOM_CREATE_INTERFACE;
 import net.scapeemulator.game.model.player.skills.magic.AutoCastHandler;
 import net.scapeemulator.game.model.player.skills.magic.Spell;
 import net.scapeemulator.game.model.player.skills.magic.TeleportSpell;
@@ -66,6 +67,9 @@ public final class ButtonDispatcher {
             return;
         }
         switch (widgetId) {
+        case ROOM_CREATE_INTERFACE:
+            player.getHouse().handleSelectRoomInterface(child);
+            break;
         case 105:
             player.getGrandExchangeHandler().handleMainInterface(child, option);
             break;
@@ -114,12 +118,12 @@ public final class ButtonDispatcher {
             AutoCastHandler.handleSpellSelection(player, widgetId, child);
             break;
         case Interface.BANK:
-            if(player.getBankSession() != null) {
+            if (player.getBankSession() != null) {
                 player.getBankSession().handleInterfaceClick(child, dyn, option);
             }
             break;
         case BankSession.BANK_INVENTORY:
-            if(player.getBankSession() != null) {
+            if (player.getBankSession() != null) {
                 player.getBankSession().handleInventoryClick(child, dyn, option);
             }
             break;

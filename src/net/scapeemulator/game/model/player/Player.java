@@ -77,13 +77,14 @@ public final class Player extends Mob {
     private int energy = 100;
     private Player wantToTrade;
     private TradeSession tradeSession;
-    private final House house = new House();
+    private final House house = new House(this);
     private final SkillSet skillSet = new SkillSet();
     private BankSession bankSession;
     private final BankSettings bankSettings = new BankSettings();
     private final InventorySet inventorySet = new InventorySet(this);
     private ChatMessage chatMessage;
     private RegionPalette constructedRegion;
+    private SceneRebuiltListener sceneRebuiltListener;
     private final PlayerTimers timers = new PlayerTimers();
     private final Friends friends = new Friends(this);
     private final Prayers prayers = new Prayers(this);
@@ -455,6 +456,10 @@ public final class Player extends Mob {
         World.getWorld().getGroundObjects().fireEvents(groundObjSync);
     }
 
+    public GroundObjectSynchronizer getGroundObjectSynchronizer() {
+        return groundObjSync;
+    }
+
     public void refreshOptions() {
         for (int i = 0; i < options.length; i++) {
             PlayerOption option = options[i];
@@ -469,6 +474,14 @@ public final class Player extends Mob {
         regionChanging = false;
         chatMessage = null;
         constructedRegion = null;
+    }
+
+    public SceneRebuiltListener getSceneRebuiltListener() {
+        return sceneRebuiltListener;
+    }
+
+    public void setSceneRebuiltListener(SceneRebuiltListener sceneRebuiltListener) {
+        this.sceneRebuiltListener = sceneRebuiltListener;
     }
 
     public ChannelFuture send(Message message) {

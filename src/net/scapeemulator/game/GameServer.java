@@ -36,6 +36,7 @@ import net.scapeemulator.game.model.object.GroundObjectPopulator;
 import net.scapeemulator.game.model.pathfinding.MapDataListener;
 import net.scapeemulator.game.model.player.EquipmentDefinition;
 import net.scapeemulator.game.model.player.consumable.Consumables;
+import net.scapeemulator.game.model.player.skills.construction.Construction;
 import net.scapeemulator.game.model.player.skills.cooking.Cooking;
 import net.scapeemulator.game.model.player.skills.firemaking.Firemaking;
 import net.scapeemulator.game.model.player.skills.herblore.Herblore;
@@ -194,10 +195,11 @@ public final class GameServer {
         PrayerSkill.initialize();
         Herblore.initialize();
         Woodcutting.initialize();
+        Construction.initialize();
 
         /* bind other content */
         Consumables.initialize();
-        
+
         /* load player serializer from config file */
         serializer = createPlayerSerializer();
         logger.info("Using serializer: " + serializer + ".");
