@@ -55,4 +55,8 @@ public final class ItemDefinitions {
         return definitions[id];
     }
 
+    public static String name(int id) {
+        return forId(id).getName();
+    }
+
 }
