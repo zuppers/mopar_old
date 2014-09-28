@@ -32,12 +32,22 @@ public class RegionPalette {
                 this.id = id;
             }
 
+            public static Rotation forId(int id) {
+                id %= 4;
+                for (Rotation rotation : values()) {
+                    if (rotation.id == id) {
+                        return rotation;
+                    }
+                }
+                throw new RuntimeException();
+            }
+
             public int getId() {
                 return id;
             }
 
-            public static Rotation random() {
-                return values()[(int) (Math.random() * values().length)];
+            public Rotation rotate(Rotation rotate) {
+                return forId(rotate.getId() + id);
             }
 
         }
