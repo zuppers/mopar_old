@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.zip.ZipException;
 
 import net.scapeemulator.cache.Cache;
 import net.scapeemulator.cache.Container;
@@ -85,8 +86,11 @@ public final class MapLoader {
         ByteBuffer buffer = cache.getStore().read(5, fileId);
 
         int[] keys = keyTable.getKeys(x, y);
-
-        buffer = Container.decode(buffer, keys).getData();
+        try {
+            buffer = Container.decode(buffer, keys).getData();
+        } catch (ZipException ze) {
+            System.out.println(ze.getMessage() + " readLandscape(" + x + ", " + y + ", " + fileId + ")");
+        }
 
         int id = -1;
 
