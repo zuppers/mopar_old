@@ -70,7 +70,6 @@ public class FollowAction extends Action<Mob> {
         }
         mob.getWalkingQueue().addPoint(path.poll());
         if (path.isEmpty()) {
-            System.out.println("5");
             return;
         }
         if (mob instanceof Player) {
