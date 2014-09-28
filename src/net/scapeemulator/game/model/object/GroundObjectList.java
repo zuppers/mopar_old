@@ -173,6 +173,10 @@ public final class GroundObjectList {
          * Sets the object id of the ground object.
          */
         public void setId(int id) {
+            if (this.id == id) {
+                return;
+            }
+
             this.id = id;
 
             if (!isHidden) {
@@ -228,7 +232,9 @@ public final class GroundObjectList {
          */
         public void setRotation(int rotation) {
             rotation &= 3;
-
+            if (this.rotation == rotation) {
+                return;
+            }
             int oldRotation = this.rotation;
             this.rotation = rotation;
 
@@ -490,6 +496,14 @@ public final class GroundObjectList {
             tiles.put(position, tile);
         }
         return tile.put(object.getType().getObjectGroup(), object) ? object : null;
+    }
+
+    public List<GroundObject> getAll(Position position) {
+        Tile tile = tiles.get(position);
+        if (tile == null) {
+            return null;
+        }
+        return tile.getObjects();
     }
 
     public GroundObject get(int objectId, Position position) {
