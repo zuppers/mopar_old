@@ -112,7 +112,7 @@ public final class TraversalMap {
 
     public void markWall(int rotation, int plane, int x, int y, ObjectType type, boolean impenetrable) {
         switch (type) {
-        case TYPE_0:
+        case STRAIGHT_WALL:
             if (rotation == WEST) {
                 set(plane, x, y, WALL_WEST);
                 set(plane, x - 1, y, WALL_EAST);
@@ -233,7 +233,7 @@ public final class TraversalMap {
 
     public void unmarkWall(int rotation, int plane, int x, int y, ObjectType type, boolean impenetrable) {
         switch (type) {
-            case TYPE_0:
+            case STRAIGHT_WALL:
                 if (rotation == WEST) {
                     unset(plane, x, y, WALL_WEST);
                     unset(plane, x - 1, y, WALL_EAST);
