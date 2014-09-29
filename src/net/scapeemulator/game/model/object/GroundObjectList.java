@@ -96,6 +96,10 @@ public final class GroundObjectList {
             return null;
         }
 
+        public GroundObject get(ObjectGroup group) {
+            return objects.get(group);
+        }
+
         public boolean isEmpty() {
             for (Entry<ObjectGroup, GroundObject> entry : objects.entrySet()) {
                 GroundObject object = entry.getValue();
@@ -512,6 +516,14 @@ public final class GroundObjectList {
             return null;
         }
         return tile.get(objectId);
+    }
+
+    public GroundObject get(ObjectGroup group, Position position) {
+        Tile tile = tiles.get(position);
+        if (tile == null) {
+            return null;
+        }
+        return tile.get(group);
     }
 
     public boolean contains(int objectId, Position position) {

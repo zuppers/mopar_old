@@ -212,6 +212,6 @@ public final class Position {
      */
     @Override
     public String toString() {
-        return "position[x: " + x + ", y: " + y + ", height: " + height + "] local[" + getLocalX() + ", " + getLocalY() + "]";
+        return "position[x: " + x + ", y: " + y + ", height: " + height + "] region[" + getRegionX() + ", " + getRegionY() + "]";
     }
 }

@@ -60,7 +60,6 @@ public final class RsChannelHandler extends ChannelInboundMessageHandlerAdapter<
 
             switch (handshake.getService()) {
             case HandshakeMessage.SERVICE_LOGIN:
-                System.out.println("Login Request");
                 session = new LoginSession(server, ctx.channel());
                 break;
 
@@ -69,7 +68,6 @@ public final class RsChannelHandler extends ChannelInboundMessageHandlerAdapter<
                 break;
 
             case HandshakeMessage.SERVICE_JAGGRAB:
-                System.out.println("Jaggrab Request");
                 session = new JaggrabSession(server, ctx.channel());
                 break;
 

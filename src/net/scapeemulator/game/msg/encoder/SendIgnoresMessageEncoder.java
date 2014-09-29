@@ -19,7 +19,6 @@ public final class SendIgnoresMessageEncoder extends MessageEncoder<SendIgnoresM
 		GameFrameBuilder builder = new GameFrameBuilder(alloc, 126, Type.VARIABLE_SHORT);
 		for (long name : message.getIgnores()) {
 			if (name > 0) {
-				System.out.println(name);
 				builder.put(DataType.LONG, name);
 			}
 		}

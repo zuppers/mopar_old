@@ -53,7 +53,6 @@ public final class RegisterSession extends Session {
              * the actual client, we aren't scared to just dispose without sending a response.
              */
             String username = req.getUsername();
-            System.out.println(username);
             if (!username.matches("^[a-z0-9_]{3,12}$")) {
                 return;
             }
@@ -62,7 +61,6 @@ public final class RegisterSession extends Session {
             }
 
             String password = req.getPassword();
-            System.out.println(password);
             if (password.matches("^[a-zA-Z0-9_]{5,20}$")) {
                 if (server.getSerializer().register(((InetSocketAddress) channel.remoteAddress()).getAddress().getHostAddress(), username, password)) {
                     channel.write(new RegisterResponse(RegisterResponse.STATUS_OK)).addListener(ChannelFutureListener.CLOSE);

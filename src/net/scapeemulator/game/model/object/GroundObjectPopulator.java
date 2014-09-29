@@ -24,18 +24,23 @@ public final class GroundObjectPopulator extends MapListenerAdapter {
 
     @Override
     public void objectDecoded(int id, int rotation, ObjectType type, Position position) {
-
         /* Stop the list from appending the object to the updated list */
         list.setRecordUpdates(false);
 
         ObjectDefinition def = ObjectDefinitions.forId(id);
 
         /* Only insert an object if it has a name */
-        if (!"null".equals(def.getName())) {
+        if (!"null".equals(def.getName()) || shouldForce(position)) {
             list.put(position, id, def.getAnimationId(), rotation, type);
         }
 
         /* Reset the record updates state of the list */
         list.setRecordUpdates(true);
+    }
+
+    private static boolean shouldForce(Position pos) {
+        int x = pos.getRegionX();
+        int y = pos.getRegionY();
+        return (x >= 232 && x < 247 && y >= 632 && y <= 639);
     }
 }

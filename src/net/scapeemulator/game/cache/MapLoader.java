@@ -89,7 +89,7 @@ public final class MapLoader {
         try {
             buffer = Container.decode(buffer, keys).getData();
         } catch (ZipException ze) {
-            System.out.println(ze.getMessage() + " readLandscape(" + x + ", " + y + ", " + fileId + ")");
+            System.err.println(ze.getMessage() + " readLandscape(" + x + ", " + y + ", " + fileId + ")");
         }
 
         int id = -1;

@@ -6,15 +6,14 @@ import net.scapeemulator.game.msg.MessageHandler;
 import net.scapeemulator.game.msg.impl.inter.InterfaceInputMessage;
 
 /**
- * Written by Hadyn Richard
+ * @author Hadyn Richard
  */
 public final class InterfaceInputMessageHandler extends MessageHandler<InterfaceInputMessage> {
 
     @Override
     public void handle(Player player, InterfaceInputMessage message) {
         Component component = player.getInterfaceSet().getComponent(message.getId());
-        System.out.println("InterInputMH - id: " + message.getId() + ", comp: " + message.getComponentId() + ", dyn: " + message.getDynamicId());
-        if(component != null) {
+        if (component != null) {
             component.alertInputPressed(message.getComponentId(), message.getDynamicId());
         }
     }
