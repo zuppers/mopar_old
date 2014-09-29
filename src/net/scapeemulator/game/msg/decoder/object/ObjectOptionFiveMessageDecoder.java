@@ -9,20 +9,22 @@ import net.scapeemulator.game.net.game.DataType;
 import net.scapeemulator.game.net.game.GameFrame;
 import net.scapeemulator.game.net.game.GameFrameReader;
 
-public final class UnknownObjectMessageDecoder extends MessageDecoder<ObjectOptionMessage> {
+/**
+ * @author David Insley
+ */
+public final class ObjectOptionFiveMessageDecoder extends MessageDecoder<ObjectOptionMessage> {
 
-	public UnknownObjectMessageDecoder() {
+	public ObjectOptionFiveMessageDecoder() {
 		super(170);
 	}
 
 	@Override
 	public ObjectOptionMessage decode(GameFrame frame) {
-		GameFrameReader reader = new GameFrameReader(frame);                   
+        GameFrameReader reader = new GameFrameReader(frame);               
 		int id = (int) reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD);
 		int x = (int) reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD);
 		int y = (int) reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD);
-		System.out.println(x + ", " + y + ", " + id);
-		return new ObjectOptionMessage(id, x, y, Option.TWO);
+		return new ObjectOptionMessage(id, x, y, Option.FIVE);
 	}
 
 }
