@@ -20,6 +20,14 @@ public class ItemRequirement extends Requirement {
         this(new Item(itemId, amount), remove, null);
     }
 
+    public ItemRequirement(int itemId, boolean remove, String error) {
+        this(new Item(itemId, 1), remove, error);
+    }
+
+    public ItemRequirement(int itemId, int amount, boolean remove, String error) {
+        this(new Item(itemId, amount), remove, error);
+    }
+
     public ItemRequirement(Item item, boolean remove) {
         this(item, remove, null);
     }
