@@ -78,6 +78,7 @@ public final class Player extends Mob {
     private Player wantToTrade;
     private TradeSession tradeSession;
     private final House house = new House(this);
+    private House inHouse;
     private final SkillSet skillSet = new SkillSet();
     private BankSession bankSession;
     private final BankSettings bankSettings = new BankSettings();
@@ -345,6 +346,14 @@ public final class Player extends Mob {
 
     public House getHouse() {
         return house;
+    }
+
+    public House getInHouse() {
+        return inHouse;
+    }
+
+    public void setInHouse(House inHouse) {
+        this.inHouse = inHouse;
     }
 
     public SkillSet getSkillSet() {
