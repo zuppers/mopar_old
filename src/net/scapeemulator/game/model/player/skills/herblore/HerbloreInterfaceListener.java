@@ -39,8 +39,7 @@ public class HerbloreInterfaceListener extends ComponentListener {
             player.startAction(new HerbloreAction(player, recipe, amount));
         } else {
             componentClosed(null);
-            player.getScriptInput().setIntegerInputListener(new XPotionsAmountListener(player, recipe));
-            player.getScriptInput().showIntegerScriptInput();
+            player.getScriptInput().showIntegerScriptInput(new XPotionsAmountListener(player, recipe));
         }
 
     }

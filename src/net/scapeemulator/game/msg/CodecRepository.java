@@ -21,6 +21,7 @@ import net.scapeemulator.game.msg.decoder.PrivateChatSentMessageDecoder;
 import net.scapeemulator.game.msg.decoder.RegionChangedMessageDecoder;
 import net.scapeemulator.game.msg.decoder.SceneRebuiltMessageDecoder;
 import net.scapeemulator.game.msg.decoder.SequenceNumberMessageDecoder;
+import net.scapeemulator.game.msg.decoder.UsernameScriptInputMessageDecoder;
 import net.scapeemulator.game.msg.decoder.WalkMessageDecoder;
 import net.scapeemulator.game.msg.decoder.button.ButtonOptionMessageDecoder;
 import net.scapeemulator.game.msg.decoder.button.OldButtonMessageDecoder;
@@ -43,9 +44,11 @@ import net.scapeemulator.game.msg.decoder.npc.NPCInteractMessageDecoder;
 import net.scapeemulator.game.msg.decoder.npc.NPCOptionOneMessageDecoder;
 import net.scapeemulator.game.msg.decoder.npc.NPCOptionTwoMessageDecoder;
 import net.scapeemulator.game.msg.decoder.object.ObjectExamineMessageDecoder;
+import net.scapeemulator.game.msg.decoder.object.ObjectOptionFourMessageDecoder;
 import net.scapeemulator.game.msg.decoder.object.ObjectOptionOneMessageDecoder;
+import net.scapeemulator.game.msg.decoder.object.ObjectOptionThreeMessageDecoder;
 import net.scapeemulator.game.msg.decoder.object.ObjectOptionTwoMessageDecoder;
-import net.scapeemulator.game.msg.decoder.object.UnknownObjectMessageDecoder;
+import net.scapeemulator.game.msg.decoder.object.ObjectOptionFiveMessageDecoder;
 import net.scapeemulator.game.msg.decoder.player.PlayerOptionFourMessageDecoder;
 import net.scapeemulator.game.msg.decoder.player.PlayerOptionThreeMessageDecoder;
 import net.scapeemulator.game.msg.encoder.CameraAngleMessageEncoder;
@@ -122,8 +125,12 @@ public final class CodecRepository {
         bind(new SequenceNumberMessageDecoder());
         bind(new InterfaceClosedMessageDecoder());
         bind(new IntegerScriptInputMessageDecoder());
+        bind(new UsernameScriptInputMessageDecoder());
         bind(new ObjectOptionOneMessageDecoder());
         bind(new ObjectOptionTwoMessageDecoder());
+        bind(new ObjectOptionThreeMessageDecoder());
+        bind(new ObjectOptionFourMessageDecoder());
+        bind(new ObjectOptionFiveMessageDecoder());
         bind(new ObjectExamineMessageDecoder());
         bind(new SceneRebuiltMessageDecoder());
         bind(new PrivacySettingsUpdateMessageDecoder());
@@ -132,7 +139,6 @@ public final class CodecRepository {
         bind(new FriendListOperationMessageDecoder(120));
         bind(new FriendListOperationMessageDecoder(213));
         bind(new PrivateChatSentMessageDecoder());
-        bind(new UnknownObjectMessageDecoder()); // TODO
         bind(new GroundItemOptionThreeMessageDecoder());
         bind(new GrandExchangeSearchMessageDecoder());
 

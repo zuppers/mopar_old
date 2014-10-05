@@ -12,7 +12,7 @@ import net.scapeemulator.game.msg.impl.inter.InterfaceItemsMessage;
 import net.scapeemulator.game.msg.impl.inter.InterfaceOpenMessage;
 import net.scapeemulator.game.msg.impl.inter.InterfaceVisibleMessage;
 
-public class GrandExchangeHandler extends IntegerScriptInputListener {
+public class GrandExchangeHandler extends ScriptInputListenerAdapter {
 
     private Player player;
     private GEOffer[] playerOffers;
@@ -114,8 +114,7 @@ public class GrandExchangeHandler extends IntegerScriptInputListener {
         case 170: // custom amount
         case 185: // custom price
             customInputId = childId;
-            player.getScriptInput().setIntegerInputListener(this);
-            player.getScriptInput().showIntegerScriptInput("Enter " + (customInputId == 170 ? "amount" : "price") + ":");
+            player.getScriptInput().showIntegerScriptInput("Enter " + (customInputId == 170 ? "amount" : "price") + ":", this);
             break;
         case 171:
             modifyPrice(-1);
@@ -349,7 +348,7 @@ public class GrandExchangeHandler extends IntegerScriptInputListener {
     }
 
     @Override
-    public void inputReceived(int value) {
+    public void intInputReceived(int value) {
         if (customInputId == 170) {
             setAmount(value);
         } else if (customInputId == 185) {

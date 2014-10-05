@@ -69,7 +69,7 @@ public final class MessageDispatcher {
         bind(SequenceNumberMessage.class, new SequenceNumberMessageHandler());
         bind(InterfaceClosedMessage.class, new InterfaceClosedMessageHandler());
         bind(SceneRebuiltMessage.class, new SceneRebuiltMessageHandler());
-        bind(IntegerScriptInputMessage.class, new IntegerScriptInputMessageHandler());
+        bind(ScriptInputMessage.class, new ScriptInputMessageHandler());
         bind(GroundItemOptionMessage.class, new GroundItemOptionMessageHandler(groundItemDispatcher));
         bind(ItemOnItemMessage.class, new ItemOnItemMessageHandler(itemOnItemDispatcher));
         bind(MagicOnItemMessage.class, new MagicOnItemMessageHandler());

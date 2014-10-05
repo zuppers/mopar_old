@@ -1,12 +1,12 @@
 package net.scapeemulator.game.model.player.skills.herblore;
 
-import net.scapeemulator.game.model.player.IntegerScriptInputListener;
 import net.scapeemulator.game.model.player.Player;
+import net.scapeemulator.game.model.player.ScriptInputListenerAdapter;
 
 /**
  * @author David Insley
  */
-public class XPotionsAmountListener extends IntegerScriptInputListener {
+public class XPotionsAmountListener extends ScriptInputListenerAdapter {
 
     private final Player player;
     private final HerbloreRecipe recipe;
@@ -17,7 +17,7 @@ public class XPotionsAmountListener extends IntegerScriptInputListener {
     }
 
     @Override
-    public void inputReceived(int value) {
+    public void intInputReceived(int value) {
         player.startAction(new HerbloreAction(player, recipe, value));
         player.getScriptInput().reset();
     }

@@ -3,13 +3,12 @@ package net.scapeemulator.game.model.player.bank;
 import static net.scapeemulator.game.model.player.bank.BankTab.TAB_ALL;
 import static net.scapeemulator.game.model.player.interfaces.Interface.BANK;
 import net.scapeemulator.game.model.ExtendedOption;
-import net.scapeemulator.game.model.player.IntegerScriptInputListener;
+import net.scapeemulator.game.model.player.ScriptInputListenerAdapter;
 import net.scapeemulator.game.model.player.Item;
 import net.scapeemulator.game.model.player.Player;
 import net.scapeemulator.game.model.player.interfaces.ComponentListener;
 import net.scapeemulator.game.model.player.interfaces.InterfaceSet.Component;
 import net.scapeemulator.game.model.player.inventory.Inventory;
-import net.scapeemulator.game.msg.impl.ConfigMessage;
 import net.scapeemulator.game.msg.impl.inter.InterfaceAccessMessage;
 
 /**
@@ -33,7 +32,7 @@ public class BankSession extends ComponentListener {
      */
     private boolean noteWithdrawal;
     private boolean insert;
-    
+
     public BankSession(Player player) {
         this.player = player;
         this.inventory = player.getInventory();
@@ -94,16 +93,16 @@ public class BankSession extends ComponentListener {
                 withdraw(dyn, settings.getLastX());
                 break;
             case FIVE:
-                player.getScriptInput().setIntegerInputListener(new IntegerScriptInputListener() {
+                player.getScriptInput().showIntegerScriptInput(new ScriptInputListenerAdapter() {
                     @Override
-                    public void inputReceived(int value) {
+                    public void intInputReceived(int value) {
                         withdraw(dyn, value);
                         settings.setLastX(value);
                         player.getStateSet().setState(1249, value);
                         player.getScriptInput().reset();
                     }
+
                 });
-                player.getScriptInput().showIntegerScriptInput();
                 break;
             case SIX:
                 withdraw(dyn, Integer.MAX_VALUE);
@@ -132,16 +131,15 @@ public class BankSession extends ComponentListener {
             deposit(dyn, settings.getLastX());
             break;
         case FIVE:
-            player.getScriptInput().setIntegerInputListener(new IntegerScriptInputListener() {
+            player.getScriptInput().showIntegerScriptInput(new ScriptInputListenerAdapter() {
                 @Override
-                public void inputReceived(int value) {
+                public void intInputReceived(int value) {
                     deposit(dyn, value);
                     settings.setLastX(value);
                     player.getStateSet().setState(1249, value);
                     player.getScriptInput().reset();
                 }
             });
-            player.getScriptInput().showIntegerScriptInput();
             break;
         case SIX:
             deposit(dyn, Integer.MAX_VALUE);
@@ -244,7 +242,7 @@ public class BankSession extends ComponentListener {
         if (withdrawn > 0) {
             bank.remove(new Item(originalItem.getId(), withdrawn), slot);
             if (bank.get(slot) == null) {
-                
+
                 // Move all items one slot to fill the empty space.
                 bank.silence();
                 for (int i = slot; i < BANK_SLOTS - 1; i++) {

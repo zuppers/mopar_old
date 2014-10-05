@@ -1,7 +1,7 @@
 package net.scapeemulator.game.model.player.trade;
 
 import net.scapeemulator.game.model.ExtendedOption;
-import net.scapeemulator.game.model.player.IntegerScriptInputListener;
+import net.scapeemulator.game.model.player.ScriptInputListenerAdapter;
 import net.scapeemulator.game.model.player.Item;
 import net.scapeemulator.game.model.player.Player;
 import net.scapeemulator.game.model.player.interfaces.ComponentListener;
@@ -132,15 +132,14 @@ public class TradeSession extends ComponentListener {
                     inventory.add(removed);
                     break;
                 case FIVE:
-                    player.getScriptInput().setIntegerInputListener(new IntegerScriptInputListener() {
+                    player.getScriptInput().showIntegerScriptInput(new ScriptInputListenerAdapter() {
                         @Override
-                        public void inputReceived(int value) {
+                        public void intInputReceived(int value) {
                             Item removed = tradeInventory.remove(new Item(item.getId(), value), dynamicId);
                             inventory.add(removed);
                             player.getScriptInput().reset();
                         }
                     });
-                    player.getScriptInput().showIntegerScriptInput();
                     break;
                 default:
                     return;
@@ -178,15 +177,14 @@ public class TradeSession extends ComponentListener {
             tradeInventory.add(removed);
             break;
         case FIVE:
-            player.getScriptInput().setIntegerInputListener(new IntegerScriptInputListener() {
+            player.getScriptInput().showIntegerScriptInput(new ScriptInputListenerAdapter() {
                 @Override
-                public void inputReceived(int value) {
+                public void intInputReceived(int value) {
                     Item removed = inventory.remove(new Item(item.getId(), value), dynamicId);
                     tradeInventory.add(removed);
                     player.getScriptInput().reset();
                 }
             });
-            player.getScriptInput().showIntegerScriptInput();
             break;
         default:
             return;
