@@ -31,7 +31,7 @@ public final class RegionConstructMessageEncoder extends MessageEncoder<RegionCo
         Position position = message.getPosition();
         builder.put(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD, position.getLocalX());
         builder.put(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD, position.getRegionX());
-        builder.put(DataType.BYTE, DataTransformation.SUBTRACT, position.getHeight());
+        builder.put(DataType.BYTE, DataTransformation.SUBTRACT, position.getHeight() % 4);
         builder.put(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD, position.getLocalY());
 
         builder.switchToBitAccess();

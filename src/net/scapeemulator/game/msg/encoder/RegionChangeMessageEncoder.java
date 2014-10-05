@@ -51,7 +51,7 @@ public final class RegionChangeMessageEncoder extends MessageEncoder<RegionChang
             }
         }
 
-        builder.put(DataType.BYTE, DataTransformation.SUBTRACT, position.getHeight());
+        builder.put(DataType.BYTE, DataTransformation.SUBTRACT, position.getHeight() % 4);
         builder.put(DataType.SHORT, position.getRegionX());
         builder.put(DataType.SHORT, DataTransformation.ADD, position.getRegionY());
         builder.put(DataType.SHORT, DataTransformation.ADD, position.getLocalY(position.getRegionY()));
