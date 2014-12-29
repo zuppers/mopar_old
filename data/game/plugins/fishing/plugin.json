@@ -1,5 +1,0 @@
-{
-	"authors" : [ "davidi2" ],
-	"scripts" : [ "fish.rb", "fishing_tools.rb", "fishing_spots.rb", "fishing.rb" ],
-	"dependencies" : []
-}
