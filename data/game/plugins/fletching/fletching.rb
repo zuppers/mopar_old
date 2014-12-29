@@ -9,7 +9,7 @@ require 'java'
 
 java_import 'net.scapeemulator.game.model.player.interfaces.ComponentListenerAdapter'
 java_import 'net.scapeemulator.game.msg.impl.ScriptMessage'
-java_import 'net.scapeemulator.game.model.player.IntegerScriptInputListener'
+java_import 'net.scapeemulator.game.model.player.ScriptInputListener'
 
 module Fletching
 
@@ -111,13 +111,13 @@ module Fletching
     end
   end
 
-  class FletchingInputListener < IntegerScriptInputListener
+  class FletchingInputListener < ScriptInputListener
     def set_context(player, recipe)
       @player = player
       @recipe = recipe
     end
 
-    def inputReceived(value)
+    def intInputReceived(value)
       @player.start_action FletchingTask.new(@player, @recipe, value) if value > 0
       @player.get_script_input.reset
     end

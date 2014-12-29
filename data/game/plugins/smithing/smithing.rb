@@ -13,7 +13,7 @@ java_import 'net.scapeemulator.game.model.SpotAnimation'
 java_import 'net.scapeemulator.game.task.DistancedAction'
 java_import 'net.scapeemulator.game.model.player.interfaces.ComponentListenerAdapter'
 java_import 'net.scapeemulator.game.msg.impl.ScriptMessage'
-java_import 'net.scapeemulator.game.model.player.IntegerScriptInputListener'
+java_import 'net.scapeemulator.game.model.player.ScriptInputListener'
 
 module Smithing
 
@@ -214,13 +214,13 @@ module Smithing
 
   end
     
-  class SmithingInputListener < IntegerScriptInputListener
+  class SmithingInputListener < ScriptInputListener
     def set_context(player, product)
       @player = player
       @product = product
     end
 
-    def inputReceived(value)
+    def intInputReceived(value)
       if @product.check_reqs(@player, true)
         if @product.instance_of? Product
           @player.start_action SmithingTask.new(4, @player, @product, value) if value > 0
