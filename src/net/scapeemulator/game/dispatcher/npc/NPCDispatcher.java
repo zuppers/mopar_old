@@ -97,7 +97,6 @@ public class NPCDispatcher {
 		if (interfaceId != spellbook.getInterfaceId()) {
 			return;
 		}
-		System.out.println(childId);
 		Spell spell = spellbook.getSpell(childId);
 		if (spell == null) {
 			return;
