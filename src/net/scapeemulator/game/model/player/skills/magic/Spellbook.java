@@ -10,9 +10,9 @@ import net.scapeemulator.game.model.player.skills.Skill;
 
 public class Spellbook {
 
-    public static final Spellbook NORMAL_SPELLBOOK = new Spellbook(192);
-    public static final Spellbook ANCIENT_SPELLBOOK = new Spellbook(193);
-    public static final Spellbook LUNAR_SPELLBOOK = new Spellbook(430);
+    public static final Spellbook NORMAL_SPELLBOOK = new Spellbook(Magic.NORMAL_SPELLBOOK_ID);
+    public static final Spellbook ANCIENT_SPELLBOOK = new Spellbook(Magic.ANCIENT_SPELLBOOK_ID);
+    public static final Spellbook LUNAR_SPELLBOOK = new Spellbook(Magic.LUNAR_SPELLBOOK_ID);
 
     private final int interfaceId;
     private Spell[] spells = new Spell[100];

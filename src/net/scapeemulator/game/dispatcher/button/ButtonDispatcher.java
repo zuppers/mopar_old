@@ -5,16 +5,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import net.scapeemulator.game.GameServer;
 import net.scapeemulator.game.model.ExtendedOption;
 import net.scapeemulator.game.model.Widget;
 import net.scapeemulator.game.model.player.Equipment;
 import net.scapeemulator.game.model.player.Player;
-import net.scapeemulator.game.model.player.bank.BankSession;
-import net.scapeemulator.game.model.player.interfaces.Interface;
-import static net.scapeemulator.game.model.player.skills.construction.Construction.ROOM_CREATE_INTERFACE;
-import net.scapeemulator.game.model.player.skills.magic.AutoCastHandler;
-import net.scapeemulator.game.model.player.skills.magic.Spell;
-import net.scapeemulator.game.model.player.skills.magic.TeleportSpell;
 import net.scapeemulator.game.model.player.skills.prayer.Prayer;
 
 /**
@@ -24,8 +19,26 @@ import net.scapeemulator.game.model.player.skills.prayer.Prayer;
 public final class ButtonDispatcher {
 
     private Map<Integer, List<ButtonHandler>> handlerLists = new HashMap<>();
+    private Map<Integer, WindowHandler> windowHandlers = new HashMap<>();
 
     public ButtonDispatcher() {
+    }
+
+    /**
+     * Shortcut method to get the GameServer instance of this dispatcher.
+     * 
+     * @return the GameServer instance of the ButtonDispatcher
+     */
+    public static ButtonDispatcher getInstance() {
+        return GameServer.getInstance().getMessageDispatcher().getButtonDispatcher();
+    }
+
+    public void bind(WindowHandler handler) {
+        for (int windowId : handler.getWindowIds()) {
+            if (windowHandlers.put(windowId, handler) != null) {
+                System.out.println("Duplicate window handler entries for ID: " + windowId);
+            }
+        }
     }
 
     public void bind(ButtonHandler handler) {
@@ -58,83 +71,28 @@ public final class ButtonDispatcher {
         }
         int widgetId = Widget.getWidgetId(hash);
         int child = Widget.getComponentId(hash);
-        System.out.println("button dispatcher - parent: " + widgetId + " " + ", child: " + child + ", dyn: " + dyn + ", option: " + option);
+        System.out.println("button - parent: " + widgetId + " " + ", child: " + child + ", dyn: " + dyn + ", option: " + option);
 
         // Check for correct interfaces open in the handler!
-
-        if (widgetId >= 75 && widgetId <= 93) {
-            player.getPlayerCombatHandler().attackTabClick(widgetId, child);
-            return;
+        WindowHandler wHandler = windowHandlers.get(widgetId);
+        if (wHandler != null) {
+            if (wHandler.handle(player, widgetId, child, option, dyn)) {
+                return;
+            }
         }
+        // TODO convert all of these switched ones to the new WindowHandler
         switch (widgetId) {
-        case ROOM_CREATE_INTERFACE:
-            player.getHouse().handleSelectRoomInterface(child);
-            break;
-        case 105:
-            player.getGrandExchangeHandler().handleMainInterface(child, option);
-            break;
-        case 107:
-            player.getGrandExchangeHandler().handleOfferInventoryClick(child, dyn);
-            break;
-        case 190:
-        case 192:
-            Spell spell = player.getSpellbook().getSpell(child);
-            if (spell == null) {
-                return;
-            }
-            switch (spell.getType()) {
-            case COMBAT:
-            case EFFECT_MOB:
-            case ITEM:
-                return;
-            case TELEPORT:
-                ((TeleportSpell) spell).cast(player);
-                break;
-            }
-            break;
+
         case 271:
             player.getPrayers().toggle(Prayer.forId(child));
-            break;
-        case 334:
-        case 335:
-            if (player.getTradeSession() != null) {
-                player.getTradeSession().handleInterfaceClick(widgetId, child, dyn, option);
-            }
-            break;
-        case 336:
-            if (player.getTradeSession() != null) {
-                player.getTradeSession().handleInventoryClick(dyn, option);
-            }
             break;
         case 387:
             if (child == 55) {
                 Equipment.showEquipmentInterface(player);
             }
             break;
-        case 310:
-        case 319:
-        case 388:
-        case 406:
-            AutoCastHandler.handleSpellSelection(player, widgetId, child);
-            break;
-        case Interface.BANK:
-            if (player.getBankSession() != null) {
-                player.getBankSession().handleInterfaceClick(child, dyn, option);
-            }
-            break;
-        case BankSession.BANK_INVENTORY:
-            if (player.getBankSession() != null) {
-                player.getBankSession().handleInventoryClick(child, dyn, option);
-            }
-            break;
         case 771:
             player.getAppearance().handle(child);
-            break;
-        case 620:
-            player.getShopHandler().handleInput(child, dyn, option);
-            break;
-        case 621:
-            player.getShopHandler().handleInventoryClick(dyn, option);
             break;
         default:
 

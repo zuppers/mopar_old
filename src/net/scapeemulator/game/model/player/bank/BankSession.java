@@ -2,6 +2,7 @@ package net.scapeemulator.game.model.player.bank;
 
 import static net.scapeemulator.game.model.player.bank.BankTab.TAB_ALL;
 import static net.scapeemulator.game.model.player.interfaces.Interface.BANK;
+import net.scapeemulator.game.dispatcher.button.ButtonDispatcher;
 import net.scapeemulator.game.model.ExtendedOption;
 import net.scapeemulator.game.model.player.ScriptInputListenerAdapter;
 import net.scapeemulator.game.model.player.Item;
@@ -15,6 +16,10 @@ import net.scapeemulator.game.msg.impl.inter.InterfaceAccessMessage;
  * @author David Insley
  */
 public class BankSession extends ComponentListener {
+
+    static {
+        ButtonDispatcher.getInstance().bind(new BankInterfaceHandler());
+    }
 
     public static final int BANK_SLOTS = 400;
     public static final int BANK_INVENTORY = 763;

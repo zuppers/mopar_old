@@ -3,11 +3,13 @@ package net.scapeemulator.game.model.player;
 import java.util.HashMap;
 
 import net.scapeemulator.cache.def.ItemDefinition;
+import net.scapeemulator.game.dispatcher.button.ButtonDispatcher;
 import net.scapeemulator.game.model.ExtendedOption;
 import net.scapeemulator.game.model.World;
 import net.scapeemulator.game.model.definition.ItemDefinitions;
 import net.scapeemulator.game.model.player.interfaces.ComponentListener;
 import net.scapeemulator.game.model.player.interfaces.InterfaceSet.Component;
+import net.scapeemulator.game.model.shop.ShopInterfaceHandler;
 import net.scapeemulator.game.model.shop.StockType;
 import net.scapeemulator.game.model.shop.Shop;
 import net.scapeemulator.game.msg.impl.ScriptMessage;
@@ -18,6 +20,10 @@ import net.scapeemulator.game.util.math.BasicMath;
 
 public class ShopHandler extends ComponentListener {
 
+    static {
+        ButtonDispatcher.getInstance().bind(new ShopInterfaceHandler());
+    }
+
     public final static HashMap<String, Shop> shops = new HashMap<String, Shop>();
     private final static int[] amounts = { 1, 5, 10, 50 };
 
@@ -26,22 +32,10 @@ public class ShopHandler extends ComponentListener {
     private StockType activeStock;
 
     /*
-     * 520 Shopkeeper FALADOR 
-     * 521 Shop assistant 
-     * 522 Shopkeeper VARROCK 
-     * 523 Shop assistant 
-     * 524 Shopkeeper Al Kharid 
-     * 525 Shop assistant 
-     * 526 Shopkeeper LUMBRIDGE 
-     * 527 Shop assistant 
-     * 528 Shopkeeper 
-     * 529 Shop assistant 
-     * 530 Shopkeeper 
-     * 531 Shop assistant 
-     * 532 Shopkeeper 
-     * 533 Shop assistant 
-     * 534 Fairy shopkeeper 
-     * 535 Fairy shop assistant
+     * 520 Shopkeeper FALADOR 521 Shop assistant 522 Shopkeeper VARROCK 523 Shop assistant 524
+     * Shopkeeper Al Kharid 525 Shop assistant 526 Shopkeeper LUMBRIDGE 527 Shop assistant 528
+     * Shopkeeper 529 Shop assistant 530 Shopkeeper 531 Shop assistant 532 Shopkeeper 533 Shop
+     * assistant 534 Fairy shopkeeper 535 Fairy shop assistant
      */
 
     public ShopHandler(Player player) {
@@ -77,7 +71,7 @@ public class ShopHandler extends ComponentListener {
         // Remove the items from the players inventory
         Item toSell = new Item(itemId, amount);
         Item removed = player.getInventory().remove(toSell);
-        
+
         // Triple check that everything worked
         if (removed == null || !removed.equals(toSell)) {
             return;

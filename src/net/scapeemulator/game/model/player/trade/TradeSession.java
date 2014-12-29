@@ -1,5 +1,6 @@
 package net.scapeemulator.game.model.player.trade;
 
+import net.scapeemulator.game.dispatcher.button.ButtonDispatcher;
 import net.scapeemulator.game.model.ExtendedOption;
 import net.scapeemulator.game.model.player.ScriptInputListenerAdapter;
 import net.scapeemulator.game.model.player.Item;
@@ -17,6 +18,10 @@ import net.scapeemulator.game.msg.impl.inter.InterfaceVisibleMessage;
  * @author David Insley
  */
 public class TradeSession extends ComponentListener {
+
+    static {
+        ButtonDispatcher.getInstance().bind(new TradeInterfaceHandler());
+    }
 
     private static final int VERIFY_WINDOW = 334;
     private static final int TRADE_WINDOW = 335;

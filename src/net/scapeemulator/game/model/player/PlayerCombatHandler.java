@@ -1,5 +1,6 @@
 package net.scapeemulator.game.model.player;
 
+import net.scapeemulator.game.dispatcher.button.ButtonDispatcher;
 import net.scapeemulator.game.model.World;
 import net.scapeemulator.game.model.mob.Animation;
 import net.scapeemulator.game.model.mob.Mob;
@@ -13,6 +14,7 @@ import net.scapeemulator.game.model.player.EquipmentDefinition;
 import net.scapeemulator.game.model.player.Item;
 import net.scapeemulator.game.model.player.Player;
 import net.scapeemulator.game.model.player.EquipmentDefinition.WeaponClass;
+import net.scapeemulator.game.model.player.interfaces.CombatTabHandler;
 import net.scapeemulator.game.model.player.skills.Skill;
 import net.scapeemulator.game.model.player.skills.magic.AutoCastHandler;
 import net.scapeemulator.game.model.player.skills.magic.CombatSpell;
@@ -27,6 +29,10 @@ import net.scapeemulator.game.msg.impl.inter.InterfaceTextMessage;
 import net.scapeemulator.game.msg.impl.inter.InterfaceVisibleMessage;
 
 public class PlayerCombatHandler extends CombatHandler<Player> {
+
+    static {
+        ButtonDispatcher.getInstance().bind(new CombatTabHandler());
+    }
 
     private Item weapon;
     private EquipmentDefinition weaponDefinition;
