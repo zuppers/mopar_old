@@ -24,11 +24,13 @@ public enum Hatchet {
     DRAGON(6739, 2846, 61, 8),
     INFERNO_ADZE(13661, 10251, 61, 9);
     
+    private final int itemId;
     private final Animation animation;
     private final Requirements requirements;
     private final int speed;
     
     private Hatchet(int itemId, int animationId, int level, int speed) {
+        this.itemId = itemId;
         animation = new Animation(animationId);
         requirements = new Requirements();
         requirements.addRequirement(new SkillRequirement(Skill.WOODCUTTING, level, true, "use that axe"));
@@ -36,6 +38,10 @@ public enum Hatchet {
         ItemRequirement ir = new ItemRequirement(itemId, false);
         requirements.addRequirement(new OneOfRequirement(er, ir));
         this.speed = speed;
+    }
+    
+    public int getItemId() {
+        return itemId;
     }
     
     public Animation getAnimation() {

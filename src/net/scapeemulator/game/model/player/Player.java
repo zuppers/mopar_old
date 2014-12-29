@@ -19,6 +19,7 @@ import net.scapeemulator.game.model.mob.Mob;
 import net.scapeemulator.game.model.mob.combat.AttackType;
 import net.scapeemulator.game.model.npc.NPC;
 import net.scapeemulator.game.model.object.GroundObjectSynchronizer;
+import net.scapeemulator.game.model.player.PlayerVariables.Variable;
 import net.scapeemulator.game.model.player.action.PlayerDeathAction;
 import net.scapeemulator.game.model.player.appearance.Appearance;
 import net.scapeemulator.game.model.player.bank.BankSession;
@@ -31,8 +32,15 @@ import net.scapeemulator.game.model.player.skills.SkillAppearanceListener;
 import net.scapeemulator.game.model.player.skills.SkillMessageListener;
 import net.scapeemulator.game.model.player.skills.SkillSet;
 import net.scapeemulator.game.model.player.skills.construction.House;
+import net.scapeemulator.game.model.player.skills.firemaking.Firemaking;
+import net.scapeemulator.game.model.player.skills.fishing.FishingTool;
+import net.scapeemulator.game.model.player.skills.magic.Rune;
 import net.scapeemulator.game.model.player.skills.magic.Spellbook;
+import net.scapeemulator.game.model.player.skills.mining.Pickaxe;
 import net.scapeemulator.game.model.player.skills.prayer.Prayers;
+import net.scapeemulator.game.model.player.skills.ranged.Arrow;
+import net.scapeemulator.game.model.player.skills.ranged.Bow;
+import net.scapeemulator.game.model.player.skills.woodcutting.Hatchet;
 import net.scapeemulator.game.model.player.trade.TradeSession;
 import net.scapeemulator.game.msg.Message;
 import net.scapeemulator.game.msg.impl.ChatMessage;
@@ -91,6 +99,7 @@ public final class Player extends Mob {
     private final Prayers prayers = new Prayers(this);
     private final ScriptInput scriptInput = new ScriptInput(this);
     private final PlayerSettings settings = new PlayerSettings(this);
+    private final PlayerVariables variables = new PlayerVariables();
     private final InterfaceSet interfaceSet = new InterfaceSet(this);
     private final GrandExchangeHandler grandExchangeHandler = new GrandExchangeHandler(this);
     private final ShopHandler shopHandler = new ShopHandler(this);
@@ -104,7 +113,6 @@ public final class Player extends Mob {
     private int[] appearanceTickets = new int[World.MAX_PLAYERS];
     private int appearanceTicket = nextAppearanceTicket();
     private final PlayerOption[] options = new PlayerOption[10];
-    private int homeId;
     private int pnpc = -1;
 
     // TODO remove
@@ -264,7 +272,7 @@ public final class Player extends Mob {
     }
 
     public Position getHomeLocation() {
-        return HOME_LOCATIONS[homeId];
+        return HOME_LOCATIONS[variables.getVar(Variable.HOME_LOCATION)];
     }
 
     public InterfaceSet getInterfaceSet() {
@@ -338,6 +346,10 @@ public final class Player extends Mob {
 
     public PlayerSettings getSettings() {
         return settings;
+    }
+
+    public PlayerVariables getVariables() {
+        return variables;
     }
 
     public ShopHandler getShopHandler() {
@@ -660,5 +672,40 @@ public final class Player extends Mob {
 
     public RegionPalette getConstructedRegion() {
         return constructedRegion;
+    }
+
+    public void onLogin() {
+        grandExchangeHandler.init();
+        calculateEquipmentBonuses();
+        friends.init();
+        if (variables.getVar(Variable.FIRST_LOGIN) == 1) {
+            variables.setVar(Variable.FIRST_LOGIN, 0);
+            sendMessage("Welcome, thank you for joining MoparScape!");
+            World.getWorld().sendGlobalMessage(getDisplayName() + " has joined the server! Welcome!");
+
+            // Starter items
+            getInventory().add(new Item(995, 500)); // Coins
+            getInventory().add(new Item(1171)); // Wooden shield
+            getInventory().add(new Item(1277)); // Bronze sword
+            getInventory().add(new Item(2309)); // Bread
+
+            getInventory().add(new Item(FishingTool.SMALL_NET.getToolId()));
+            getInventory().add(new Item(Hatchet.BRONZE.getItemId()));
+            getInventory().add(new Item(Pickaxe.BRONZE.getItemId()));
+            getInventory().add(new Item(Firemaking.TINDERBOX));
+
+            getInventory().add(new Item(Bow.SHORTBOW.getBowId()));
+            getInventory().add(new Item(Arrow.BRONZE.getArrowId(), 100));
+
+            getInventory().add(new Item(Rune.MIND.getItemId(), 100));
+            getInventory().add(new Item(Rune.AIR.getItemId(), 100));
+            getInventory().add(new Item(Rune.WATER.getItemId(), 25));
+            getInventory().add(new Item(Rune.EARTH.getItemId(), 25));
+            getInventory().add(new Item(Rune.FIRE.getItemId(), 25));
+        } else {
+            sendMessage("Welcome to MoparScape.");
+            World.getWorld().sendGlobalMessage(getDisplayName() + " has logged in.");
+        }
+        System.out.println("Player logged in: " + getDisplayName());
     }
 }

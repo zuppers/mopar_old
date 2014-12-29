@@ -30,6 +30,10 @@ public enum Bow {
 		this.maxArrow = maxArrow;
 	}
 	
+	public int getBowId() {
+	    return itemId;
+	}
+	
 	public static Bow forId(int itemId) {
 		if(itemId >= 4214 && itemId <= 4223) {
 			return CRYSTAL_BOW;

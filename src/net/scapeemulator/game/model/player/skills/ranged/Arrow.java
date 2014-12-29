@@ -66,6 +66,10 @@ public enum Arrow {
 		this.projectileGraphic = projectileGraphic;
 	}
 	
+	public int getArrowId() {
+	    return itemId;
+	}
+	
 	public static Arrow forId(int itemId) {
 		for(Arrow arrow : values()) {
 			if(arrow.itemId == itemId) {

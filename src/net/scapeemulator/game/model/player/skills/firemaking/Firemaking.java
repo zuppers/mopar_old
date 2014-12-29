@@ -7,6 +7,8 @@ import net.scapeemulator.game.GameServer;
  */
 public class Firemaking {
 
+    public static final int TINDERBOX = 590;
+
     public static void initialize() {
         for (Log log : Log.values()) {
             GameServer.getInstance().getMessageDispatcher().getItemOnItemDispatcher().bind(new LogOnTinderboxHandler(log));

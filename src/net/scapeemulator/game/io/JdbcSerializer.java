@@ -7,6 +7,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
 import net.scapeemulator.cache.def.NPCDefinition;
 import net.scapeemulator.game.io.jdbc.AppearanceTable;
 import net.scapeemulator.game.io.jdbc.FriendsTable;
@@ -17,6 +18,7 @@ import net.scapeemulator.game.io.jdbc.PlayersTable;
 import net.scapeemulator.game.io.jdbc.SettingsTable;
 import net.scapeemulator.game.io.jdbc.SkillsTable;
 import net.scapeemulator.game.io.jdbc.Table;
+import net.scapeemulator.game.io.jdbc.VariablesTable;
 import net.scapeemulator.game.model.Position;
 import net.scapeemulator.game.model.World;
 import net.scapeemulator.game.model.area.QuadArea;
@@ -33,9 +35,12 @@ import net.scapeemulator.game.model.player.ShopHandler;
 import net.scapeemulator.game.model.player.inventory.Inventory;
 import net.scapeemulator.game.model.shop.Shop;
 import net.scapeemulator.game.net.login.LoginResponse;
+
 import org.mindrot.jbcrypt.BCrypt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.mysql.jdbc.Statement;
 
 public final class JdbcSerializer extends Serializer implements Closeable {
 
@@ -53,10 +58,10 @@ public final class JdbcSerializer extends Serializer implements Closeable {
         connection = DriverManager.getConnection(url, username, password);
         connection.setAutoCommit(false);
         loginStatement = connection.prepareStatement("SELECT id, password FROM players WHERE username = ?;");
-        registerStatement = connection.prepareStatement("INSERT INTO players (ip, username, password, rights, x, y, height) VALUES (?, ?, ?, 0, 3222, 3222, 0);");
+        registerStatement = connection.prepareStatement("INSERT INTO players (ip, username, password, rights, x, y, height) VALUES (?, ?, ?, 0, 3222, 3222, 0);", Statement.RETURN_GENERATED_KEYS);
 
-        playerTables = new Table[] { new PlayersTable(connection), new FriendsTable(connection), new SettingsTable(connection), new AppearanceTable(connection), new SkillsTable(connection),
-                new ItemsTable(connection, "inventory") {
+        playerTables = new Table[] { new PlayersTable(connection), new FriendsTable(connection), new SettingsTable(connection), new VariablesTable(connection), new AppearanceTable(connection),
+                new SkillsTable(connection), new ItemsTable(connection, "inventory") {
                     @Override
                     public Inventory getInventory(Player player) {
                         return player.getInventory();
@@ -112,8 +117,9 @@ public final class JdbcSerializer extends Serializer implements Closeable {
     @Override
     public void savePlayer(Player player) {
         try {
-            for (Table<Player> table : playerTables)
+            for (Table<Player> table : playerTables) {
                 table.save(player);
+            }
 
             connection.commit();
         } catch (SQLException | IOException ex) {
@@ -149,12 +155,16 @@ public final class JdbcSerializer extends Serializer implements Closeable {
             registerStatement.setString(2, username);
             registerStatement.setString(3, BCrypt.hashpw(password, BCrypt.gensalt()));
             registerStatement.execute();
+            ResultSet result = registerStatement.getGeneratedKeys();
+            result.next();
+            int dbId = result.getInt(1);
+            logger.info("Registered `" + username + "` dbId: " + dbId);
             connection.commit();
             return true;
         } catch (SQLException ex) {
+            ex.printStackTrace();
             return false;
         }
-
     }
 
     public void saveGrandExchange(GrandExchange ge) {

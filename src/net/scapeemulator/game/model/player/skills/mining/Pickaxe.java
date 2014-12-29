@@ -22,11 +22,13 @@ public enum Pickaxe {
     RUNE(1275, 624, 41, 6),
     INFERNO_ADZE(13661, 10222, 41, 7);
     
+    private final int itemId;
     private final Animation animation;
     private final Requirements requirements;
     private final int speed;
     
     private Pickaxe(int itemId, int animationId, int level, int speed) {
+        this.itemId = itemId;
         animation = new Animation(animationId);
         requirements = new Requirements();
         requirements.addRequirement(new SkillRequirement(Skill.MINING, level, true, "use that pickaxe"));
@@ -34,6 +36,10 @@ public enum Pickaxe {
         ItemRequirement ir = new ItemRequirement(itemId, false);
         requirements.addRequirement(new OneOfRequirement(er, ir));
         this.speed = speed;
+    }
+    
+    public int getItemId() {
+        return itemId;
     }
     
     public Animation getAnimation() {

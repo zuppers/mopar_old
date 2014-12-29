@@ -9,7 +9,6 @@ import java.util.Queue;
 
 import net.scapeemulator.game.GameServer;
 import net.scapeemulator.game.model.Position;
-import net.scapeemulator.game.model.World;
 import net.scapeemulator.game.model.player.Player;
 import net.scapeemulator.game.model.player.PlayerOption;
 import net.scapeemulator.game.msg.Message;
@@ -41,9 +40,6 @@ public final class GameSession extends Session {
 		player.getInterfaceSet().init();
 		player.getPlayerCombatHandler().init();
 		
-		player.sendMessage("Welcome to the server.");
-		System.out.println("Player logged in: " + player.getDisplayName());
-		World.getWorld().sendGlobalMessage(player.getDisplayName() + " has logged in.");
 		/* Set all the default options that all players have available */
 		player.getOption(PlayerOption.FOLLOW_OPTION).setText("Follow");
 		player.getOption(PlayerOption.TRADE_OPTION).setText("Trade with");
@@ -51,14 +47,11 @@ public final class GameSession extends Session {
 
 		/* fireEvents skills, inventory, energy, etc. */
 		player.getInventory().refresh();
-		player.getEquipment().refresh();
-		
+		player.getEquipment().refresh();		
 		player.getSettings().refresh();
 		player.getSkillSet().refresh();
-		player.getGrandExchangeHandler().init();
 		player.setEnergy(player.getEnergy());
-		player.calculateEquipmentBonuses();
-		player.getFriends().init();
+		player.onLogin();
 	}
 
 	@Override
