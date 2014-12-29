@@ -4,29 +4,29 @@ import net.scapeemulator.game.msg.Message;
 
 public final class RemoveItemMessage extends Message {
 
-	private final int id, slot, itemSlot, itemId;
+    private final int id, childId, itemSlot, itemId;
 
-	public RemoveItemMessage(int id, int slot, int itemSlot, int itemId) {
-		this.id = id;
-		this.slot = slot;
-		this.itemSlot = itemSlot;
-		this.itemId = itemId;
-	}
+    public RemoveItemMessage(int id, int childId, int itemSlot, int itemId) {
+        this.id = id;
+        this.childId = childId;
+        this.itemSlot = itemSlot;
+        this.itemId = itemId;
+    }
 
-	public int getId() {
-		return id;
-	}
+    public int getId() {
+        return id;
+    }
 
-	public int getSlot() {
-		return slot;
-	}
+    public int getChildId() {
+        return childId;
+    }
 
-	public int getItemSlot() {
-		return itemSlot;
-	}
+    public int getItemSlot() {
+        return itemSlot;
+    }
 
-	public int getItemId() {
-		return itemId;
-	}
+    public int getItemId() {
+        return itemId;
+    }
 
 }
