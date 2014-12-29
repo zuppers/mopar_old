@@ -18,6 +18,10 @@ public final class ItemDropMessageHandler extends MessageHandler<ItemDropMessage
         if (!player.getInventory().verify(msg.getSlot(), msg.getId())) {
             return;
         }
+        if (player.getInHouse() != null) {
+            player.sendMessage("You can't drop items in a house.");
+            return;
+        }
         Item removed = player.getInventory().remove(player.getInventory().get(msg.getSlot()), msg.getSlot());
         player.getGroundItems().add(removed.getId(), removed.getAmount(), player.getPosition());
     }
