@@ -39,6 +39,7 @@ import net.scapeemulator.game.model.player.consumable.Consumables;
 import net.scapeemulator.game.model.player.skills.construction.Construction;
 import net.scapeemulator.game.model.player.skills.cooking.Cooking;
 import net.scapeemulator.game.model.player.skills.firemaking.Firemaking;
+import net.scapeemulator.game.model.player.skills.fishing.Fishing;
 import net.scapeemulator.game.model.player.skills.herblore.Herblore;
 import net.scapeemulator.game.model.player.skills.magic.Magic;
 import net.scapeemulator.game.model.player.skills.mining.Mining;
@@ -188,6 +189,7 @@ public final class GameServer {
         messageDispatcher.decorateDispatchers(scriptContext);
 
         /* bind the non-script skill handlers to the dispatchers */
+        Fishing.initialize();
         Magic.initialize();
         Cooking.initialize();
         Mining.initialize();
