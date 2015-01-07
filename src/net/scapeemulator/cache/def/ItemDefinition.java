@@ -245,7 +245,7 @@ public final class ItemDefinition {
     }
 
     public boolean isStackable() {
-        return stackable || (!unnoted && swapId != id);
+        return stackable || (isNoted() && swapId != id);
     }
 
     public int getValue() {
@@ -305,11 +305,11 @@ public final class ItemDefinition {
     }
 
     public boolean isNoted() {
-        return !unnoted;
+        return !unnoted && (name == null || name.equals("null"));
     }
 
     public boolean isUnnoted() {
-        return unnoted;
+        return !isNoted();
     }
 
     public int getColourEquip1() {
