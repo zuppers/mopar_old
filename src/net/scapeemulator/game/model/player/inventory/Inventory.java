@@ -263,7 +263,7 @@ public final class Inventory {
             /* try to remove the item from the preferred slot first */
             if (preferredSlot != -1) {
                 checkSlot(preferredSlot);
-                if (items[preferredSlot].getId() == id) {
+                if (items[preferredSlot] != null && items[preferredSlot].getId() == id) {
                     set(preferredSlot, null);
 
                     if (++removed >= item.getAmount())
