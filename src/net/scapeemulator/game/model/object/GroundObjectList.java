@@ -63,9 +63,9 @@ public final class GroundObjectList {
         public Tile() {
         }
 
-        public boolean put(ObjectGroup group, GroundObject object) {
+        public boolean put(ObjectGroup group, GroundObject object, boolean override) {
             /* Cannot contain multiple of the same group of object on a tile */
-            if (objects.containsKey(group)) {
+            if (!override && objects.containsKey(group)) {
                 return false;
             }
 
@@ -492,14 +492,22 @@ public final class GroundObjectList {
         return put(position, objectId, ObjectDefinitions.forId(objectId).getAnimationId(), rotation, type);
     }
 
+    public GroundObject put(Position position, int objectId, int rotation, ObjectType type, boolean override) {
+        return put(position, objectId, ObjectDefinitions.forId(objectId).getAnimationId(), rotation, type, override);
+    }
+
     public GroundObject put(Position position, int objectId, int animationId, int rotation, ObjectType type) {
+        return put(position, objectId, animationId, rotation, type, false);
+    }
+
+    public GroundObject put(Position position, int objectId, int animationId, int rotation, ObjectType type, boolean override) {
         GroundObject object = new GroundObject(position, objectId, animationId, rotation, type);
         Tile tile = tiles.get(position);
         if (tile == null) {
             tile = new Tile();
             tiles.put(position, tile);
         }
-        return tile.put(object.getType().getObjectGroup(), object) ? object : null;
+        return tile.put(object.getType().getObjectGroup(), object, override) ? object : null;
     }
 
     public List<GroundObject> getAll(Position position) {
