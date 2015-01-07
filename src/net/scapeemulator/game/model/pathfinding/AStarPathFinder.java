@@ -255,7 +255,7 @@ public final class AStarPathFinder extends PathFinder {
 
         Path p = new Path();
         Node n = nodes[dstX][dstY];
-        while(n != nodes[srcX][srcY]) {
+        while(n != nodes[srcX][srcY] && n != null) {
             p.addFirst(new Position(n.getX() + position.getX(), n.getY() + position.getY()));
             n = n.getParent();
         }
