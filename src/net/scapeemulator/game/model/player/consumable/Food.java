@@ -12,7 +12,7 @@ public enum Food {
     CHICKEN(3, 0),
     MEAT(3, 0),
     CAKE(4, 1891, 1893, 1895),
-    BREAD(5, 0),
+    BREAD(5, 2309),
     HERRING(5, 0),
     MACKEREL(6, 0),
     PLAIN_PIZZA(7, 2289, 2291),
