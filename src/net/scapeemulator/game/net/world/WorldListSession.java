@@ -7,19 +7,17 @@ import net.scapeemulator.game.net.Session;
 
 public final class WorldListSession extends Session {
 
-	private static final Country[] COUNTRIES = {
-		new Country(Country.FLAG_USA, "USA")
-	};
+    private static final Country[] COUNTRIES = { new Country(Country.FLAG_USA, "USA") };
 
-	public WorldListSession(GameServer server, Channel channel) {
-		super(server, channel);
-	}
+    public WorldListSession(GameServer server, Channel channel) {
+        super(server, channel);
+    }
 
-	@Override
-	public void messageReceived(Object message) {
-		World[] worlds = { new World(1, World.FLAG_MEMBERS | World.FLAG_HIGHLIGHT, 0, "Non-Local", "67.168.49.236"), new World(2, World.FLAG_MEMBERS | World.FLAG_HIGHLIGHT, 0, "Local", "127.0.0.1"), new World(3, World.FLAG_MEMBERS | World.FLAG_HIGHLIGHT, 0, "LAN", "192.168.2.10") };
-		int[] players = { 0, 0, 0 };
-		channel.write(new WorldListMessage(0xDEADBEEF, COUNTRIES, worlds, players)).addListener(ChannelFutureListener.CLOSE);
-	}
+    @Override
+    public void messageReceived(Object message) {
+        World[] worlds = { new World(1, World.FLAG_MEMBERS, 0, "MoparScape Server", "game.moparscape.org"), new World(2, 0, 0, "Local", "127.0.0.1") };
+        int[] players = { net.scapeemulator.game.model.World.getWorld().getPlayers().getSize(), 0 };
+        channel.write(new WorldListMessage(0xDEADBEEF, COUNTRIES, worlds, players)).addListener(ChannelFutureListener.CLOSE);
+    }
 
 }
