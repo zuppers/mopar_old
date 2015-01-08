@@ -121,7 +121,7 @@ public final class GameServer {
 
     private Serializer createPlayerSerializer() throws IOException, SQLException {
         Properties properties = new Properties();
-        try (InputStream is = new FileInputStream("data/game/serializer.conf")) {
+        try (InputStream is = new FileInputStream("data/game/config/serializer.conf")) {
             properties.load(is);
         }
 
