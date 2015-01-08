@@ -88,10 +88,33 @@ public final class SkillSet {
         calculateCombatLevel();
     }
 
+    private double xpRate(int skill, double xp) {
+        return xp * 3.0;
+    }
+    
+    /**
+     * Grants experience to the player modified by the XP rate.
+     * 
+     * @param skill skill id to grant experience to
+     * @param xp amount of experience to grant
+     */
     public void addExperience(int skill, double xp) {
+        addExperience(skill, xp, true);
+    }
+
+    /**
+     * Grants experience to the player.
+     * 
+     * @param skill skill id to grant experience to
+     * @param xp amount of experience to grant
+     * @param modify whether or not the experience should be modifed for the xp rate
+     */
+    public void addExperience(int skill, double xp, boolean modify) {
         if (xp <= 0) {
             return;
         }
+
+        xp = xpRate(skill, xp);
 
         int oldLevel = level[skill];
         int oldCB = combatLevel;
