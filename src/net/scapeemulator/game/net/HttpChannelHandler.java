@@ -24,7 +24,7 @@ public final class HttpChannelHandler extends ChannelInboundMessageHandlerAdapte
 	private static final Logger logger = LoggerFactory.getLogger(HttpChannelHandler.class);
 
 	private static final String NOT_FOUND_HTML = "<html><head><title>404 - Page not found</title></head><body style=\"color: black; background: white; font-family: Arial, Verdana, Helvetica;\"><div style=\"font-weight: bold; color: #666666; font-size: large\">404 - Page not found</div><hr width=\"300\" align=\"left\" /><p>Sorry, the page you were looking for was not found.</p><!--Padding for IEPadding Padding for IEPadding Padding for IEPadding Padding for IEPadding for IEPadding for IEPadding for IEPadding for IEPadding for IEPadding for IEPadding for IEPadding for IEPadding for IE--></body></html>";
-	private static final FileProvider provider = new FileProvider(false);
+	private static final FileProvider provider = new FileProvider("data/game/www", false);
 
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) {

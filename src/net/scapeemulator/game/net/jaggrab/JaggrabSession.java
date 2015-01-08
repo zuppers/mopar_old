@@ -12,21 +12,21 @@ import net.scapeemulator.game.net.file.FileProvider;
 
 public final class JaggrabSession extends Session {
 
-	private static final FileProvider provider = new FileProvider(true);
+    private static final FileProvider provider = new FileProvider("data/game/jaggrab/", true);
 
-	public JaggrabSession(GameServer server, Channel channel) {
-		super(server, channel);
-	}
+    public JaggrabSession(GameServer server, Channel channel) {
+        super(server, channel);
+    }
 
-	@Override
-	public void messageReceived(Object message) throws IOException {
-		JaggrabRequest request = (JaggrabRequest) message;
-		FileRegion file = provider.serve(request.getPath());
-		if (file != null) {
-			channel.write(file).addListener(ChannelFutureListener.CLOSE);
-		} else {
-			channel.close();
-		}
-	}
+    @Override
+    public void messageReceived(Object message) throws IOException {
+        JaggrabRequest request = (JaggrabRequest) message;
+        FileRegion file = provider.serve(request.getPath());
+        if (file != null) {
+            channel.write(file).addListener(ChannelFutureListener.CLOSE);
+        } else {
+            channel.close();
+        }
+    }
 
 }

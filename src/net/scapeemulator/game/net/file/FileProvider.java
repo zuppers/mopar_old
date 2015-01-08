@@ -12,55 +12,58 @@ import java.util.regex.Pattern;
 
 public final class FileProvider {
 
-	private static final File root = new File("data/game/www/");
-	private final boolean codeOnly;
+    private final File root;
+    private final boolean codeOnly;
 
-	public FileProvider(boolean codeOnly) {
-		this.codeOnly = codeOnly;
-	}
+    public FileProvider(String root, boolean codeOnly) {
+        this.root = new File(root);
+        this.codeOnly = codeOnly;
+    }
 
-	public FileRegion serve(String path) throws IOException {
-		path = rewrite(path);
-		if (codeOnly && !path.matches("^/(jogl_\\d_\\d\\.lib|(loader|loader_gl|runescape)\\.jar|(jogl|runescape|runescape_gl)\\.pack200|unpackclass.pack)$"))
-			return null;
-		File f = new File(root, path);
-		if (!f.getAbsolutePath().startsWith(root.getAbsolutePath()))
-			return null;
+    public FileRegion serve(String path) throws IOException {
+        path = rewrite(path);
+        System.out.println(path);
+        if (codeOnly && !path.matches("^/(jogl_\\d_\\d\\.lib|(loader|loader_gl|runescape)\\.jar|(jogl|runescape|runescape_gl)\\.pack200|unpackclass.pack)$"))
+            return null;
 
-		if (!f.exists() || !f.isFile())
-			return null;
+        File f = new File(root, path);
+        if (!f.getAbsolutePath().startsWith(root.getAbsolutePath()))
+            return null;
 
-		return new DefaultFileRegion(FileChannel.open(f.toPath(), StandardOpenOption.READ), 0, f.length());
-	}
+        if (!f.exists() || !f.isFile())
+            return null;
 
-	private String rewrite(String path) {
-		Pattern pattern = Pattern.compile("^/jogl_(\\d)_(\\d)_-?\\d+\\.lib$");
-		Matcher matcher = pattern.matcher(path);
-		if (matcher.matches()) {
-			return "/jogl_" + matcher.group(1) + "_" + matcher.group(2) + ".lib";
-		}
+        return new DefaultFileRegion(FileChannel.open(f.toPath(), StandardOpenOption.READ), 0, f.length());
+    }
 
-		pattern = Pattern.compile("^/(jogl|runescape|runescape_gl)_-?\\d+\\.pack200$");
-		matcher = pattern.matcher(path);
-		if (matcher.matches()) {
-			return "/" + matcher.group(1) + ".pack200";
-		}
+    private String rewrite(String path) {
+        Pattern pattern = Pattern.compile("^/jogl_(\\d)_(\\d)_[0-9-]+\\.lib$");
+        Matcher matcher = pattern.matcher(path);
+        if (matcher.matches()) {
+            return "/jogl_" + matcher.group(1) + "_" + matcher.group(2) + ".lib";
+        }
 
-		pattern = Pattern.compile("^/(loader|loader_gl|runescape)_-?\\d+\\.jar$");
-		matcher = pattern.matcher(path);
-		if (matcher.matches()) {
-			return "/" + matcher.group(1) + ".jar";
-		}
+        pattern = Pattern.compile("^/(jogl|runescape|runescape_gl)_[0-9-]+\\.pack200$");
+        matcher = pattern.matcher(path);
+        if (matcher.matches()) {
+            return "/" + matcher.group(1) + ".pack200";
+        }
 
-		if (path.matches("^/unpackclass_-?\\d+\\.pack$")) {
-			return "/unpackclass.pack";
-		}
+        pattern = Pattern.compile("^/(loader|loader_gl|runescape)_[0-9-]+\\.jar$");
+        matcher = pattern.matcher(path);
+        if (matcher.matches()) {
+            return "/" + matcher.group(1) + ".jar";
+        }
 
-		if (path.equals("/")) {
-			return "/index.html";
-		}
+        if (path.matches("^/unpackclass_[0-9-]+\\.pack$")) {
+            return "/unpackclass.pack";
+        }
 
-		return path;
-	}
+        if (path.equals("/")) {
+            return "/index.html";
+        }
+
+        return path;
+    }
 
 }
