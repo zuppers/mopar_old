@@ -26,12 +26,13 @@ public final class ClientBundler {
 	}
 
 	public void bundle() throws IOException, NoSuchAlgorithmException {
-		/* unpack source files */
+	    
+		/* unpack source jars */
 		logger.info("Starting client bundler...");
 		Application client = Application.unpackJar(new File("data/asm/runescape.jar"));
 		Application glClient = Application.unpack200(new File("data/asm/runescape_gl.pack200"));
-		Application loader = Application.unpackJar(new File("data/asm/loader.jar"));
-		Application glLoader = Application.unpackJar(new File("data/asm/loader_gl.jar"));
+		Application loader = Application.unpackJar(new File("data/www/loader.jar"));
+		Application glLoader = Application.unpackJar(new File("data/www/loader_gl.jar"));
 		Application jogl = Application.unpackJar(new File("data/asm/jogl.jar"));
 
 		/* update client RSA keys */
@@ -112,8 +113,8 @@ public final class ClientBundler {
 
 		/* write the loaders back out */
 		logger.info("Bundling loaders...");
-		loader.packJar(new File("data/game/jaggrab/loader.jar"));
-		glLoader.packJar(new File("data/game/jaggrab/loader_gl.jar"));
+		loader.packJar(new File("data/game/www/loader.jar"));
+		glLoader.packJar(new File("data/game/www/loader_gl.jar"));
 
 		/* copy natives/unpacker */
 		logger.info("Copying native libraries and game unpacker...");
@@ -147,8 +148,8 @@ public final class ClientBundler {
 
 		/* sign loaders */
 		logger.info("Signing loaders...");
-		Runtime.getRuntime().exec("jarsigner -keystore data/asm/scapeemu.keystore -storepass scapeemu data/game/jaggrab/loader.jar scapeemu");
-		Runtime.getRuntime().exec("jarsigner -keystore data/asm/scapeemu.keystore -storepass scapeemu data/game/jaggrab/loader_gl.jar scapeemu");
+		Runtime.getRuntime().exec("jarsigner -keystore data/asm/scapeemu.keystore -storepass scapeemu data/game/www/loader.jar scapeemu");
+		Runtime.getRuntime().exec("jarsigner -keystore data/asm/scapeemu.keystore -storepass scapeemu data/game/www/loader_gl.jar scapeemu");
 
 		/* all done! */
 		logger.info("Client bundler completed successfully.");
