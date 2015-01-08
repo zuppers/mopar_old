@@ -180,8 +180,8 @@ public class PlayerCombatHandler extends CombatHandler<Player> {
             return;
         case SHARED:
             mob.getSkillSet().addExperience(Skill.DEFENCE, xp);
-            mob.getSkillSet().addExperience(Skill.DEFENCE, xp);
-            mob.getSkillSet().addExperience(Skill.DEFENCE, xp);
+            mob.getSkillSet().addExperience(Skill.ATTACK, xp);
+            mob.getSkillSet().addExperience(Skill.STRENGTH, xp);
             return;
         default: // Should never happen...
             return;
@@ -290,6 +290,7 @@ public class PlayerCombatHandler extends CombatHandler<Player> {
         power += equipmentBonus / 10.0;
         power += (level * equipmentBonus) / 200.0;
         power *= 1.0; // TODO other modifiers?
+        power += 5;
         System.out.println("Player DR: " + power);
         return Math.random() * power;
     }
@@ -404,6 +405,7 @@ public class PlayerCombatHandler extends CombatHandler<Player> {
             AttackStyle newStyle = weaponClass.getAttackStyle(childId);
             if (newStyle != null) {
                 attackStyle = newStyle;
+                attackType = weaponClass.getAttackType(childId);
                 mob.getSettings().setAttackStyle(childId);
             }
         } else {
