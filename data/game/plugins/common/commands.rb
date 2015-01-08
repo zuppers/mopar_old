@@ -7,9 +7,11 @@ java_import 'net.scapeemulator.game.model.object.ObjectType'
 java_import 'net.scapeemulator.game.model.mob.Animation'
 java_import 'net.scapeemulator.game.model.player.Item'
 java_import 'net.scapeemulator.game.model.player.skills.SkillSet'
+java_import 'net.scapeemulator.game.model.player.skills.construction.Construction'
 java_import 'net.scapeemulator.game.model.object.ObjectOrientation'
 java_import 'net.scapeemulator.game.model.SpotAnimation'
 java_import 'net.scapeemulator.game.msg.impl.inter.InterfaceItemsMessage'
+java_import 'net.scapeemulator.game.msg.impl.inter.InterfaceItemMessage'
 java_import 'net.scapeemulator.game.msg.impl.inter.InterfaceVisibleMessage'
 java_import 'net.scapeemulator.game.msg.impl.inter.InterfaceOpenMessage'
 java_import 'net.scapeemulator.game.msg.impl.ConfigMessage'
@@ -19,25 +21,26 @@ java_import 'net.scapeemulator.game.msg.impl.camera.CameraAngleMessage'
 java_import 'net.scapeemulator.game.msg.impl.camera.CameraFaceMessage'
 java_import 'net.scapeemulator.game.model.player.RegionPalette'
 java_import 'net.scapeemulator.game.msg.impl.RegionConstructMessage'
+java_import 'net.scapeemulator.game.model.player.minigame.stealingcreation.StealingCreation'
 
 # Common administrator commands
 bind :cmd, :name => 'looks' do
   player.get_appearance.show_appearance_interface
 end
 
-bind :cmd, :name => 'construct' do
+bind :cmd, :name => 'sc' do
   h = player.get_position.height
   h = args[2].to_i if args.length > 2
   player.teleport(Position.new(args[0].to_i, args[1].to_i, h))
-  player.send RegionConstructMessage.new(player.position, RegionPalette::test)
-  player.set_last_known_region(player.position)
+  player.set_constructed_region StealingCreation::sc.get_region_palette
 end
 
 bind :cmd, :name => 'con' do
-  h = player.get_position.height
-  h = args[2].to_i if args.length > 2
-  player.teleport(Position.new(args[0].to_i, args[1].to_i, h))
-  player.set_constructed_region player.get_house.get_region_palette
+  Construction::ENTER_PORTAL_DIALOGUE.display_to player
+end
+
+bind :cmd, :name => 'build' do
+  player.get_house.building_mode(args[0].to_i == 1)
 end
 
 bind :cmd, :name => 'chat' do
@@ -112,6 +115,10 @@ bind :cmd, :name => 'camface' do
   player.send CameraFaceMessage.new(args[0].to_i, args[1].to_i, args[2].to_i, args[3].to_i, args[4].to_i)
 end
 
+bind :cmd, :name => 'dumpcon' do
+  player.get_house.dump_room_data
+end
+
 bind :cmd, :name => 'camangle' do
   player.send CameraAngleMessage.new(args[0].to_i, args[1].to_i)
 end
@@ -123,7 +130,9 @@ end
 bind :cmd, :name => 'object' do
   rot = ObjectOrientation::WEST
   rot = args[1].to_i if args.length > 1
-  OBJECT_LIST.put(player.position, args[0].to_i, rot, ObjectType::PROP)
+  type = ObjectType::PROP
+  type = ObjectType::for_id(args[2].to_i) if args.length > 2
+  OBJECT_LIST.put(player.position, args[0].to_i, rot, type)
 end
 
 bind :cmd, :name => 'pnpc' do

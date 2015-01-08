@@ -25,7 +25,8 @@ public class StealingCreation {
     private final int paletteOffset;
     private final int arenaSize;
     private final Node[][] arena;
-
+    // SC: 1926, 5716
+    // 39619 - 39638 = sc walls
     public StealingCreation(int arenaSize) {
         if (arenaSize < 5 || arenaSize > 9 || arenaSize % 2 == 0) {
             throw new IllegalArgumentException("arena size must 5, 7, or 9");
@@ -100,10 +101,6 @@ public class StealingCreation {
         arena[arenaSize - 1][arenaSize - 1] = new Node(NodeType.BASE, Rotation.CW_180);
 
 
-    }
-
-    public void loadArena(Player player) {
-        new Node(null, 5);
     }
 
     public RegionPalette getRegionPalette() {
