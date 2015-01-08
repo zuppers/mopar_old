@@ -99,8 +99,7 @@ public class ShopHandler extends ComponentListener {
 
         // ---- Start amount check ----//
         ItemDefinition def = ItemDefinitions.forId(itemId);
-        int cost = def.getValue();
-        cost = cost < 1 ? 1 : cost;
+        int cost = def.getValue() < 1 ? 1 : def.getValue();
         int assets = player.getInventory().getAmount(995);
         boolean coinsGone = false;
         if (cost * amount > assets) {
@@ -140,7 +139,7 @@ public class ShopHandler extends ComponentListener {
         player.getInventory().add(new Item(itemId, amount));
     }
 
-    public void handleInput(int childId, int dynamicId, ExtendedOption option) {
+    public void handleInput(int childId, final int dynamicId, ExtendedOption option) {
         if (activeShop == null) {
             return;
         }
@@ -150,18 +149,31 @@ public class ShopHandler extends ComponentListener {
             break;
         case 23:
         case 24:
+            if (activeShop.getItemAtIndex(activeStock, dynamicId) == null) {
+                return;
+            }
             ItemDefinition def = activeShop.getItemAtIndex(activeStock, dynamicId).getDefinition();
             switch (option) {
             case ONE:
-                int value = def.getLowAlchemyValue();
-                value = value < 1 ? 1 : value;
+                int value = def.getValue() < 1 ? 1 : def.getValue();
                 player.sendMessage(def.getName() + " costs " + value + " coin" + (value == 1 ? "" : "s") + ".");
                 break;
             case TWO:
             case THREE:
             case FOUR:
-            case FIVE:
                 buy(dynamicId, amounts[option.toInteger() - 1]);
+                break;
+            case FIVE:
+                player.getScriptInput().showIntegerScriptInput(new ScriptInputListener() {
+                    @Override
+                    public void intInputReceived(int value) {
+                        buy(dynamicId, value);
+                    }
+
+                    @Override
+                    public void usernameInputReceived(long value) {
+                    }
+                });
                 break;
             case SIX:
                 player.sendMessage(def.getExamine());
@@ -183,7 +195,7 @@ public class ShopHandler extends ComponentListener {
         if (dynamicId < 0 || dynamicId > 27) {
             return;
         }
-        Item item = player.getInventory().get(dynamicId);
+        final Item item = player.getInventory().get(dynamicId);
         if (item == null) {
             return;
         }
@@ -196,8 +208,19 @@ public class ShopHandler extends ComponentListener {
         case TWO:
         case THREE:
         case FOUR:
-        case FIVE:
             sell(item.getId(), amounts[option.toInteger() - 1]);
+            break;
+        case FIVE:
+            player.getScriptInput().showIntegerScriptInput(new ScriptInputListener() {
+                @Override
+                public void intInputReceived(int value) {
+                    sell(item.getId(), value);
+                }
+
+                @Override
+                public void usernameInputReceived(long value) {
+                }
+            });
             break;
         case NINE:
             player.sendMessage(def.getExamine());
@@ -262,8 +285,8 @@ public class ShopHandler extends ComponentListener {
         player.getInterfaceSet().openWindow(620);
         player.getInterfaceSet().openInventory(621);
         player.getInterfaceSet().getWindow().setListener(this);
-        player.send(new ScriptMessage(150, "IviiiIsssssssss", new Object[] { "", "", "", "", "Sell-50", "Sell-10", "Sell-5", "Sell-1", "Value", -1, 0, 7, 4, 93, 621 << 16 }));
-        player.send(new ScriptMessage(150, "IviiiIsssssssss", new Object[] { "", "", "", "", "Buy 50", "Buy 10", "Buy 5", "Buy 1", "Value", -1, 0, 4, 10, 31, (620 << 16) + 24 }));
+        player.send(new ScriptMessage(150, "IviiiIsssssssss", new Object[] { "", "", "", "", "Sell X", "Sell 10", "Sell 5", "Sell 1", "Value", -1, 0, 7, 4, 93, 621 << 16 }));
+        player.send(new ScriptMessage(150, "IviiiIsssssssss", new Object[] { "", "", "", "", "Buy X", "Buy 10", "Buy 5", "Buy 1", "Value", -1, 0, 4, 10, 31, (620 << 16) + 24 }));
         player.send(new InterfaceAccessMessage(621, 0, 0, 27, 1278));
         player.send(new InterfaceAccessMessage(621, 34, 0, 27, 2360446));
         player.send(new ScriptMessage(25, "vg", new Object[] { shop.getShopId(), 93 }));

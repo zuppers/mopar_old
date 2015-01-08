@@ -330,11 +330,7 @@ public final class JdbcSerializer extends Serializer implements Closeable {
                 for (int i = 0; i < itemIds.length; i++) {
                     stockIds[i] = Integer.parseInt(itemIds[i]);
                 }
-                if (set.getBoolean("is_gen")) {
-                    ShopHandler.shops.put(name, new Shop(id, name, shopId, false, true, stockIds));
-                } else {
-                    ShopHandler.shops.put(name, new Shop(id, name, shopId, false, false, stockIds));
-                }
+                ShopHandler.shops.put(name, new Shop(id, name, shopId, set.getBoolean("is_gen"), stockIds));
                 count++;
             }
             System.out.println("complete! Loaded " + count);
