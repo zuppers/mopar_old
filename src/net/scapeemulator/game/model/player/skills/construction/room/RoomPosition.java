@@ -18,11 +18,11 @@ public class RoomPosition {
     }
 
     /**
-     * Gets the height level of this position.
+     * Gets the height level of this position relative to the house.
      * 
      * @return the room plane
      */
-    public int getHeight() {
+    public int getHouseHeight() {
         return height;
     }
 

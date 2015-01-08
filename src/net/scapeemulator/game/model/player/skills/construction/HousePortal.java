@@ -1,5 +1,8 @@
 package net.scapeemulator.game.model.player.skills.construction;
 
+import net.scapeemulator.game.model.Position;
+import net.scapeemulator.game.model.area.QuadArea;
+
 /**
  * @author David Insley
  */
@@ -16,7 +19,7 @@ public enum HousePortal {
     private final int cost;
     //private final int x;
     //private final int y;
-    //private final QuadArea tpLoc;
+    private QuadArea tpLoc;
     
     private HousePortal(int level, int cost) {
         this.level = level;
@@ -29,5 +32,9 @@ public enum HousePortal {
 
     public int getCost() {
         return cost;
+    }
+
+    public Position getRandomTeleport() {
+        return tpLoc.randomPosition(0);
     }
 }

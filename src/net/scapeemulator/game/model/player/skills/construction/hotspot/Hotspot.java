@@ -1,6 +1,7 @@
 package net.scapeemulator.game.model.player.skills.construction.hotspot;
 
 import net.scapeemulator.game.model.object.GroundObjectList.GroundObject;
+import net.scapeemulator.game.model.player.skills.construction.House.BuildingSession;
 
 /**
  * Represents an instance of a house hotspot.
@@ -9,6 +10,9 @@ import net.scapeemulator.game.model.object.GroundObjectList.GroundObject;
  */
 public abstract class Hotspot {
 
+    /**
+     * The object in the house ObjectList that this hotspot is linked to.
+     */
     protected final GroundObject object;
 
     public Hotspot(GroundObject object) {
@@ -17,6 +21,8 @@ public abstract class Hotspot {
 
     public abstract void buildingMode(boolean building);
 
-    public abstract int getHotspotId();
+    public GroundObject getObject() {
+        return object;
+    }
 
 }

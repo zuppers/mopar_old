@@ -1,7 +1,6 @@
 package net.scapeemulator.game.model.player.skills.construction.hotspot;
 
 import net.scapeemulator.game.model.object.GroundObjectList.GroundObject;
-import net.scapeemulator.game.model.player.skills.construction.Furniture;
 import net.scapeemulator.game.model.player.skills.construction.HouseStyle;
 
 /**
@@ -15,7 +14,27 @@ public class WindowHotspot extends Hotspot {
 
     public WindowHotspot(HouseStyle houseStyle, GroundObject object) {
         super(object);
-        windowId = Furniture.valueOf(houseStyle.name() + "_WINDOW").getObjectId();
+        switch (houseStyle) {
+        case BASIC_STONE:
+            windowId = 13091;
+            break;
+        case FANCY_STONE:
+            windowId = 13117;
+            break;
+        case FREMENNIK_WOOD:
+            windowId = 13112;
+            break;
+        case TROPICAL_WOOD:
+            windowId = 10816;
+            break;
+        case WHITEWASHED_STONE:
+            windowId = 13005;
+            break;
+        case BASIC_WOOD:
+        default:
+            windowId = 13099;
+            break;
+        }
     }
 
     @Override
@@ -23,8 +42,4 @@ public class WindowHotspot extends Hotspot {
         object.setId(windowId);
     }
 
-    @Override
-    public int getHotspotId() {
-        return HotspotType.WINDOW.getHotspotId();
-    }
 }

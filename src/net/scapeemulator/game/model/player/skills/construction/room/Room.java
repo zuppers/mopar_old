@@ -1,5 +1,7 @@
 package net.scapeemulator.game.model.player.skills.construction.room;
 
+import net.scapeemulator.game.model.Position;
+import net.scapeemulator.game.model.object.ObjectGroup;
 import net.scapeemulator.game.model.player.RegionPalette.Tile.Rotation;
 import net.scapeemulator.game.model.player.skills.construction.House;
 

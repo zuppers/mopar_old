@@ -57,7 +57,8 @@ public class RoomPreview extends Room {
                     case NONE:
                         break;
                     }
-                    int height = roomPos.getHeight();
+
+                    int height = house.getHeightOffset() + roomPos.getHouseHeight();
                     int baseX = roomPos.getBaseX();
                     int baseY = roomPos.getBaseY();
                     HotspotType type = HotspotType.forObjectId(obj.getId());
@@ -65,7 +66,7 @@ public class RoomPreview extends Room {
                         DoorType doorType = obj.getId() == DoorType.BASIC_WOOD_1.getHotspotId() ? house.getStyle().getDoorType1() : house.getStyle().getDoorType2();
                         house.getObjectList().put(new Position(baseX + newX, baseY + newY, height), doorType.getHotspotId(), newRot, obj.getType());
                     } else {
-                        if (type != HotspotType.WINDOW) {
+                        if (obj.getType().getObjectGroup() == ObjectGroup.GROUP_2) {
                             house.getObjectList().put(new Position(baseX + newX, baseY + newY, height), obj.getId(), newRot, obj.getType());
                         }
                     }
@@ -75,19 +76,9 @@ public class RoomPreview extends Room {
     }
 
     public void rotate(Rotation rotation) {
-        clearPreview();
+        house.clearRoomSpace(roomPos, false);
         roomRotation = roomRotation.rotate(rotation);
         previewRoom();
-    }
-
-    public void clearPreview() {
-        for (int x = 0; x < Room.ROOM_SIZE; x++) {
-            for (int y = 0; y < Room.ROOM_SIZE; y++) {
-                for (ObjectGroup group : ObjectGroup.values()) {
-                    house.getObjectList().remove(new Position(roomPos.getBaseX() + x, roomPos.getBaseY() + y, roomPos.getHeight()), group);
-                }
-            }
-        }
     }
 
 }

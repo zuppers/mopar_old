@@ -1,18 +1,24 @@
 package net.scapeemulator.game.model.player.skills.construction;
 
 import net.scapeemulator.game.model.Position;
+import net.scapeemulator.game.model.World;
 import net.scapeemulator.game.model.object.GroundObjectList;
+import net.scapeemulator.game.model.object.GroundObjectList.GroundObject;
+import net.scapeemulator.game.model.object.ObjectGroup;
+import net.scapeemulator.game.model.object.ObjectType;
 import net.scapeemulator.game.model.player.Player;
 import net.scapeemulator.game.model.player.RegionPalette;
 import net.scapeemulator.game.model.player.RegionPalette.Tile.Rotation;
 import net.scapeemulator.game.model.player.SceneRebuiltListener;
-import net.scapeemulator.game.model.player.skills.construction.hotspot.DoorHotspot;
+import net.scapeemulator.game.model.player.skills.construction.hotspot.BuildableHotspot;
+import net.scapeemulator.game.model.player.skills.construction.hotspot.FurnitureHotspot;
 import net.scapeemulator.game.model.player.skills.construction.hotspot.Hotspot;
 import net.scapeemulator.game.model.player.skills.construction.room.Room;
 import net.scapeemulator.game.model.player.skills.construction.room.RoomPlaced;
 import net.scapeemulator.game.model.player.skills.construction.room.RoomPosition;
 import net.scapeemulator.game.model.player.skills.construction.room.RoomPreview;
 import net.scapeemulator.game.model.player.skills.construction.room.RoomType;
+import net.scapeemulator.game.task.Action;
 
 /**
  * Represents an instance of a Construction player owned house (POH).
@@ -33,24 +39,13 @@ public class House {
      */
     private static final int PALETTE_OFFSET = (13 - REGION_SIZE) / 2;
 
-    /**
-     * X coordinate of the bottom left corner of the center subregion.
-     */
     public static final int HOUSE_X = 4000;
-
-    /**
-     * Y coordinate of the bottom left corner of the center subregion.
-     */
     public static final int HOUSE_Y = 4000;
 
     /**
-     * X coordinate of the bottom left corner of the house region.
+     * X and Y coordinate of the bottom left corner of the house region.
      */
     public static final int BASE_X = HOUSE_X - ((REGION_SIZE / 2) * Room.ROOM_SIZE);
-
-    /**
-     * Y coordinate of the bottom left corner of the house region.
-     */
     public static final int BASE_Y = HOUSE_Y - ((REGION_SIZE / 2) * Room.ROOM_SIZE);
 
     /**
@@ -64,10 +59,8 @@ public class House {
     private GroundObjectList objects;
 
     /**
-     * A 3D array containing all potential rooms in the house region. Note that grass and empty
-     * dungeon areas are not null but actually a type of room.
-     * 
-     * @see Room
+     * A 3D array containing all rooms in the house region. Note that grass and empty dungeon areas
+     * are not null but actually a type of room.
      */
     private final RoomPlaced[][][] rooms;
 
@@ -85,12 +78,14 @@ public class House {
     /**
      * Set to true when the object list is populated with all of the house hotspots.
      */
-    private boolean loaded = false;
+    private boolean populated = false;
 
-    private boolean buildingMode = true;
+    /**
+     * Whether or not this house is locked to visitors.
+     */
+    private boolean locked = false;
 
-    private RoomPosition temp;
-    private RoomPreview preview;
+    private BuildingSession buildSession;
 
     /**
      * Constructs a POH with the default settings. Portal location in Rimmington, basic wood style,
@@ -101,163 +96,141 @@ public class House {
         worldPortal = HousePortal.RIMMINGTON;
         style = HouseStyle.FANCY_STONE;
         rooms = new RoomPlaced[4][REGION_SIZE][REGION_SIZE];
-        for (int x = 0; x < REGION_SIZE; x++) {
-            for (int y = 0; y < REGION_SIZE; y++) {
-                rooms[0][x][y] = new RoomPlaced(this, new RoomPosition(0, x, y), RoomType.DUNGEON_CLEAR, Rotation.NONE);
-                rooms[1][x][y] = new RoomPlaced(this, new RoomPosition(1, x, y), RoomType.GRASS, Rotation.NONE);
-                rooms[2][x][y] = new RoomPlaced(this, new RoomPosition(2, x, y), RoomType.NONE, Rotation.NONE);
-                rooms[3][x][y] = new RoomPlaced(this, new RoomPosition(3, x, y), RoomType.NONE, Rotation.NONE);
+        for (int height = 0; height < 4; height++) {
+            for (int x = 0; x < REGION_SIZE; x++) {
+                for (int y = 0; y < REGION_SIZE; y++) {
+                    rooms[height][x][y] = new RoomPlaced(this, new RoomPosition(height, x, y), Construction.defaultRoom(height), Rotation.NONE);
+                }
             }
         }
         rooms[1][4][4] = new RoomPlaced(this, new RoomPosition(1, 4, 4), RoomType.GARDEN, Rotation.NONE);
+        // TODO remove, temporary
+        rooms[1][4][4].setFurnitureIndex(3, 3, ObjectType.PROP.getObjectGroup(), 0);
         rooms[1][4][5] = new RoomPlaced(this, new RoomPosition(1, 4, 5), RoomType.PARLOUR, Rotation.NONE);
     }
 
-    public void loadHouse() {
+    /**
+     * Resets the ground object list and populates it with the hotspots for each room.
+     */
+    private void populateHouse() {
         objects = new GroundObjectList();
         for (int height = 0; height < 4; height++) {
             for (int x = 0; x < REGION_SIZE; x++) {
                 for (int y = 0; y < REGION_SIZE; y++) {
-                    RoomPlaced room = rooms[height][x][y];
-                    if (room == null) {
-                        continue;
-                    }
-                    room.createHotspots();
+                    rooms[height][x][y].createHotspots();
                 }
             }
         }
-        loaded = true;
+        populated = true;
     }
 
-    public void handleClick(Player player, int id, Position pos) {
-        int x = pos.getX();
-        int y = pos.getY();
-        int baseRoomX = x - (x % 8);
-        int baseRoomY = y - (y % 8);
-        int deltaX = x - baseRoomX;
-        int deltaY = y - baseRoomY;
-        RoomPlaced room = forCoords(pos.getHeight(), x, y);
-        if (room == null) {
+    public void otherEnterPortal(Player player) {
+        if (owner.getInHouse() != this) {
+            player.sendMessage("They don't appear to be at home.");
             return;
         }
-        Hotspot hotspot = room.getHotspot(deltaX, deltaY, id);
-        if (hotspot instanceof DoorHotspot) {
-            DoorHotspot door = (DoorHotspot) hotspot;
-            Room adjacent = door.getAdjacent();
-            if (adjacent == null) {
-                // Should only happen on the edges of the map.
-                return;
-            }
-            if (adjacent.getType() == RoomType.GRASS || adjacent.getType() == RoomType.NONE) {
-                temp = adjacent.getRoomPos();
-                player.getInterfaceSet().openWindow(Construction.ROOM_CREATE_INTERFACE);
-            } else {
-                // TODO room removal
-            }
+        if (locked) {
+            player.sendMessage("You cannot access that house right now.");
             return;
         }
+        if (buildSession != null) {
+            player.sendMessage("That player is currently in building mode.");
+            return;
+        }
+        sendHouse(player, getPortalPosition());
     }
 
-    public void rotatePreview(Rotation rot) {
-        if (!buildingMode || preview == null) {
-            return;
+    public void ownerEnterPortal(boolean building) {
+        if (!populated) {
+            populateHouse();
         }
-        preview.rotate(rot);
+        setBuildingMode(building);
+        sendHouse(owner, getPortalPosition());
     }
 
-    public void enterHouse(Player player) {
-        // TODO replace that position with a way of finding the portal entrance
-        enterHouse(player, new Position(HOUSE_X + 2, HOUSE_Y + 2, 1));
-    }
-
-    public void enterHouse(final Player player, final Position newPos) {
-        if (buildingMode && player != owner) {
-            player.sendMessage("The owner of that house is in building mode.");
-            return;
-        }
-        if (!loaded) {
-            loadHouse();
-        }
-        Position pos = new Position(HOUSE_X, HOUSE_Y, 1);
+    private void sendHouse(final Player player, final Position newPos) {
+        Position pos = new Position(HOUSE_X, HOUSE_Y, getHeightOffset() + 1);
+        player.setActionsBlocked(true);
         player.teleport(pos);
         player.getInterfaceSet().openWindow(Construction.POH_LOADING_INTERFACE);
+        if (!populated) {
+            populateHouse();
+        }
         RegionPalette palette = getRegionPalette();
         player.setConstructedRegion(palette);
         player.setSceneRebuiltListener(new SceneRebuiltListener() {
             @Override
             public void sceneRebuilt() {
-                if (newPos != null) {
-                    player.teleport(newPos);
-                }
-                buildingMode(buildingMode);
                 objects.fireAllEvents(player.getGroundObjectSynchronizer());
                 objects.addListener(player.getGroundObjectSynchronizer());
-                player.getInterfaceSet().closeWindow();
+                player.teleport(newPos);
+                player.startAction(new Action<Player>(player, 7, false) {
+                    @Override
+                    public void execute() {
+                        stop();
+                        mob.getInterfaceSet().closeWindow();
+                        mob.setActionsBlocked(false);
+                    }
+                });
             }
         });
-
+        player.setInHouse(this);
     }
 
-    public void handleSelectRoomInterface(int childId) {
-        owner.getInterfaceSet().closeWindow();
-        RoomType roomType = RoomType.forInterfaceId(childId);
-        if (!buildingMode || temp == null || roomType == null) {
-            return;
+    private Position getPortalPosition() {
+        return new Position(HOUSE_X + 1, HOUSE_Y + 2, getHeightOffset() + 1);
+    }
+
+    public void clearRoomSpace(RoomPosition pos, boolean respawnObjects) {
+        RoomType type = Construction.defaultRoom(pos.getHouseHeight());
+        Position clearPos = style.getRoomPosition(type);
+        for (int x = 0; x < Room.ROOM_SIZE; x++) {
+            for (int y = 0; y < Room.ROOM_SIZE; y++) {
+                for (ObjectGroup group : ObjectGroup.values()) {
+                    Position objPos = new Position(pos.getBaseX() + x, pos.getBaseY() + y, getHeightOffset() + pos.getHouseHeight());
+                    objects.remove(objPos, group);
+                    if (respawnObjects && type != RoomType.NONE) {
+                        GroundObject obj = World.getWorld().getGroundObjects().get(group, new Position(clearPos.getX() + x, clearPos.getY() + y, clearPos.getHeight()));
+                        if (obj != null) {
+                            objects.put(objPos, obj.getId(), obj.getRotation(), obj.getType());
+                        }
+                    }
+                }
+            }
         }
-        (preview = new RoomPreview(this, roomType, temp)).previewRoom();
-        temp = null;
-        Construction.PREVIEW_DIALOGUE.displayTo(owner);
+
     }
 
-    public void finishPreview() {
-        if (!buildingMode || preview == null) {
-            return;
-        }
-        RoomPosition pos = preview.getRoomPos();
-        rooms[pos.getHeight()][pos.getHouseX()][pos.getHouseY()] = new RoomPlaced(this, preview.getRoomPos(), preview.getType(), preview.getRoomRotation());
-        loaded = false;
-        enterHouse(owner, owner.getPosition());
-    }
-
-    public void buildingMode(boolean buildingMode) {
+    public void setBuildingMode(boolean buildingMode) {
         for (int height = 0; height < 4; height++) {
             for (int x = 0; x < REGION_SIZE; x++) {
                 for (int y = 0; y < REGION_SIZE; y++) {
                     RoomPlaced room = rooms[height][x][y];
-                    if (room == null) {
-                        continue;
-                    }
                     room.buildingMode(buildingMode);
                 }
             }
         }
-        this.buildingMode = buildingMode;
+        buildSession = buildingMode ? new BuildingSession() : null;
     }
 
     /**
-     * Gets the Room for the given coordinates in the POH.
+     * Gets the Room for the given coordinates in the POH. Note that the height is for the actual
+     * position in the world (0-3 + ownerId * 4), IE the players actual height, not the rooms
+     * height.
      * 
-     * @param height the height
+     * @param worldHeight the height of the position in the world
      * @param x the x coordinate
      * @param y the y coordinate
      * @return the Room at the given coordinates if it exists, or null if it doesn't
      */
-    public RoomPlaced forCoords(int height, int x, int y) {
+    public RoomPlaced forCoords(int worldHeight, int x, int y) {
         int roomX = (int) (4 + ((x - HOUSE_X) / 8.0));
         int roomY = (int) (4 + ((y - HOUSE_Y) / 8.0));
         try {
-            return rooms[height][roomX][roomY];
+            return rooms[worldHeight - getHeightOffset()][roomX][roomY];
         } catch (IndexOutOfBoundsException e) {
             return null;
         }
-    }
-
-    public GroundObjectList getObjectList() {
-        return objects;
-    }
-
-    public HouseStyle getStyle() {
-        return style;
     }
 
     /**
@@ -277,5 +250,148 @@ public class House {
             }
         }
         return palette;
+    }
+
+    public int getHeightOffset() {
+        return owner.getId() * 4;
+    }
+
+    public GroundObjectList getObjectList() {
+        return objects;
+    }
+
+    public HouseStyle getStyle() {
+        return style;
+    }
+
+    public BuildingSession getBuildingSession() {
+        return buildSession;
+    }
+
+    public class BuildingSession {
+
+        private RoomPosition temp;
+        private RoomPreview preview;
+        private BuildableHotspot furnTemp;
+
+        public void handleBuildOption(GroundObject object) {
+            owner.turnToPosition(object.getCenterPosition());
+            int x = object.getPosition().getX();
+            int y = object.getPosition().getY();
+            RoomPlaced room = forCoords(object.getPosition().getHeight(), x, y);
+            if (room == null) {
+                return;
+            }
+            Hotspot hotspot = room.getHotspot(x - room.getRoomPos().getBaseX(), y - room.getRoomPos().getBaseY(), object);
+            if (hotspot instanceof BuildableHotspot) {
+                ((BuildableHotspot) hotspot).handleBuildOption(this);
+            }
+        }
+
+        public void handleFurnitureBuildInterface(int itemIndex) {
+            if (furnTemp != null) {
+                furnTemp.handleBuildInterface(this, itemIndex);
+            }
+        }
+
+        public void handleSelectRoomInterface(int childId) {
+            owner.getInterfaceSet().closeWindow();
+            RoomType roomType = RoomType.forInterfaceId(childId);
+            if (temp == null || roomType == null) {
+                return;
+            }
+            (preview = new RoomPreview(House.this, roomType, temp)).previewRoom();
+            temp = null;
+            Construction.PREVIEW_DIALOGUE.displayTo(owner);
+
+            /*
+             * Start an action so that if the player moves or does anything else the preview is
+             * cancelled, or after 60 seconds.
+             */
+            owner.startAction(new Action<Player>(owner, 100, false) {
+
+                @Override
+                public void execute() {
+                }
+
+                @Override
+                public void stop() {
+                    super.stop();
+                    cancelPreview();
+                }
+            });
+
+        }
+
+        public void initRoomBuild(RoomPosition pos) {
+            owner.getInterfaceSet().openWindow(Construction.ROOM_CREATE_INTERFACE);
+            temp = pos;
+        }
+
+        public void rotatePreview(Rotation rot) {
+            if (preview == null) {
+                return;
+            }
+            preview.rotate(rot);
+        }
+
+        public void cancelPreview() {
+            if (preview == null) {
+                return;
+            }
+            clearRoomSpace(preview.getRoomPos(), true);
+            preview = null;
+        }
+
+        public void finishPreview() {
+            if (preview == null) {
+                return;
+            }
+            RoomPosition pos = preview.getRoomPos();
+            rooms[pos.getHouseHeight()][pos.getHouseX()][pos.getHouseY()] = new RoomPlaced(House.this, pos, preview.getType(), preview.getRoomRotation());
+            populateHouse();
+            setBuildingMode(true);
+            preview = null;
+            owner.stopAction();
+            sendHouse(owner, owner.getPosition());
+        }
+
+        public void initRoomDelete(RoomPosition pos) {
+            if (pos.getHouseHeight() == 1) {
+                if (rooms[2][pos.getHouseX()][pos.getHouseY()].getType() != RoomType.NONE) {
+                    owner.sendMessage("You must remove the room above that one first.");
+                    return;
+                }
+            }
+            // TODO if deleting a dungeon stair, say do it from above
+            Construction.ROOM_DELETION_DIALOGUE.displayTo(owner);
+            temp = pos;
+        }
+
+        public void cancelDeletion() {
+            temp = null;
+            owner.sendMessage("Room deletion cancelled.");
+        }
+
+        public void confirmDeletion() {
+            if (temp == null) {
+                return;
+            }
+            owner.getInterfaceSet().openWindow(Construction.POH_LOADING_INTERFACE);
+            clearRoomSpace(temp, true);
+            rooms[temp.getHouseHeight()][temp.getHouseX()][temp.getHouseY()] = new RoomPlaced(House.this, temp, Construction.defaultRoom(temp.getHouseHeight()), Rotation.NONE);
+            temp = null;
+            populateHouse();
+            setBuildingMode(true);
+            sendHouse(owner, owner.getPosition());
+        }
+
+        public Player getBuilder() {
+            return owner;
+        }
+
+        public void setFurniturePlaceholder(BuildableHotspot temp) {
+            furnTemp = temp;
+        }
     }
 }

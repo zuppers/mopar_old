@@ -14,6 +14,7 @@ import net.scapeemulator.game.model.player.skills.construction.hotspot.Furniture
 import net.scapeemulator.game.model.player.skills.construction.hotspot.Hotspot;
 import net.scapeemulator.game.model.player.skills.construction.hotspot.HotspotType;
 import net.scapeemulator.game.model.player.skills.construction.hotspot.WindowHotspot;
+import net.scapeemulator.game.util.math.MutableInt;
 
 /**
  * Represents a 'set in stone' room inside a house that can no longer be rotated or moved, only
@@ -25,7 +26,11 @@ public class RoomPlaced extends Room {
 
     private Hotspot[][][] hotspots;
 
-    int[][][] furnitureIndices;
+    /**
+     * Using MutableInts to allow a pass by reference to the furniture hotspots to change the
+     * furniture index easily.
+     */
+    MutableInt[][][] furnitureIndices;
 
     /**
      * Constructs a room with the given type and rotation.
@@ -36,7 +41,7 @@ public class RoomPlaced extends Room {
      */
     public RoomPlaced(House house, RoomPosition roomPos, RoomType type, Rotation rotation) {
         super(house, roomPos, type, rotation);
-        furnitureIndices = new int[ROOM_SIZE][ROOM_SIZE][ObjectGroup.values().length];
+        furnitureIndices = new MutableInt[ROOM_SIZE][ROOM_SIZE][ObjectGroup.values().length];
     }
 
     public void createHotspots() {
@@ -76,7 +81,7 @@ public class RoomPlaced extends Room {
                         break;
                     }
 
-                    int height = roomPos.getHeight();
+                    int height = house.getHeightOffset() + roomPos.getHouseHeight();
                     int baseX = roomPos.getBaseX();
                     int baseY = roomPos.getBaseY();
 
@@ -98,6 +103,9 @@ public class RoomPlaced extends Room {
                         if (type == HotspotType.WINDOW) {
                             hotspots[newX][newY][i] = new WindowHotspot(house.getStyle(), placed);
                         } else {
+                            if (furnitureIndices[x][y][i] == null) {
+                                furnitureIndices[x][y][i] = new MutableInt(-1);
+                            }
                             hotspots[newX][newY][i] = new FurnitureHotspot(type, furnitureIndices[x][y][i], placed);
                         }
                     }
@@ -119,13 +127,22 @@ public class RoomPlaced extends Room {
         }
     }
 
-    public Hotspot getHotspot(int x, int y, int id) {
+    public Hotspot getHotspot(int x, int y, GroundObject object) {
         for (Hotspot hotspot : hotspots[x][y]) {
-            if (hotspot != null && hotspot.getHotspotId() == id) {
+            if (hotspot != null && hotspot.getObject() == object) {
                 return hotspot;
             }
         }
         return null;
+    }
+
+    // TODO remove, temporary
+    public void setFurnitureIndex(int x, int y, ObjectGroup group, int id) {
+        if (furnitureIndices[x][y][group.getId()] == null) {
+            furnitureIndices[x][y][group.getId()] = new MutableInt(id);
+        } else {
+            furnitureIndices[x][y][group.getId()].set(id);
+        }
     }
 
     /**
