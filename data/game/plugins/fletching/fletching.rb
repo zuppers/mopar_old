@@ -90,8 +90,7 @@ module Fletching
         close
         input_listener = FletchingInputListener.new
         input_listener.set_context(@player, recipe)
-        @player.get_script_input.set_integer_input_listener input_listener
-        @player.get_script_input.show_integer_script_input
+        @player.get_script_input.show_integer_script_input input_listener
       else
         @player.get_interface_set.get_chatbox.reset
         @player.start_action FletchingTask.new(@player, recipe, amt)

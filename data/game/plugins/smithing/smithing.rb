@@ -122,8 +122,7 @@ module Smithing
       when 'X'
         input_listener = SmithingInputListener.new
         input_listener.set_context(mob, product)
-        mob.get_script_input.set_integer_input_listener input_listener
-        mob.get_script_input.show_integer_script_input
+        mob.get_script_input.show_integer_script_input input_listener
         return
       when 'ALL'
         amt = mob.get_inventory.get_amount(@bar.bar_id) / type.bars
@@ -177,8 +176,7 @@ module Smithing
       if amt == 'X'
         input_listener = SmithingInputListener.new
         input_listener.set_context(mob, bar)
-        mob.get_script_input.set_integer_input_listener input_listener
-        mob.get_script_input.show_integer_script_input
+        mob.get_script_input.show_integer_script_input input_listener
         return
       end
       if bar.check_reqs(mob, true)
