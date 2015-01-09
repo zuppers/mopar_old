@@ -56,7 +56,7 @@ public final class Position {
     }
 
     public int getBaseLocalY() {
-        return getBaseLocalY(getRegionX());
+        return getBaseLocalY(getRegionY());
     }
 
     public int getBaseLocalX(int centralRegionX) {
