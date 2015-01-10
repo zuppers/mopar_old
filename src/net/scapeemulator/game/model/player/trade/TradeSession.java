@@ -83,6 +83,7 @@ public class TradeSession extends ComponentListener {
         player.send(new InterfaceVisibleMessage(VERIFY_WINDOW, 37, true));
         player.send(new InterfaceVisibleMessage(VERIFY_WINDOW, 41, true));
         // player.send(new InterfaceVisibleMessage(VERIFY_WINDOW, 46, true)); TODO TRADE MODIFIED
+        player.getInterfaceSet().getWindow().removeListener();
         player.getInterfaceSet().openWindow(VERIFY_WINDOW, this);
 
         status = TradeStatus.VERIFYING;
