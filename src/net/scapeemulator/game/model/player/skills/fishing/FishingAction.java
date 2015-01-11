@@ -15,16 +15,25 @@ public class FishingAction extends DistancedAction<Player> {
 
     private final FishingTool fishingTool;
     private final Fish[] fish;
+    private State state;
+
+    private enum State {
+        WALKING, INIT, FISHING
+    }
 
     public FishingAction(Player player, NPC npc, FishingSpot fishingSpot, Option option) {
         super(3, true, player, npc.getPosition(), 1);
         player.turnToTarget(npc);
         fishingTool = fishingSpot.getTool(option);
         fish = fishingSpot.getFish(option);
+        state = State.WALKING;
     }
 
     @Override
     public void executeAction() {
+        if (state == State.WALKING) {
+            state = State.INIT;
+        }
         if (mob.getInventory().freeSlot() == -1) {
             mob.sendMessage("You do not have enough inventory space to hold any more fish.");
             stop();
@@ -46,7 +55,6 @@ public class FishingAction extends DistancedAction<Player> {
         Fish caught = null;
         for (Fish f : fish) {
             int dif = playerLevel - f.getLevel();
-            System.out.println("fishing dif: " + dif + " roll: " + roll);
             if (dif >= 0) {
                 hasLevelReq = true;
                 int chance = (dif * 2) + 20;
@@ -64,6 +72,11 @@ public class FishingAction extends DistancedAction<Player> {
         }
 
         mob.playAnimation(fishingTool.getAnimation());
+
+        if (state == State.INIT) {
+            state = State.FISHING;
+            return;
+        }
 
         if (caught == null) {
             return;
