@@ -14,7 +14,9 @@ public class TradeRequestAction extends MobInteractionAction<Player, Player> {
 
     @Override
     public void executeAction() {
-        if (target.getInterfaceSet().getWindow().getCurrentId() != -1) {
+        if(target == mob) {
+            mob.sendMessage("Why would you want to trade with yourself?");
+        } else if (target.getInterfaceSet().getWindow().getCurrentId() != -1) {
             mob.sendMessage("That player is busy at the moment.");
         } else if (target.wantsToTrade(mob)) {
             mob.setTradeRequest(null);

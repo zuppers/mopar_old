@@ -11,6 +11,7 @@ import net.scapeemulator.game.model.player.inventory.*;
 import net.scapeemulator.game.msg.impl.ScriptMessage;
 import net.scapeemulator.game.msg.impl.inter.InterfaceAccessMessage;
 import net.scapeemulator.game.msg.impl.inter.InterfaceVisibleMessage;
+import net.scapeemulator.game.task.Action;
 
 /**
  * Represents a trade session between two players.
@@ -46,7 +47,17 @@ public class TradeSession extends ComponentListener {
     }
 
     public void init() {
+        player.startAction(new Action<Player>(player, 1, true) {
+            @Override
+            public void execute() {
+            }
 
+            @Override
+            public void stop() {
+                decline();
+                super.stop();
+            }
+        });
         otherSession = otherPlayer.getTradeSession();
 
         // Configure player inventory
