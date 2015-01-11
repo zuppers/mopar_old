@@ -42,4 +42,10 @@ public class BuryBoneAction extends Action<Player> {
 
     }
 
+    @Override
+    public void stop() {
+        mob.setActionsBlocked(false);
+        super.stop();
+    }
+
 }
