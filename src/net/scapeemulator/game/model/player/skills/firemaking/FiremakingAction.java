@@ -8,6 +8,7 @@ import net.scapeemulator.game.model.object.GroundObjectList.GroundObject;
 import net.scapeemulator.game.model.object.ObjectOrientation;
 import net.scapeemulator.game.model.object.ObjectType;
 import net.scapeemulator.game.model.pathfinding.Path;
+import net.scapeemulator.game.model.player.Item;
 import net.scapeemulator.game.model.player.Player;
 import net.scapeemulator.game.model.player.SlottedItem;
 import net.scapeemulator.game.model.player.skills.Skill;
@@ -53,7 +54,11 @@ public class FiremakingAction extends Action<Player> {
 
         if (status == -1) {
             log.getRequirements().fulfillAll(mob);
-            mob.getInventory().remove(slottedLog.getItem(), slottedLog.getSlot());
+            Item removed = mob.getInventory().remove(slottedLog.getItem(), slottedLog.getSlot());
+            if(!removed.equals(slottedLog.getItem())) {
+                stop();
+                return;
+            }
             mob.getGroundItems().add(log.getItemId(), 1, mob.getPosition());
             mob.playAnimation(ANIMATION);
             int dif = mob.getSkillSet().getCurrentLevel(Skill.FIREMAKING) - log.getLevel();
