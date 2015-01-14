@@ -35,6 +35,7 @@ import net.scapeemulator.game.model.definition.WidgetDefinitions;
 import net.scapeemulator.game.model.object.GroundObjectPopulator;
 import net.scapeemulator.game.model.pathfinding.MapDataListener;
 import net.scapeemulator.game.model.player.EquipmentDefinition;
+import net.scapeemulator.game.model.player.bank.BankerAction;
 import net.scapeemulator.game.model.player.consumable.Consumables;
 import net.scapeemulator.game.model.player.skills.construction.Construction;
 import net.scapeemulator.game.model.player.skills.cooking.Cooking;
@@ -168,6 +169,7 @@ public final class GameServer {
         VarbitDefinitions.init(cache);
         NPCDefinitions.init(cache);
         EquipmentDefinition.init();
+        messageDispatcher.getNpcDispatcher().bind(new BankerAction());
 
         /* load all the maps into memory */
         mapLoader = new MapLoader(cache, landscapeKeyTable);
