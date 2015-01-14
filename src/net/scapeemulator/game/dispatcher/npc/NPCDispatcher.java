@@ -137,7 +137,7 @@ public class NPCDispatcher {
 				return;
 			}
 
-			String optionName = getOptionName(id, option);
+			String optionName = getOptionName(npc.getType(), option);
 			System.out.println("NPC dispatcher [opt=" + option + "; type=" + npc.getType() + "; optname=" + optionName + "]");
 			HandlerContext context = new HandlerContext();
 
