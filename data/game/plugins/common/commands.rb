@@ -56,6 +56,10 @@ bind :cmd, :name => 'min' do
   player.set_min
 end
 
+bind :cmd, :name => 'reset' do 
+  player.reset_pos
+end
+
 bind :cmd, :name => 'noclip' do
   player.toggle_clipping
 end
@@ -193,7 +197,7 @@ bind :cmd, :name => 'teletome' do
 end
 
 bind :cmd, :name => 'npc' do
-  create_npc :normal, :id => args[0].to_i, :position => player.get_position do |npc| npc.turn_to_target player end
+create_npc :normal, :id => args[0].to_i, :position => player.get_position do |npc| npc.turn_to_target player end
 end
 
 bind :cmd, :name => 'pos' do
@@ -204,8 +208,8 @@ bind :cmd, :name => 'ge' do
   player.get_grand_exchange_handler.show_interface
 end
 
-bind :cmd, :name => 'shop' do
-  player.get_shop_handler.open_shop 'Lumbridge General Store'
+bind :cmd, :name => 'yell' do
+  World::getWorld().send_global_message("[<img=1>#{player.get_display_name}] #{args.to_a.join(' ')}")
 end
 
 bind :cmd, :name => 'bank' do
