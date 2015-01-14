@@ -78,7 +78,7 @@ public final class Player extends Mob {
     private boolean regionChanging;
     private boolean updateModelLists;
     private boolean blockActions;
-    private Position lastKnownRegion;
+    private Position lastKnownRegion = position;
     private final List<Player> localPlayers = new ArrayList<>();
     private final List<NPC> localNpcs = new ArrayList<>();
     private Appearance appearance = new Appearance(this);
@@ -576,6 +576,12 @@ public final class Player extends Mob {
         this.regionChanging = true;
     }
 
+    public void resetPos() {
+        min = null;
+        max = null;
+        sendMessage("Min/max reset.");
+    }
+    
     public void setMax() {
         max = position;
         sendMessage("Top right bounds set to " + max);
@@ -610,8 +616,13 @@ public final class Player extends Mob {
 
     public void setSpawnPos(int id) {
         sendMessage("Spawn for " + NPCDefinitions.forId(id).getName() + " sent to console.");
+        if(min == null || max == null) {
+            System.out.println("INSERT INTO `npcspawns`(`type`, `x`, `y`, `height`, `roam`) " + "VALUES (" + id + "," + position.getX() + "," + position.getY() + ","
+                    + position.getHeight() + "," + 0 + ");");
+        } else {
         System.out.println("INSERT INTO `npcspawns`(`type`, `x`, `y`, `height`, `roam`, `min_x`, `min_y`, `max_x`, `max_y`) " + "VALUES (" + id + "," + position.getX() + "," + position.getY() + ","
                 + position.getHeight() + "," + 1 + "," + min.getX() + "," + min.getY() + "," + max.getX() + "," + max.getY() + ");");
+        }
     }
 
     public void setSpellbook(Spellbook spellbook) {
@@ -684,7 +695,7 @@ public final class Player extends Mob {
             World.getWorld().sendGlobalMessage(getDisplayName() + " has joined the server! Welcome!");
 
             // Starter items
-            getInventory().add(new Item(995, 500)); // Coins
+            getInventory().add(new Item(995, 5000)); // Coins
             getInventory().add(new Item(1171)); // Wooden shield
             getInventory().add(new Item(1277)); // Bronze sword
             getInventory().add(new Item(2309)); // Bread
@@ -697,11 +708,11 @@ public final class Player extends Mob {
             getInventory().add(new Item(Bow.SHORTBOW.getBowId()));
             getInventory().add(new Item(Arrow.BRONZE.getArrowId(), 100));
 
-            getInventory().add(new Item(Rune.MIND.getItemId(), 100));
-            getInventory().add(new Item(Rune.AIR.getItemId(), 100));
-            getInventory().add(new Item(Rune.WATER.getItemId(), 25));
-            getInventory().add(new Item(Rune.EARTH.getItemId(), 25));
-            getInventory().add(new Item(Rune.FIRE.getItemId(), 25));
+            getInventory().add(new Item(Rune.MIND.getItemId(), 500));
+            getInventory().add(new Item(Rune.AIR.getItemId(), 500));
+            getInventory().add(new Item(Rune.WATER.getItemId(), 250));
+            getInventory().add(new Item(Rune.EARTH.getItemId(), 250));
+            getInventory().add(new Item(Rune.FIRE.getItemId(), 250));
         } else {
             sendMessage("Welcome to MoparScape.");
             World.getWorld().sendGlobalMessage(getDisplayName() + " has logged in.");
