@@ -216,10 +216,6 @@ bind :cmd, :name => 'bank' do
   player.start_bank_session
 end
 
-bind :cmd, :name => 'clear' do
-  player.get_bank_session.clear_search
-end
-
 bind :cmd, :name => 'shopid' do
   player.get_shop_handler.shop_script args[0].to_i
 end
