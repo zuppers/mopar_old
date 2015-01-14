@@ -114,7 +114,7 @@ public class Fishing {
         spawnSpot(FishingSpot.CAGE_HARPOON, 3364, 3800);
 
         // Lumbridge spots
-        spawnSpot(FishingSpot.FLYROD_ROD, 3228, 3252);
+        spawnSpot(FishingSpot.FLYROD_ROD, 3238, 3252);
         spawnSpot(FishingSpot.FLYROD_ROD, 3239, 3241);
         spawnSpot(FishingSpot.FLYROD_ROD, 3239, 3243);
         spawnSpot(FishingSpot.FLYROD_ROD, 3238, 3253);
