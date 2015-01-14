@@ -23,6 +23,8 @@ public final class ItemDropMessageHandler extends MessageHandler<ItemDropMessage
             return;
         }
         Item removed = player.getInventory().remove(player.getInventory().get(msg.getSlot()), msg.getSlot());
-        player.getGroundItems().add(removed.getId(), removed.getAmount(), player.getPosition());
+        if (removed != null && removed.getAmount() > 0) {
+            player.getGroundItems().add(removed.getId(), removed.getAmount(), player.getPosition());
+        }
     }
 }
