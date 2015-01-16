@@ -49,7 +49,7 @@ public final class GameFrameDecoder extends ByteToMessageDecoder {
         SIZES[30] = 2; // Fourth click NPC (trade slayermaster).
         SIZES[31] = -3;
         SIZES[32] = -3;
-        SIZES[33] = -3;
+        SIZES[33] = 6;
         SIZES[34] = 8; // Add ignore
         SIZES[35] = -3;
         SIZES[36] = -3;
