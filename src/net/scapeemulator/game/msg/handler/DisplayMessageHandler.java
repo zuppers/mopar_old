@@ -23,6 +23,7 @@ public final class DisplayMessageHandler extends MessageHandler<DisplayMessage> 
 			interfaces.setDisplayMode(newMode);
 			interfaces.init();
 			interfaces.openWindow(Interface.DISPLAY_SETTINGS); // TODO close on the old root?
+			player.getPlayerCombatHandler().restoreTab();
 		}
 	}
 
