@@ -20,8 +20,8 @@ public final class DisplayMessageDecoder extends MessageDecoder<DisplayMessage> 
 		int mode = (int) reader.getUnsigned(DataType.BYTE);
 		int width = (int) reader.getUnsigned(DataType.SHORT);
 		int height = (int) reader.getUnsigned(DataType.SHORT);
-		reader.getUnsigned(DataType.BYTE); // TODO identify this
-		return new DisplayMessage(mode, width, height);
+		int antialiasing = (int) reader.getUnsigned(DataType.BYTE);
+		return new DisplayMessage(mode, width, height, antialiasing);
 	}
 
 }
