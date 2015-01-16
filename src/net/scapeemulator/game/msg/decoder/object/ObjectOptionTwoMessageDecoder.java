@@ -20,7 +20,7 @@ public final class ObjectOptionTwoMessageDecoder extends MessageDecoder<ObjectOp
 		GameFrameReader reader = new GameFrameReader(frame);
 		int y = (int) reader.getSigned(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD);
 		int x = (int) reader.getSigned(DataType.SHORT, DataOrder.LITTLE);
-		int id = (int) reader.getSigned(DataType.SHORT);
+		int id = (int) reader.getUnsigned(DataType.SHORT);
 		return new ObjectOptionMessage(id, x, y, Option.TWO);
 	}
 
