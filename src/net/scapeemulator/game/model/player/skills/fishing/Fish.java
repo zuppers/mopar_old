@@ -6,6 +6,7 @@ package net.scapeemulator.game.model.player.skills.fishing;
 public enum Fish {
     
     SHRIMP(1, 10, 317, 315),
+    CRAYFISH(1, 10, 13435, 13433),
     SARDINE(5, 20, 327, 325),
     HERRING(10, 30, 345, 347),
     ANCHOVY(15, 40, 321, 319),
