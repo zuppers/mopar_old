@@ -49,7 +49,7 @@ public final class LoginDecoder extends ByteToMessageDecoder {
 			int width = buf.readUnsignedShort();
 			int height = buf.readUnsignedShort();
 
-			buf.readUnsignedByte();
+			int antialiasing = buf.readUnsignedByte();
 
 			byte[] uid = new byte[24];
 			for (int i = 0; i < uid.length; i++)

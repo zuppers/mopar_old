@@ -4,12 +4,13 @@ import net.scapeemulator.game.msg.Message;
 
 public final class DisplayMessage extends Message {
 
-	private final int mode, width, height;
+	private final int mode, width, height, antialiasing;
 
-	public DisplayMessage(int mode, int width, int height) {
+	public DisplayMessage(int mode, int width, int height, int antialiasing) {
 		this.mode = mode;
 		this.width = width;
 		this.height = height;
+		this.antialiasing = antialiasing;
 	}
 
 	public int getMode() {
@@ -22,6 +23,10 @@ public final class DisplayMessage extends Message {
 
 	public int getHeight() {
 		return height;
+	}
+	
+	public int getAntiAliasing(){
+		return antialiasing;
 	}
 
 }
