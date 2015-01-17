@@ -177,7 +177,7 @@ public class Shop {
         }
         if (hasStock(StockType.PLAYER)) {
             // TODO replace getValue() > 0 with a tradable check
-            return (getBestSlot(StockType.PLAYER, itemId) > -1 && ItemDefinitions.forId(itemId).getValue() > 0);
+            return (getBestSlot(StockType.PLAYER, itemId) > -1 && ItemDefinitions.forId(itemId).getLowAlchemyValue() > 0);
         }
         return false;
     }

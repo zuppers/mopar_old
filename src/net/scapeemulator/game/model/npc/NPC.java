@@ -13,13 +13,14 @@ import net.scapeemulator.game.model.npc.action.NPCDeathAction;
 import net.scapeemulator.game.model.npc.drops.NPCDropTable;
 import net.scapeemulator.game.model.player.Item;
 import net.scapeemulator.game.model.player.Player;
+import net.scapeemulator.game.model.player.skills.prayer.Bone;
 
 public abstract class NPC extends Mob {
 
     private Position spawnPosition;
     private int type;
     private int currentHp;
-    private int changingType;
+    private int changingType = -1;
     private Area walkingBounds;
     private NPCDefinition definition;
 
@@ -106,10 +107,12 @@ public abstract class NPC extends Mob {
     }
 
     public void drop(Mob receiver) {
+        GroundItemList groundItemList = receiver instanceof Player ? ((Player) receiver).getGroundItems() : World.getWorld().getGroundItems();
         if (NPCDropTable.DROP_TABLES[type] == null) {
+            // TODO remove this
+            groundItemList.add(Bone.BONES.getItemId(), 1, position);
             return;
         }
-        GroundItemList groundItemList = receiver instanceof Player ? ((Player) receiver).getGroundItems() : World.getWorld().getGroundItems();
         List<Item> items = NPCDropTable.DROP_TABLES[type].getRandomDrops();
         for (Item item : items) {
             groundItemList.add(item.getId(), item.getAmount(), position);

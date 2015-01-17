@@ -26,6 +26,7 @@ import net.scapeemulator.game.msg.decoder.WalkMessageDecoder;
 import net.scapeemulator.game.msg.decoder.button.ButtonOptionMessageDecoder;
 import net.scapeemulator.game.msg.decoder.button.OldButtonMessageDecoder;
 import net.scapeemulator.game.msg.decoder.grounditem.GroundItemOptionThreeMessageDecoder;
+import net.scapeemulator.game.msg.decoder.grounditem.GroundItemOptionFourMessageDecoder;
 import net.scapeemulator.game.msg.decoder.inter.InterfaceClosedMessageDecoder;
 import net.scapeemulator.game.msg.decoder.inter.InterfaceInputMessageDecoder;
 import net.scapeemulator.game.msg.decoder.item.ItemDropMessageDecoder;
@@ -140,6 +141,7 @@ public final class CodecRepository {
         bind(new FriendListOperationMessageDecoder(213));
         bind(new PrivateChatSentMessageDecoder());
         bind(new GroundItemOptionThreeMessageDecoder());
+        bind(new GroundItemOptionFourMessageDecoder());
         bind(new GrandExchangeSearchMessageDecoder());
 
         /* Bind all the item decoders */

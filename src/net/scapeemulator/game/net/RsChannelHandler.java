@@ -18,9 +18,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class RsChannelHandler extends ChannelInboundMessageHandlerAdapter<Object> {
-    /*
-     * TODO: more specific generics here?
-     */
+
+    // TODO: more specific generics here?
 
     private static final Logger logger = LoggerFactory.getLogger(RsChannelHandler.class);
 
@@ -33,21 +32,17 @@ public final class RsChannelHandler extends ChannelInboundMessageHandlerAdapter<
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
-        logger.info("Channel connected: " + ctx.channel().remoteAddress() + ".");
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) {
-        if (session != null)
+        if (session != null) {
             session.channelClosed();
-
-        logger.info("Channel disconnected: " + ctx.channel().remoteAddress() + ".");
+        }
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        // TODO better exception sorting
-        // logger.warn("Exception caught, closing channel...", cause);
         ctx.close();
     }
 

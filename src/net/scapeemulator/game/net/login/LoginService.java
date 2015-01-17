@@ -57,6 +57,7 @@ public final class LoginService implements Runnable {
 
         @Override
         public void perform(LoginService service) {
+            player.stopAction();
             service.serializer.savePlayer(player);
             player.unregister();
             player.getFriends().logout();

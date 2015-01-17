@@ -25,6 +25,7 @@ import net.scapeemulator.game.model.area.QuadArea;
 import net.scapeemulator.game.model.definition.NPCDefinitions;
 import net.scapeemulator.game.model.grandexchange.GEOffer;
 import net.scapeemulator.game.model.grandexchange.GrandExchange;
+import net.scapeemulator.game.model.mob.Direction;
 import net.scapeemulator.game.model.mob.combat.AttackType;
 import net.scapeemulator.game.model.npc.NPC;
 import net.scapeemulator.game.model.npc.drops.NPCDropTable;
@@ -234,6 +235,7 @@ public final class JdbcSerializer extends Serializer implements Closeable {
                     int y1 = set.getInt("max_y");
                     npc.setWalkingBounds(new QuadArea(x0, y0, x1, y1));
                 }
+                npc.setDirections(Direction.valueOf(set.getString("direction")), Direction.NONE);
                 count++;
                 World.getWorld().addNpc(npc);
             }

@@ -5,7 +5,7 @@ package net.scapeemulator.game.model;
  */
 public abstract class Entity {
 
-    protected Position position;
+    protected Position position = new Position(3222, 3222);
 
     /**
      * Retrieve the position of this {@link Entity}

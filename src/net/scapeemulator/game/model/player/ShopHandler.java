@@ -102,7 +102,7 @@ public class ShopHandler extends ComponentListener {
         int cost = def.getValue() < 1 ? 1 : def.getValue();
         int assets = player.getInventory().getAmount(995);
         boolean coinsGone = false;
-        if (cost * amount > assets) {
+        if (cost * amount > assets || cost * amount < 1) {
             coinsGone = assets % cost == 0;
             amount = assets / cost;
             if (amount < 1) {
@@ -132,7 +132,7 @@ public class ShopHandler extends ComponentListener {
         }
 
         amount = activeShop.remove(activeStock, itemId, amount);
-        if (amount > 0) {
+        if (amount > 0 && activeStock != StockType.MAIN) {
             updateShopGlobally();
         }
         player.getInventory().remove(new Item(995, cost * amount));

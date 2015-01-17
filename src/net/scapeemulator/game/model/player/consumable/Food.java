@@ -1,5 +1,7 @@
 package net.scapeemulator.game.model.player.consumable;
 
+import net.scapeemulator.game.model.player.skills.cooking.RawFood;
+
 /**
  * Normal food that only heals health, no extra effects.
  * 
@@ -7,18 +9,18 @@ package net.scapeemulator.game.model.player.consumable;
  */
 public enum Food {
     CRAYFISH(1, 13433),
-    ANCHOVIES(1, 0),
-    SHRIMP(3, 0),
-    CHICKEN(3, 0),
-    MEAT(3, 0),
+    ANCHOVIES(1, RawFood.ANCHOVY.getCookedId()),
+    SHRIMP(3, RawFood.SHRIMP.getCookedId()),
+    CHICKEN(3, RawFood.CHICKEN.getCookedId()),
+    MEAT(3, RawFood.BEEF.getCookedId()),
     CAKE(4, 1891, 1893, 1895),
-    BREAD(5, 2309),
-    HERRING(5, 0),
-    MACKEREL(6, 0),
+    BREAD(5, RawFood.BREAD.getCookedId()),
+    HERRING(5, RawFood.HERRING.getCookedId()),
+    MACKEREL(6, RawFood.MACKEREL.getCookedId()),
     PLAIN_PIZZA(7, 2289, 2291),
-    TROUT(7, 0),
-    PIKE(8, 0),
-    LOBSTER(12, 0);
+    TROUT(7, RawFood.TROUT.getCookedId()),
+    PIKE(8, RawFood.PIKE.getCookedId()),
+    LOBSTER(12, RawFood.LOBSTER.getCookedId());
 
     private final int heal;
     private final int[] bites;

@@ -545,6 +545,18 @@ public final class EquipmentDumper {
                 return 7049;
             }
         }
+
+        if (name.contains("sword") || name.contains("scimitar")) {
+            switch (index) {
+            case 0:
+            case 1:
+            case 3:
+                return 451;
+            case 2:
+                return 433;
+            }       
+        }
+        
         if (name.contains("staff")) {
             return 419;
         }
@@ -561,12 +573,16 @@ public final class EquipmentDumper {
         if (name.contains("2h") || name.contains("godsword")) {
             return 7050;
         }
+        if (name.contains("sword") || name.contains("scimitar")) {
+            return 434;
+        }
         if (name.contains("dagger")) {
             return 378;
         }
         if (name.contains("staff")) {
             return 520;
         }
+        // 425?
         return 404;
     }
 
