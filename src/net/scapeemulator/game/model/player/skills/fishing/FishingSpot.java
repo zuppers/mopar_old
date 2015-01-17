@@ -9,6 +9,7 @@ import net.scapeemulator.game.model.Option;
  */
 public enum FishingSpot {
     
+    CAGE_CRAYFISH(7862, CRAYFISH_CAGE, null, new Fish[] { CRAYFISH }, null),
     SMALLNET_ROD(316, SMALL_NET, FISHING_ROD, new Fish[] { SHRIMP, ANCHOVY }, new Fish[] { SARDINE, HERRING }),
     FLYROD_ROD(309, FLY_FISHING_ROD, FISHING_ROD, new Fish[] { TROUT, SALMON }, new Fish[] { PIKE }),
     CAGE_HARPOON(312, LOBSTER_CAGE, HARPOON, new Fish[] { LOBSTER }, new Fish[] { TUNA, SWORDFISH }),
