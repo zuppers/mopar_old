@@ -118,6 +118,9 @@ public class Fishing {
         spawnSpot(FishingSpot.FLYROD_ROD, 3239, 3241);
         spawnSpot(FishingSpot.FLYROD_ROD, 3239, 3243);
         spawnSpot(FishingSpot.FLYROD_ROD, 3238, 3253);
+        spawnSpot(FishingSpot.CAGE_CRAYFISH, 3259, 3203);
+        spawnSpot(FishingSpot.CAGE_CRAYFISH, 3259, 3204);
+        spawnSpot(FishingSpot.CAGE_CRAYFISH, 3259, 3206);
     }
 
 }
