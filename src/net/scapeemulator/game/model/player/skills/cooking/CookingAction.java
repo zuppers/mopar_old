@@ -48,8 +48,8 @@ public class CookingAction extends DistancedAction<Player> {
 
     @Override
     public void executeAction() {
-       
-         if (!World.getWorld().getGroundObjects().contains(this.object.getId(),this.object.getPosition())) {
+        GroundObject object = World.getWorld().getGroundObjects().get(this.object.getId(), this.object.getPosition());
+        if (object == null) {
             stop();
             return;
         }
