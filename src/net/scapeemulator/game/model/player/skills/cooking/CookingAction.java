@@ -2,8 +2,10 @@ package net.scapeemulator.game.model.player.skills.cooking;
 
 import java.util.Random;
 
+import net.scapeemulator.game.model.World;
 import net.scapeemulator.game.model.definition.ItemDefinitions;
 import net.scapeemulator.game.model.object.GroundObjectList.GroundObject;
+import net.scapeemulator.game.model.object.GroundObjectListenerAdapter;
 import net.scapeemulator.game.model.player.Equipment;
 import net.scapeemulator.game.model.player.Item;
 import net.scapeemulator.game.model.player.Player;
@@ -29,9 +31,9 @@ public class CookingAction extends DistancedAction<Player> {
 
     private final SlottedItem item;
     private final GroundObject object;
-    private final int origId;
     private final HeatSource heatSource;
     private final RawFood food;
+    private final FireObjectListener listener;
     private State state;
     private int amount;
 
@@ -41,18 +43,14 @@ public class CookingAction extends DistancedAction<Player> {
         this.food = food;
         this.item = item;
         this.object = object;
-        origId = object.getId();
         player.turnToPosition(object.getCenterPosition());
+        listener = new FireObjectListener();
+        World.getWorld().getGroundObjects().addListener(listener);
         state = State.WALKING;
     }
 
     @Override
     public void executeAction() {
-        if (object == null || object.getId() != origId || object.isHidden()) {
-            mob.sendMessage("Stopped");
-            stop();
-            return;
-        }
         switch (state) {
         case WALKING:
             if (!mob.getWalkingQueue().isEmpty()) {
@@ -110,8 +108,14 @@ public class CookingAction extends DistancedAction<Player> {
 
     }
 
+    private void fireOut() {
+        mob.sendMessage("Your fire has run out.");
+        stop();
+    }
+
     @Override
     public void stop() {
+        World.getWorld().getGroundObjects().removeListener(listener);
         mob.cancelAnimation();
         super.stop();
     }
@@ -162,5 +166,22 @@ public class CookingAction extends DistancedAction<Player> {
             stop();
         }
 
+    }
+
+    private class FireObjectListener extends GroundObjectListenerAdapter {
+
+        @Override
+        public void groundObjectUpdated(GroundObject updated) {
+            if (object == updated) {
+                fireOut();
+            }
+        }
+
+        @Override
+        public void groundObjectRemoved(GroundObject removed) {
+            if (object == removed) {
+                fireOut();
+            }
+        }
     }
 }
