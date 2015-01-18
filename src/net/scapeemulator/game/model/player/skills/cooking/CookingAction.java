@@ -48,9 +48,8 @@ public class CookingAction extends DistancedAction<Player> {
 
     @Override
     public void executeAction() {
-        GroundObjectList objectList = World.getWorld().getGroundObjects();
-        GroundObject object = objectList.get(this.object.getId(), this.object.getPosition());
-        if (object == null) {
+        if (object == null || object.getId() != origId || object.isHidden()) {
+            mob.sendMessage("Stopped");
             stop();
             return;
         }
