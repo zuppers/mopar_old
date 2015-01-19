@@ -22,8 +22,8 @@ public final class ItemDumper {
                 ItemDefinition def = ItemDefinitions.forId(id);
                 if (def != null) {
                     output.write(id + "\t" + def.getName() + "\t\t");
-                    output.write("stacks:" + def.isStackable() + "\t" + "noted:" + def.isNoted() + "\t");
-                    output.write("value:" + def.getValue() + "\t" + "noted/unnoted:" + def.getNoted() + "/" + def.getUnnoted());
+                    output.write("stacks:" + def.isStackable() + "\t" + "noted:" + !def.getUnnoted() + "\t");
+                    output.write("value:" + def.getValue() + "\t" + "noted/unnoted:" + def.getUnnotedItemId() + "/" + def.getNotedItemId());
                     output.newLine();
                     output.flush();
                 }

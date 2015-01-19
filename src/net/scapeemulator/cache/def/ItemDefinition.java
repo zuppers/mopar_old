@@ -535,8 +535,12 @@ public final class ItemDefinition {
         return modelOffset2;
     }
 
+    public boolean getStackable() {
+        return stackable;
+    }
+
     public boolean isStackable() {
-        return stackable || (isNoted() && swapId != id);
+        return notedTemplateId == 799 || stackable;
     }
 
     public int getValue() {
@@ -595,14 +599,6 @@ public final class ItemDefinition {
         return modifiedTextureColors;
     }
 
-    public boolean isNoted() {
-        return !unnoted && (name == null || name.equals("null"));
-    }
-
-    public boolean isUnnoted() {
-        return !isNoted();
-    }
-
     public int getColourEquip1() {
         return maleModel3;
     }
@@ -611,20 +607,24 @@ public final class ItemDefinition {
         return femaleModel3;
     }
 
-    public boolean canSwap() {
-        return id != swapId;
-    }
-
-    public int swap() {
+    public int getSwapId() {
         return swapId;
     }
 
-    public int getNoted() {
-        return (!unnoted || swapId == -1) ? id : swapId;
+    public boolean canBank() {
+        return true;
     }
 
-    public int getUnnoted() {
-        return (!isNoted() || swapId == -1) ? id : swapId;
+    public boolean getUnnoted() {
+        return unnoted;
+    }
+
+    public int getNotedItemId() {
+        return notedTemplateId == 779 ? id : swapId;
+    }
+
+    public int getUnnotedItemId() {
+        return unnoted ? id : swapId;
     }
 
     public int getNotedTemplateId() {
@@ -653,14 +653,6 @@ public final class ItemDefinition {
 
     public int getLendTemplateId() {
         return lendTemplateId;
-    }
-
-    public boolean canBank() {
-        return true;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public void setName(String name) {
