@@ -535,10 +535,22 @@ public final class ItemDefinition {
         return modelOffset2;
     }
 
+    /**
+     * Returns the raw boolean in the cache about whether this item is stackable. To get more
+     * accurate information server sided, use isStackable()
+     * 
+     * @return the raw boolean in the cache about whether this item is stackable
+     */
     public boolean getStackable() {
         return stackable;
     }
 
+    /**
+     * Uses a combination of item information to determine if this item should stack in a player
+     * inventory.
+     * 
+     * @return true if the item should stack in a player inventory, false otherwise
+     */
     public boolean isStackable() {
         return notedTemplateId == 799 || stackable;
     }

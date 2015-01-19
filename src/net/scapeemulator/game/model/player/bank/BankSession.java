@@ -179,7 +179,7 @@ public class BankSession extends ComponentListener {
         int invenAmount = inventory.getAmount(originalItem.getId());
         amount = amount > invenAmount ? invenAmount : amount;
 
-        Item toDeposit = new Item(originalItem.getDefinition().getUnnoted(), amount);
+        Item toDeposit = new Item(originalItem.getDefinition().getUnnotedItemId(), amount);
 
         int depositedAmount = 0;
 
@@ -227,8 +227,9 @@ public class BankSession extends ComponentListener {
 
         Item toWithdraw = new Item(originalItem.getId(), amount);
         if (noteWithdrawal) {
-            if (originalItem.getDefinition().canSwap()) {
-                toWithdraw = new Item(originalItem.getDefinition().getNoted(), amount);
+            int notedId = originalItem.getDefinition().getNotedItemId();
+            if (notedId != originalItem.getId()) {
+                toWithdraw = new Item(notedId, amount);
             } else {
                 player.sendMessage("That item cannot be withdrawn as a note.");
             }

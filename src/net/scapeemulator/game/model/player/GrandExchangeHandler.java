@@ -46,7 +46,7 @@ public class GrandExchangeHandler extends ScriptInputListenerAdapter {
         if (item == null) {
             return;
         }
-        activeItemId = item.getDefinition().getUnnoted();
+        activeItemId = item.getDefinition().getUnnotedItemId();
         setItemExamine("ID " + activeItemId + ": " + ItemDefinitions.forId(activeItemId).getName());
         player.getStateSet().setState(1109, activeItemId);
     }
@@ -174,7 +174,7 @@ public class GrandExchangeHandler extends ScriptInputListenerAdapter {
                     System.out.println("This should never happen! Please report. ID: " + toRemove.getId() + " " + player.getDisplayName());
                     return;
                 }
-                toRemove = new Item(toRemove.getDefinition().getNoted(), removed != null ? toRemove.getAmount() - removed.getAmount() : toRemove.getAmount());
+                toRemove = new Item(toRemove.getDefinition().getNotedItemId(), removed != null ? toRemove.getAmount() - removed.getAmount() : toRemove.getAmount());
                 removed = player.getInventory().remove(toRemove);
                 if (!removed.equals(toRemove)) {
                     return;
@@ -226,7 +226,7 @@ public class GrandExchangeHandler extends ScriptInputListenerAdapter {
         GEOffer offer = playerOffers[activeSlot];
         if (itemSlot) {
             if (noted) {
-                Item remaining = player.getInventory().add(new Item(ItemDefinitions.forId(offer.getItemId()).getNoted(), offer.getUnclaimedItems()));
+                Item remaining = player.getInventory().add(new Item(ItemDefinitions.forId(offer.getItemId()).getNotedItemId(), offer.getUnclaimedItems()));
                 if (remaining != null) {
                     offer.setUnclaimedItems(remaining.getAmount());
                 } else {

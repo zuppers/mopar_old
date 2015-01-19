@@ -46,8 +46,7 @@ public class ShopHandler extends ComponentListener {
         if (activeShop == null) {
             return;
         }
-        int unnotedId = ItemDefinitions.forId(itemId).getUnnoted();
-
+        int unnotedId = ItemDefinitions.forId(itemId).getUnnotedItemId();
         if (!activeShop.acceptsItem(unnotedId)) {
             player.sendMessage("You cannot sell that item to this shop.");
             return;
@@ -199,7 +198,7 @@ public class ShopHandler extends ComponentListener {
         if (item == null) {
             return;
         }
-        ItemDefinition def = ItemDefinitions.forId(item.getDefinition().getUnnoted());
+        ItemDefinition def = ItemDefinitions.forId(item.getDefinition().getUnnotedItemId());
         switch (option) {
         case ONE:
             int value = (int) (def.getLowAlchemyValue());

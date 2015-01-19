@@ -365,10 +365,12 @@ public final class Inventory {
 
     public int getAmountNotedAndUnnoted(int id) {
         ItemDefinition def = ItemDefinitions.forId(id);
-        if (def.isStackable() || !def.canSwap()) {
-            return getAmount(id);
+        int unnoted = def.getUnnotedItemId();
+        int noted = def.getNotedItemId();
+        if (unnoted != noted) {
+            return getAmount(unnoted) + getAmount(noted);
         }
-        return getAmount(id) + getAmount(def.swap());
+        return getAmount(id);
     }
 
     public boolean contains(int id) {
