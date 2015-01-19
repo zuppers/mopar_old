@@ -8,6 +8,7 @@ import net.scapeemulator.game.model.mob.Animation;
 public enum FishingTool {
     
     SMALL_NET(303, 620, "You cast out your net..."),
+    CRAYFISH_CAGE(13431, 10009, "You attempt to catch a crayfish..."),
     BIG_NET(305, 620, "You cast out your large net..."),
     FISHING_ROD(307, 313, 622, "You cast out your line..."),
     FLY_FISHING_ROD(309, 314, 622, "You cast out your fly fishing rod..."),
