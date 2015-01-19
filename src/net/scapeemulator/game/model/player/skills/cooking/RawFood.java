@@ -27,6 +27,7 @@ public enum RawFood {
     
     // Fish
     SHRIMP(Fish.SHRIMP, 1, 30, 323, 34),
+    CRAYFISH(Fish.CRAYFISH, 1, 30, 13437, 34),
     SARDINE(Fish.SARDINE, 1, 40, 369, 34),
     ANCHOVY(Fish.ANCHOVY, 1, 30, 323, 34),
     HERRING(Fish.HERRING, 5, 50, 357, 34),

@@ -624,7 +624,7 @@ public final class ItemDefinition {
     }
 
     public int getUnnoted() {
-        return (unnoted || swapId == -1) ? id : swapId;
+        return (!isNoted() || swapId == -1) ? id : swapId;
     }
 
     public int getNotedTemplateId() {
