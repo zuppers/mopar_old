@@ -33,6 +33,7 @@ public class FishingAction extends DistancedAction<Player> {
     public void executeAction() {
         if (state == State.WALKING) {
             state = State.INIT;
+            mob.sendMessage(fishingTool.getMessage());
         }
         if (mob.getInventory().freeSlot() == -1) {
             mob.sendMessage("You do not have enough inventory space to hold any more fish.");
