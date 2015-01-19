@@ -26,7 +26,7 @@ public final class RegionChangeMessageEncoder extends MessageEncoder<RegionChang
         GameFrameBuilder builder = new GameFrameBuilder(alloc, 162, Type.VARIABLE_SHORT);
 
         Position position = message.getPosition();
-        builder.put(DataType.SHORT, DataTransformation.ADD, position.getLocalX(position.getRegionX()));
+        builder.put(DataType.SHORT, DataTransformation.ADD, position.getLocalX());
 
         boolean force = true;
         int centralMapX = position.getRegionX() / 8;
@@ -42,11 +42,9 @@ public final class RegionChangeMessageEncoder extends MessageEncoder<RegionChang
             for (int mapY = ((position.getRegionY() - 6) / 8); mapY <= ((position.getRegionY() + 6) / 8); mapY++) {
                 if (force || (mapY != 49 && mapY != 149 && mapY != 147 && mapX != 50 && (mapX != 49 || mapY != 47))) {
                     int[] keys = table.getKeys(mapX, mapY);
-                    for (int i = 0; i < 4; i++)
+                    for (int i = 0; i < 4; i++) {
                         builder.put(DataType.INT, DataOrder.INVERSED_MIDDLE, keys[i]);
-                } else {
-                    for (int i = 0; i < 4; i++)
-                        builder.put(DataType.INT, DataOrder.INVERSED_MIDDLE, 0);
+                    }
                 }
             }
         }
@@ -54,7 +52,7 @@ public final class RegionChangeMessageEncoder extends MessageEncoder<RegionChang
         builder.put(DataType.BYTE, DataTransformation.SUBTRACT, position.getHeight() % 4);
         builder.put(DataType.SHORT, position.getRegionX());
         builder.put(DataType.SHORT, DataTransformation.ADD, position.getRegionY());
-        builder.put(DataType.SHORT, DataTransformation.ADD, position.getLocalY(position.getRegionY()));
+        builder.put(DataType.SHORT, DataTransformation.ADD, position.getLocalY());
         return builder.toGameFrame();
     }
 
