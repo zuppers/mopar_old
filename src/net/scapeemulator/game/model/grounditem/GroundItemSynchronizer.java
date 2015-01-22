@@ -37,9 +37,9 @@ public final class GroundItemSynchronizer extends GroundItemListener {
     private final List<GroundItem> toRemove = new LinkedList<>();
 
     /**
-     * Constructs a new {@link GroundItemSynchronizer};
+     * Constructs a new synchronizer for a player.
      * 
-     * @param player The player to synchronize the ground items for.
+     * @param player player to synchronize the ground items for
      */
     public GroundItemSynchronizer(Player player) {
         this.player = player;
@@ -73,7 +73,7 @@ public final class GroundItemSynchronizer extends GroundItemListener {
     }
 
     @Override
-    public void groundItemUpdated(GroundItemList.GroundItem groundItem, int previousAmount, Type type) {
+    public void groundItemUpdated(GroundItem groundItem, int previousAmount, Type type) {
         Position position = groundItem.getPosition();
         if (uids.contains(groundItem.getUid()) && player.getPosition().isWithinScene(position)) {
             sendPlacementCoords(position);
@@ -131,7 +131,7 @@ public final class GroundItemSynchronizer extends GroundItemListener {
 
     private GroundItemList getAlternateList(Type type) {
         switch (type) {
-        case LOCAL:
+        case PRIVATE:
             return World.getWorld().getGroundItems();
         case WORLD:
             return player.getGroundItems();

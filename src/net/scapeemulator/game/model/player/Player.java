@@ -107,7 +107,7 @@ public final class Player extends Mob {
     private Spellbook spellbook = Spellbook.NORMAL_SPELLBOOK;
     private final AccessSet accessSet = new AccessSet(this);
     private final EquipmentBonuses equipmentBonuses = new EquipmentBonuses();
-    private final GroundItemList groundItems = new GroundItemList(Type.LOCAL);
+    private final GroundItemList groundItems = new GroundItemList(Type.PRIVATE);
     private final GroundItemSynchronizer groundItemSync = new GroundItemSynchronizer(this);
     private final GroundObjectSynchronizer groundObjSync = new GroundObjectSynchronizer(this);
     private int[] appearanceTickets = new int[World.MAX_PLAYERS];
