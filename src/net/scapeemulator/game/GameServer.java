@@ -153,7 +153,7 @@ public final class GameServer {
     }
 
     public void load() throws IOException, ScriptException, SQLException {
-        logger.info("Starting ScapeEmulator game server...");
+        logger.info("Starting game server...");
 
         /* load landscape keys */
 
@@ -169,7 +169,6 @@ public final class GameServer {
         VarbitDefinitions.init(cache);
         NPCDefinitions.init(cache);
         EquipmentDefinition.init();
-        messageDispatcher.getNpcDispatcher().bind(new BankerAction());
 
         /* load all the maps into memory */
         mapLoader = new MapLoader(cache, landscapeKeyTable);
@@ -203,11 +202,16 @@ public final class GameServer {
 
         /* bind other content */
         Consumables.initialize();
+        messageDispatcher.getNpcDispatcher().bind(new BankerAction());
 
         /* load player serializer from config file */
         serializer = createPlayerSerializer();
         logger.info("Using serializer: " + serializer + ".");
         loginService = new LoginService(serializer);
+        serializer.loadNPCDrops();
+        serializer.loadNPCDefinitions();
+        serializer.loadNPCSpawns();
+        serializer.loadShops();
 
         /* start netty */
         httpBootstrap.group(loopGroup);
@@ -216,10 +220,7 @@ public final class GameServer {
         serviceBootstrap.group(loopGroup);
         serviceBootstrap.channel(NioServerSocketChannel.class);
         serviceBootstrap.childHandler(new RsChannelInitializer(this));
-        serializer.loadNPCDrops();
-        serializer.loadNPCDefinitions();
-        serializer.loadNPCSpawns();
-        serializer.loadShops();
+
     }
 
     public void start() {
