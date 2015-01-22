@@ -44,6 +44,7 @@ public final class MessageDispatcher {
     private final ItemOnItemDispatcher itemOnItemDispatcher = new ItemOnItemDispatcher();
     private final ItemOnObjectDispatcher itemOnObjectDispatcher = new ItemOnObjectDispatcher();
     private final ItemDispatcher itemDispatcher = new ItemDispatcher();
+    private final ItemOnNPCDispatcher itemOnNPCDispatcher = new ItemOnNPCDispatcher();
     private final ObjectDispatcher objectDispatcher = new ObjectDispatcher();
     private final PlayerDispatcher playerDispatcher = new PlayerDispatcher();
     private final NPCDispatcher npcDispatcher = new NPCDispatcher();
@@ -75,6 +76,7 @@ public final class MessageDispatcher {
         bind(MagicOnItemMessage.class, new MagicOnItemMessageHandler());
         bind(ItemOnObjectMessage.class, new ItemOnObjectMessageHandler(itemOnObjectDispatcher));
         bind(ItemOptionMessage.class, new ItemOptionMessageHandler(itemDispatcher));
+        bind(ItemOnNPCMessage.class, new ItemOnNPCMessageHandler(itemOnNPCDispatcher));
         bind(ItemExamineMessage.class, new ItemExamineMessageHandler());
         bind(ItemDropMessage.class, new ItemDropMessageHandler());
         bind(ButtonOptionMessage.class, new ButtonOptionMessageHandler(buttonDispatcher));
@@ -134,6 +136,10 @@ public final class MessageDispatcher {
 
     public ItemOnObjectDispatcher getItemOnObjectDispatcher() {
         return itemOnObjectDispatcher;
+    }
+
+    public ItemOnNPCDispatcher getItemOnNPCDispatcher() {
+        return itemOnNPCDispatcher;
     }
 
     public ItemDispatcher getItemDispatcher() {
