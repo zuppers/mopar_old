@@ -172,9 +172,6 @@ public class Shop {
      *         getBestSlot(int)} > -1 and the {@link Item} associated with the itemId is tradeable.
      */
     public boolean acceptsItem(int itemId) {
-        if (contains(StockType.MAIN, itemId)) {
-            return true;
-        }
         if (hasStock(StockType.PLAYER)) {
             // TODO replace getValue() > 0 with a tradable check
             return (getBestSlot(StockType.PLAYER, itemId) > -1 && ItemDefinitions.forId(itemId).getLowAlchemyValue() > 0);
