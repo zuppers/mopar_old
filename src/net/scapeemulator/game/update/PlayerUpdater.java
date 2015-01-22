@@ -24,19 +24,26 @@ public final class PlayerUpdater {
     }
 
     public void tick() {
-        for (Player player : world.getPlayers())
-            preprocess(player);
+        for (Player player : world.getPlayers()) {
+            if (player.getSession() != null) {
+                preprocess(player);
+            }
+        }
 
         for (NPC npc : world.getNpcs())
             preprocess(npc);
 
         for (Player player : world.getPlayers()) {
-            updatePlayers(player);
-            updateNpcs(player);
+            if (player.getSession() != null) {
+                updatePlayers(player);
+                updateNpcs(player);
+            }
         }
 
         for (Player player : world.getPlayers())
-            postprocess(player);
+            if (player.getSession() != null) {
+                postprocess(player);
+            }
 
         for (NPC npc : world.getNpcs())
             postprocess(npc);
