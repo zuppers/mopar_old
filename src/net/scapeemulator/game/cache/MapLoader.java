@@ -21,7 +21,12 @@ public final class MapLoader {
 
     public static final int FLAG_CLIP = 0x1;
     public static final int BRIDGE_FLAG = 0x2;
-
+    
+    /**
+     * Flags that the tile is below a roof, for removing the roof during rendering.
+     */
+    public static final int ROOF_FLAG = 0x4;
+    
     private static final Logger logger = LoggerFactory.getLogger(MapLoader.class);
     private final List<MapListener> listeners = new LinkedList<MapListener>();
     private final Cache cache;
