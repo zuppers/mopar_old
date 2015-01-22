@@ -15,7 +15,7 @@ public class Fishing {
     public static void initialize() {
         spawnFishingSpots();
         GameServer.getInstance().getMessageDispatcher().getNpcDispatcher().bind(new FishingSpotHandler(Option.ONE));
-        GameServer.getInstance().getMessageDispatcher().getNpcDispatcher().bind(new FishingSpotHandler(Option.TWO));
+        GameServer.getInstance().getMessageDispatcher().getNpcDispatcher().bind(new FishingSpotHandler(Option.THREE));
     }
 
     private static void spawnSpot(FishingSpot spot, int x, int y) {

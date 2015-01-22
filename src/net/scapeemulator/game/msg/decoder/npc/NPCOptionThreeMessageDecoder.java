@@ -5,7 +5,6 @@ import java.io.IOException;
 import net.scapeemulator.game.model.Option;
 import net.scapeemulator.game.msg.MessageDecoder;
 import net.scapeemulator.game.msg.impl.npc.NPCOptionMessage;
-import net.scapeemulator.game.net.game.DataOrder;
 import net.scapeemulator.game.net.game.DataTransformation;
 import net.scapeemulator.game.net.game.DataType;
 import net.scapeemulator.game.net.game.GameFrame;
@@ -14,16 +13,16 @@ import net.scapeemulator.game.net.game.GameFrameReader;
 /**
  * @author David Insley
  */
-public final class NPCOptionTwoMessageDecoder extends MessageDecoder<NPCOptionMessage> {
+public final class NPCOptionThreeMessageDecoder extends MessageDecoder<NPCOptionMessage> {
 
-    public NPCOptionTwoMessageDecoder() {
-        super(3);
+    public NPCOptionThreeMessageDecoder() {
+        super(148);
     }
 
     @Override
     public NPCOptionMessage decode(GameFrame frame) throws IOException {
         GameFrameReader reader = new GameFrameReader(frame);
-        int id = (int) reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD);
-        return new NPCOptionMessage(id, Option.TWO);
+        int id = (int) reader.getUnsigned(DataType.SHORT, DataTransformation.ADD);
+        return new NPCOptionMessage(id, Option.THREE);
     }
 }

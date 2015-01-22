@@ -13,12 +13,12 @@ import net.scapeemulator.game.util.HandlerContext;
 public class BankerAction extends NPCHandler {
 
     public BankerAction() {
-        super(Option.TWO);
+        super(Option.THREE);
     }
 
     @Override
     public void handle(Player player, NPC npc, String option, HandlerContext context) {
-        if (npc.getType() == 45 || npc.getType() == 44) {
+        if (option.equals("bank")) {
             context.stop();
             player.startAction(new MobInteractionAction<Player, NPC>(player, npc, 2) {
 

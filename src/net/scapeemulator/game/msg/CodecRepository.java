@@ -41,9 +41,9 @@ import net.scapeemulator.game.msg.decoder.item.SwapItemsMessageDecoder;
 import net.scapeemulator.game.msg.decoder.item.SwapItemsTwoMessageDecoder;
 import net.scapeemulator.game.msg.decoder.npc.MagicOnNPCMessageDecoder;
 import net.scapeemulator.game.msg.decoder.npc.NPCExamineMessageDecoder;
-import net.scapeemulator.game.msg.decoder.npc.NPCInteractMessageDecoder;
-import net.scapeemulator.game.msg.decoder.npc.NPCOptionOneMessageDecoder;
 import net.scapeemulator.game.msg.decoder.npc.NPCOptionTwoMessageDecoder;
+import net.scapeemulator.game.msg.decoder.npc.NPCOptionOneMessageDecoder;
+import net.scapeemulator.game.msg.decoder.npc.NPCOptionThreeMessageDecoder;
 import net.scapeemulator.game.msg.decoder.object.ObjectExamineMessageDecoder;
 import net.scapeemulator.game.msg.decoder.object.ObjectOptionFourMessageDecoder;
 import net.scapeemulator.game.msg.decoder.object.ObjectOptionOneMessageDecoder;
@@ -172,9 +172,9 @@ public final class CodecRepository {
         bind(new PlayerOptionThreeMessageDecoder());
 
         bind(new NPCOptionOneMessageDecoder());
-        bind(new NPCOptionTwoMessageDecoder());
+        bind(new NPCOptionThreeMessageDecoder());
         bind(new NPCExamineMessageDecoder());
-        bind(new NPCInteractMessageDecoder());
+        bind(new NPCOptionTwoMessageDecoder());
         bind(new MagicOnNPCMessageDecoder());
 
         /* encoders */

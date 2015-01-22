@@ -38,10 +38,10 @@ public enum FishingSpot {
         switch(option) {
         case ONE:
             return firstTool;
-        case TWO:
+        case THREE:
             return secondTool;
         default:
-            throw new IllegalArgumentException("Fishing spots only support options one and two!");          
+            throw new IllegalArgumentException("Fishing spots only support options one and three!");          
         }        
     }
     
@@ -49,10 +49,10 @@ public enum FishingSpot {
         switch(option) {
         case ONE:
             return firstFish;
-        case TWO:
+        case THREE:
             return secondFish;
         default:
-            throw new IllegalArgumentException("Fishing spots only support options one and two!");          
+            throw new IllegalArgumentException("Fishing spots only support options one and three!");          
         }        
     }
     

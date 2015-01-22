@@ -82,7 +82,6 @@ public final class MessageDispatcher {
         bind(ObjectExamineMessage.class, new ObjectExamineMessageHandler());
         bind(PlayerOptionMessage.class, new PlayerOptionMessageHandler(playerDispatcher));
         bind(NPCOptionMessage.class, new NPCOptionMessageHandler(npcDispatcher));
-        bind(NPCInteractMessage.class, new NPCInteractMessageHandler(npcDispatcher));
         bind(MagicOnNPCMessage.class, new MagicOnNPCMessageHandler(npcDispatcher));
         bind(NPCExamineMessage.class, new NPCExamineMessageHandler());
         bind(InterfaceInputMessage.class, new InterfaceInputMessageHandler());

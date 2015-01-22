@@ -17,7 +17,7 @@ SHOPKEEPERS = {
   3671 => 'Wine Shop'
 }
 
-bind :npc, :option => :two do
+bind :npc, :option => :three do
   if(SHOPKEEPERS.has_key?npc.type)
     player.start_action OpenShopAction.new(player, npc)
     ctx.stop
