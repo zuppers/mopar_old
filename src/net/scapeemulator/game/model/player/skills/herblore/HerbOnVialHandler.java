@@ -4,7 +4,6 @@ import net.scapeemulator.game.dispatcher.item.ItemOnItemHandler;
 import net.scapeemulator.game.model.definition.ItemDefinitions;
 import net.scapeemulator.game.model.player.Player;
 import net.scapeemulator.game.model.player.SlottedItem;
-import net.scapeemulator.game.model.player.inventory.Inventory;
 import net.scapeemulator.game.msg.impl.inter.InterfaceItemMessage;
 
 /**
@@ -23,10 +22,7 @@ public class HerbOnVialHandler extends ItemOnItemHandler {
     }
 
     @Override
-    public void handle(Player player, Inventory inventoryOne, Inventory inventoryTwo, SlottedItem itemOne, SlottedItem itemTwo) {
-        if (inventoryOne != player.getInventory() || inventoryTwo != player.getInventory()) {
-            return;
-        }
+    public void handle(Player player, SlottedItem itemOne, SlottedItem itemTwo) {
         if (!recipe.getRequirements().hasRequirementsDisplayOne(player)) {
             return;
         }

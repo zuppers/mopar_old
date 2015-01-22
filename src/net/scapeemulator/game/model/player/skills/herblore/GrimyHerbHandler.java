@@ -6,7 +6,6 @@ import net.scapeemulator.game.model.definition.ItemDefinitions;
 import net.scapeemulator.game.model.player.Item;
 import net.scapeemulator.game.model.player.Player;
 import net.scapeemulator.game.model.player.SlottedItem;
-import net.scapeemulator.game.model.player.inventory.Inventory;
 import net.scapeemulator.game.model.player.skills.Skill;
 import net.scapeemulator.game.util.HandlerContext;
 
@@ -20,7 +19,7 @@ public class GrimyHerbHandler extends ItemHandler {
     }
 
     @Override
-    public void handle(Player player, Inventory inventory, SlottedItem item, String optionName, HandlerContext context) {
+    public void handle(Player player, SlottedItem item, String optionName, HandlerContext context) {
         Herb herb = Herb.forGrimyId(item.getItem().getId());
         if (herb != null) {
             context.stop();

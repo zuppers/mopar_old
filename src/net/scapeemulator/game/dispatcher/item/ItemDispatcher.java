@@ -1,25 +1,3 @@
-/**
- * Copyright (c) 2012, Hadyn Richard
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy 
- * of this software and associated documentation files (the "Software"), to deal 
- * in the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
- * of the Software, and to permit persons to whom the Software is furnished to do
- * so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in 
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
- * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN 
- * THE SOFTWARE.
- */
-
 package net.scapeemulator.game.dispatcher.item;
 
 import java.util.HashMap;
@@ -36,7 +14,7 @@ import net.scapeemulator.game.model.player.inventory.Inventory;
 import net.scapeemulator.game.util.HandlerContext;
 
 /**
- * Created by Hadyn Richard
+ * @author Hadyn Richard
  */
 public final class ItemDispatcher {
 
@@ -61,7 +39,7 @@ public final class ItemDispatcher {
     /**
      * Binds a handler to this dispatcher.
      * 
-     * @param handler The handler to bind.
+     * @param handler the handler to bind
      */
     public void bind(ItemHandler handler) {
         if (handler.getOption().equals(Option.ALL)) {
@@ -74,12 +52,6 @@ public final class ItemDispatcher {
         }
     }
 
-    public void unbindAll() {
-        for (List<?> list : handlerLists.values()) {
-            list.clear();
-        }
-    }
-
     private static boolean validateInventory(Inventory inventory, int id, int slot) {
         return inventory.get(slot) != null && inventory.get(slot).getId() == id;
     }
@@ -87,9 +59,9 @@ public final class ItemDispatcher {
     /**
      * Gets the name of the option for an item.
      * 
-     * @param id The item id.
-     * @param option The option.
-     * @return The option name.
+     * @param id the item id
+     * @param option the option
+     * @return the option name
      */
     private static String getOptionName(int id, Option option) {
         String optionName = ItemDefinitions.forId(id).getInventoryOptions()[option.toInteger()];
@@ -116,7 +88,7 @@ public final class ItemDispatcher {
             for (ItemHandler handler : handlers) {
 
                 /* Handle the message parameters */
-                handler.handle(player, inventory, slottedItem, optionName, context);
+                handler.handle(player, slottedItem, optionName, context);
 
                 if (context.doStop()) {
                     break;

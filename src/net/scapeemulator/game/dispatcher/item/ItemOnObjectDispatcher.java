@@ -54,7 +54,7 @@ public final class ItemOnObjectDispatcher {
         Inventory inventory = player.getInventorySet().get(hash);
 
         /* Validate the inventory */
-        if (inventory == null || !inventory.verify(slot, itemId)) {
+        if (inventory == null || inventory != player.getInventory() || !inventory.verify(slot, itemId)) {
             return;
         }
 
@@ -62,7 +62,7 @@ public final class ItemOnObjectDispatcher {
         ItemOnObjectHandler handler = handlers.get(getHash(itemId, objectId));
 
         if (handler != null) {
-            handler.handle(player, object, inventory, item);
+            handler.handle(player, object, item);
         } else {
             player.sendMessage("Nothing interesting happens.");
         }

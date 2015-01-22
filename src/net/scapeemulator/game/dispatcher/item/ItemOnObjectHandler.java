@@ -47,5 +47,5 @@ public abstract class ItemOnObjectHandler {
         return objectId;
     }
     
-    public abstract void handle(Player player, GroundObject object, Inventory inventory, SlottedItem item);
+    public abstract void handle(Player player, GroundObject object, SlottedItem item);
 }

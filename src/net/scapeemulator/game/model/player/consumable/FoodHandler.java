@@ -7,7 +7,6 @@ import net.scapeemulator.game.model.player.Item;
 import net.scapeemulator.game.model.player.Player;
 import net.scapeemulator.game.model.player.PlayerTimers.Timer;
 import net.scapeemulator.game.model.player.SlottedItem;
-import net.scapeemulator.game.model.player.inventory.Inventory;
 import net.scapeemulator.game.util.HandlerContext;
 
 /**
@@ -22,7 +21,7 @@ public class FoodHandler extends ItemHandler {
     }
 
     @Override
-    public void handle(Player player, Inventory inventory, SlottedItem item, String option, HandlerContext context) {
+    public void handle(Player player, SlottedItem item, String option, HandlerContext context) {
         if (player.getTimers().timerActive(Timer.EAT)) {
             return;
         }

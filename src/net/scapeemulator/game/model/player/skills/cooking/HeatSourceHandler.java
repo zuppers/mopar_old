@@ -4,7 +4,6 @@ import net.scapeemulator.game.dispatcher.item.ItemOnObjectHandler;
 import net.scapeemulator.game.model.object.GroundObjectList.GroundObject;
 import net.scapeemulator.game.model.player.Player;
 import net.scapeemulator.game.model.player.SlottedItem;
-import net.scapeemulator.game.model.player.inventory.Inventory;
 
 /**
  * @author David Insley
@@ -21,7 +20,7 @@ public class HeatSourceHandler extends ItemOnObjectHandler {
     }
 
     @Override
-    public void handle(Player player, GroundObject object, Inventory inventory, SlottedItem item) {
+    public void handle(Player player, GroundObject object, SlottedItem item) {
         player.startAction(new CookingAction(player, heatSource, food, item, object));
     }
 

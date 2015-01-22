@@ -275,8 +275,6 @@ define_handler_type(:item_on_item) do
 
 	# Append each of the dispatcher params
 	self.dispatcher_params << :player
-	self.dispatcher_params << :inventory
-	self.dispatcher_params << :to
 	self.dispatcher_params << :first
 	self.dispatcher_params << :second
 
@@ -294,7 +292,6 @@ define_handler_type(:item) do
 
 	# Append each of the dispatcher params
 	self.dispatcher_params << :player
-	self.dispatcher_params << :inventory
 	self.dispatcher_params << :item
 	self.dispatcher_params << :option
 	self.dispatcher_params << :ctx
@@ -313,7 +310,6 @@ define_handler_type(:item_on_obj) do
 	# Append each of the dispatcher params
 	self.dispatcher_params << :player
 	self.dispatcher_params << :obj
-	self.dispatcher_params << :inventory
 	self.dispatcher_params << :item
 
 	# Append each of the construction params
