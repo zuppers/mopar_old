@@ -104,7 +104,6 @@ public final class LoginService implements Runnable {
                 // TODO change this to check for logout conditions (combat)
                 if (true) {
                     oldPlayers.poll();
-                    players.remove(player);
                     jobs.add(new LogoutJob(player));
                 }
             }
