@@ -109,7 +109,7 @@ public class CookingAction extends DistancedAction<Player> {
     }
 
     private void fireOut() {
-        mob.sendMessage("Your fire has run out.");
+        mob.sendMessage("Your fire has gone out.");
         stop();
     }
 
