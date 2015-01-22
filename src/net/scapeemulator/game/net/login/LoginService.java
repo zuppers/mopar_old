@@ -4,7 +4,6 @@ import java.util.ArrayDeque;
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
-
 import net.scapeemulator.game.io.Serializer;
 import net.scapeemulator.game.io.Serializer.SerializeResult;
 import net.scapeemulator.game.model.MobList;
@@ -57,10 +56,9 @@ public final class LoginService implements Runnable {
 
         @Override
         public void perform(LoginService service) {
-            player.stopAction();
             service.serializer.savePlayer(player);
             player.unregister();
-            player.getFriends().logout();
+            World.getWorld().getPlayers().remove(player);
         }
 
     }
@@ -91,6 +89,7 @@ public final class LoginService implements Runnable {
     }
 
     public void addLogoutRequest(Player player) {
+        player.setSession(null);
         synchronized (oldPlayers) {
             oldPlayers.add(player);
         }
