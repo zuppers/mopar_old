@@ -22,7 +22,6 @@ public final class FileProvider {
 
     public FileRegion serve(String path) throws IOException {
         path = rewrite(path);
-        System.out.println(path);
         if (codeOnly && !path.matches("^/(jogl_\\d_\\d\\.lib|(loader|loader_gl|runescape)\\.jar|(jogl|runescape|runescape_gl)\\.pack200|unpackclass.pack)$"))
             return null;
 
