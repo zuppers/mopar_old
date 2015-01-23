@@ -25,7 +25,7 @@ public final class ItemOnGroundItemMessageDecoder extends MessageDecoder<ItemOnG
         int x = (int) reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD);
         int slot = (int) reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE);
         int itemId = (int) reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE);
-        int groundItemId = (int) reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD);
+        int groundItemId = (int) reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE);
         int y = (int) reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD);
         int widgetHash = (int) reader.getUnsigned(DataType.INT, DataOrder.INVERSED_MIDDLE);
         return new ItemOnGroundItemMessage(x, y, slot, itemId, groundItemId, widgetHash);
