@@ -31,6 +31,7 @@ import net.scapeemulator.game.msg.decoder.inter.InterfaceClosedMessageDecoder;
 import net.scapeemulator.game.msg.decoder.inter.InterfaceInputMessageDecoder;
 import net.scapeemulator.game.msg.decoder.item.ItemDropMessageDecoder;
 import net.scapeemulator.game.msg.decoder.item.ItemExamineMessageDecoder;
+import net.scapeemulator.game.msg.decoder.item.ItemOnGroundItemMessageDecoder;
 import net.scapeemulator.game.msg.decoder.item.ItemOnItemMessageDecoder;
 import net.scapeemulator.game.msg.decoder.item.ItemOnNPCMessageDecoder;
 import net.scapeemulator.game.msg.decoder.item.ItemOnObjectMessageDecoder;
@@ -155,6 +156,7 @@ public final class CodecRepository {
         bind(new SwapItemsTwoMessageDecoder());
         bind(new ItemOnItemMessageDecoder());
         bind(new ItemOnObjectMessageDecoder());
+        bind(new ItemOnGroundItemMessageDecoder());
         bind(new MagicOnItemMessageDecoder());
 
         /* Bind all the button option decoders */

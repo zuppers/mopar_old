@@ -49,7 +49,7 @@ public final class GameFrameDecoder extends ByteToMessageDecoder {
         SIZES[30] = 2; // Fourth click NPC (trade slayermaster).
         SIZES[31] = -3;
         SIZES[32] = -3;
-        SIZES[33] = 6;
+        SIZES[33] = 6; // Ground item option 4
         SIZES[34] = 8; // Add ignore
         SIZES[35] = -3;
         SIZES[36] = -3;
@@ -64,7 +64,7 @@ public final class GameFrameDecoder extends ByteToMessageDecoder {
         SIZES[45] = -3;
         SIZES[46] = -3;
         SIZES[47] = -3;
-        SIZES[48] = -3;
+        SIZES[48] = 6; // Ground item option 5
         SIZES[49] = -3;
         SIZES[50] = -3;
         SIZES[51] = -3;
@@ -117,7 +117,7 @@ public final class GameFrameDecoder extends ByteToMessageDecoder {
         SIZES[98] = 4; // Toggle sound setting
         SIZES[99] = 10; // ?
         SIZES[100] = -3;
-        SIZES[101] = -3;
+        SIZES[101] = 14; // Item on ground object
         SIZES[102] = -3;
         SIZES[103] = -3;
         SIZES[104] = 8; // Join clan chat
@@ -244,7 +244,7 @@ public final class GameFrameDecoder extends ByteToMessageDecoder {
         SIZES[225] = -3;
         SIZES[226] = -3;
         SIZES[227] = -3;
-        SIZES[228] = -3;
+        SIZES[228] = 6; // Ground item option 1
         SIZES[229] = -3;
         SIZES[230] = -3;
         SIZES[231] = 9; // Swap item slot
