@@ -1,6 +1,5 @@
 package net.scapeemulator.game.model.grounditem;
 
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -10,9 +9,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import net.scapeemulator.game.model.Entity;
 import net.scapeemulator.game.model.Position;
-import net.scapeemulator.game.model.World;
 import net.scapeemulator.game.model.definition.ItemDefinitions;
 import net.scapeemulator.game.model.player.Item;
+import net.scapeemulator.game.model.player.Player;
 import net.scapeemulator.game.util.math.BasicMath;
 
 /**
@@ -22,11 +21,14 @@ import net.scapeemulator.game.util.math.BasicMath;
 public final class GroundItemList {
 
     /**
-     * The two different scopes for a list.
+     * The owner identifier for a public item.
      */
-    public enum Type {
-        WORLD, PRIVATE
-    }
+    public static final int PUBLIC_ITEM = -1;
+
+    /**
+     * The owner identifier for a public item that doesn't expire after a timer. TODO
+     */
+    public static final int PUBLIC_ITEM_PERSIST = -2;
 
     /**
      * The UID counter for all the ground items that are created.
@@ -42,20 +44,6 @@ public final class GroundItemList {
      * The list of listeners for this list.
      */
     private final List<GroundItemListener> listeners = new LinkedList<>();
-
-    /**
-     * The type of this list.
-     */
-    private final Type type;
-
-    /**
-     * Constructs a new ground item list.
-     * 
-     * @param type The type of the list.
-     */
-    public GroundItemList(Type type) {
-        this.type = type;
-    }
 
     /**
      * The class that represents a stack of ground items at a specific location.
@@ -88,31 +76,31 @@ public final class GroundItemList {
          * @param amount The amount of the item.
          * @return the GroundItem modified or created
          */
-        public GroundItem add(int itemId, int amount) {
+        public GroundItem add(int itemId, int amount, int owner) {
             if (ItemDefinitions.forId(itemId).isStackable()) {
                 for (GroundItem groundItem : groundItems) {
-                    if (groundItem.getItemId() != itemId) {
+                    if (groundItem.getItemId() != itemId || groundItem.getOwner() != owner) {
                         continue;
                     }
                     if (BasicMath.integerOverflow(groundItem.getAmount(), amount) != 0) {
                         continue;
                     }
-
                     /* update the ground item */
                     groundItem.setAmount(groundItem.getAmount() + amount);
-
+                    groundItem.resetTimer();
                     return groundItem;
                 }
             }
 
             /* add the ground item to the ground item list */
-            GroundItem groundItem = new GroundItem(position, itemId, amount, type == Type.PRIVATE ? 100 : 200);
-            groundItem.setUid(counter.getAndIncrement());
+            GroundItem groundItem = new GroundItem(counter.getAndIncrement(), position, itemId, amount, owner);
             groundItems.add(groundItem);
 
             /* alert the listeners a new ground item was created */
             for (GroundItemListener listener : listeners) {
-                listener.groundItemCreated(groundItem, type);
+                if (listener.shouldFireEvents(groundItem)) {
+                    listener.groundItemCreated(groundItem);
+                }
             }
             return groundItem;
         }
@@ -132,9 +120,9 @@ public final class GroundItemList {
          * @param itemId The item id for the ground item to get.
          * @return The found ground item.
          */
-        public GroundItem get(int itemId) {
+        public GroundItem get(int itemId, int owner) {
             for (GroundItem groundItem : groundItems) {
-                if (groundItem.getItemId() != itemId) {
+                if (groundItem.getItemId() != itemId || (groundItem.getOwner() != -1 && groundItem.getOwner() != owner)) {
                     continue;
                 }
                 return groundItem;
@@ -143,14 +131,19 @@ public final class GroundItemList {
         }
 
         /**
-         * Gets if the stack contains a ground item with the specified item id.
+         * Gets if the stack contains a ground item with the specified item id visible to the
+         * specified player.
          * 
-         * @param itemId The item id for the ground item to check.
-         * @return If the ground item with the item id exists.
+         * @param player the player to check visibility for
+         * @param itemId the item id for the ground item to check
+         * @return true if the ground item with the item id exists
          */
-        public boolean contains(int itemId) {
+        public boolean contains(Player player, int itemId) {
             for (GroundItem groundItem : groundItems) {
                 if (groundItem.getItemId() != itemId) {
+                    continue;
+                }
+                if (groundItem.getOwner() != PUBLIC_ITEM && groundItem.getOwner() != player.getDatabaseId()) {
                     continue;
                 }
                 return true;
@@ -158,35 +151,15 @@ public final class GroundItemList {
             return false;
         }
 
-        /**
-         * Removes a ground item from the stack.
-         * 
-         * @param itemId The item id for the ground item to remove.
-         * @return The removed ground item.
-         */
-        public GroundItem remove(int itemId) {
-            Iterator<GroundItem> iterator = groundItems.iterator();
-            while (iterator.hasNext()) {
-
-                /* Get the next ground item */
-                GroundItem groundItem = iterator.next();
-
-                /* Check that its the ground item that we are looking for */
-                if (groundItem.getItemId() != itemId) {
-                    continue;
-                }
-
-                /* Remove the ground item from the stack list */
-                iterator.remove();
-
-                /* Alert the listeners a ground item was removed */
+        public GroundItem remove(GroundItem toRemove) {
+            if (groundItems.remove(toRemove)) {
                 for (GroundItemListener listener : listeners) {
-                    listener.groundItemRemoved(groundItem, type);
+                    if (listener.shouldFireEvents(toRemove)) {
+                        listener.groundItemRemoved(toRemove);
+                    }
                 }
-
-                return groundItem;
+                return toRemove;
             }
-
             return null;
         }
 
@@ -198,6 +171,7 @@ public final class GroundItemList {
         public List<GroundItem> getGroundItems() {
             return groundItems;
         }
+
     }
 
     /**
@@ -208,34 +182,32 @@ public final class GroundItemList {
         /**
          * The unique id of the ground item.
          */
-        private int uid;
+        private final int uid;
 
         /**
          * The item id that the ground item represents.
          */
-        private int itemId;
+        private final int itemId;
 
         /**
          * The amount of the item that the ground item represents.
          */
         private int amount;
 
+        /**
+         * The database id of the owner of this ground item, or -1 for a public item.
+         */
+        private int owner;
+
         private int timer;
 
-        public GroundItem(Position position, int itemId, int amount, int timer) {
+        public GroundItem(int uid, Position position, int itemId, int amount, int owner) {
+            this.uid = uid;
             this.position = position;
             this.itemId = itemId;
             this.amount = amount;
-            this.timer = timer;
-        }
-
-        /**
-         * Sets the unique id.
-         * 
-         * @param uid The unique id.
-         */
-        public void setUid(int uid) {
-            this.uid = uid;
+            this.owner = owner;
+            resetTimer();
         }
 
         /**
@@ -256,19 +228,17 @@ public final class GroundItemList {
             if (newAmount != amount) {
                 int oldAmount = amount;
                 amount = newAmount;
-
                 for (GroundItemListener listener : listeners) {
-                    listener.groundItemUpdated(this, oldAmount, type);
+                    if (listener.shouldFireEvents(this)) {
+                        listener.groundItemUpdated(this, oldAmount);
+                    }
                 }
             }
         }
 
-        public int getTimeLeft() {
-            return timer;
-        }
-
-        public void decrementTimer() {
-            timer--;
+        @Override
+        public void setPosition(Position position) {
+            // Don't allow modification of the position
         }
 
         /**
@@ -289,6 +259,26 @@ public final class GroundItemList {
             return amount;
         }
 
+        public int getOwner() {
+            return owner;
+        }
+
+        public void setOwner(int owner) {
+            this.owner = owner;
+        }
+
+        public int getTimeLeft() {
+            return timer;
+        }
+
+        public void resetTimer() {
+            timer = owner != PUBLIC_ITEM ? 100 : 200;
+        }
+
+        public void decrementTimer() {
+            timer--;
+        }
+
         /**
          * Converts the ground item to a immutable item.
          * 
@@ -297,6 +287,7 @@ public final class GroundItemList {
         public Item toItem() {
             return new Item(itemId, amount);
         }
+
     }
 
     /**
@@ -319,7 +310,9 @@ public final class GroundItemList {
     public void fireEvents(GroundItemListener listener) {
         for (Entry<Position, GroundItemStack> entry : stacks.entrySet()) {
             for (GroundItem groundItem : entry.getValue().getGroundItems()) {
-                listener.groundItemCreated(groundItem, type);
+                if (listener.shouldFireEvents(groundItem)) {
+                    listener.groundItemCreated(groundItem);
+                }
             }
         }
     }
@@ -330,14 +323,15 @@ public final class GroundItemList {
      * @param itemId The id of the item.
      * @param amount The amount of the item.
      * @param position The position of the ground item.
+     * @return
      */
-    public void add(int itemId, int amount, Position position) {
+    public GroundItem add(int itemId, int amount, Position position, Player owner) {
         GroundItemStack stack = stacks.get(position);
         if (stack == null) {
             stack = new GroundItemStack(position);
             stacks.put(position, stack);
         }
-        stack.add(itemId, amount);
+        return stack.add(itemId, amount, owner != null ? owner.getDatabaseId() : PUBLIC_ITEM);
     }
 
     /**
@@ -347,50 +341,59 @@ public final class GroundItemList {
      * @param position The position of the item.
      * @return The ground item.
      */
-    public GroundItem get(int itemId, Position position) {
+    public GroundItem get(Player player, int itemId, Position position) {
         GroundItemStack stack = stacks.get(position);
         if (stack == null) {
             return null;
         }
-        return stack.get(itemId);
+        return stack.get(itemId, player.getDatabaseId());
     }
 
     /**
-     * Checks if the list contains a ground item.
+     * Checks if the list contains a ground item visible to the player.
      * 
-     * @param itemId The id of the item to check for.
-     * @param position The position of the item.
+     * @param player the player to check visibility for
+     * @param itemId the id of the item to check for
+     * @param position the position of the item
      * @return If the ground item exists.
      */
-    public boolean contains(int itemId, Position position) {
+    public boolean contains(Player player, int itemId, Position position) {
         GroundItemStack stack = stacks.get(position);
         if (stack == null) {
             return false;
         }
-        return stack.contains(itemId);
+        return stack.contains(player, itemId);
     }
 
     /**
-     * Removes a ground item.
+     * Checks if a ground item is still in the ground item list.
      * 
-     * @param itemId The item id for the ground item.
-     * @param position The position of the ground item.
-     * @return The removed ground item.
+     * @param groundItem the ground item to search for
+     * @return true if the ground item still exists
      */
-    public GroundItem remove(int itemId, Position position) {
-        GroundItemStack stack = stacks.get(position);
+    public boolean contains(GroundItem groundItem) {
+        GroundItemStack stack = stacks.get(groundItem.getPosition());
+        if (stack == null) {
+            return false;
+        }
+        return stack.getGroundItems().contains(groundItem);
+    }
+
+    public GroundItem remove(GroundItem groundItem) {
+        GroundItemStack stack = stacks.get(groundItem.getPosition());
         if (stack == null) {
             return null;
         }
 
-        GroundItem groundItem = stack.remove(itemId);
+        /* Will be null if not removed */
+        GroundItem removed = stack.remove(groundItem);
 
         /* Remove the stack if its empty */
         if (stack.isEmpty()) {
-            stacks.remove(position);
+            stacks.remove(groundItem.getPosition());
         }
 
-        return groundItem;
+        return removed;
     }
 
     public void tick() {
@@ -404,18 +407,17 @@ public final class GroundItemList {
             }
         }
         for (GroundItem groundItem : toRemove) {
-            switch (type) {
-            case PRIVATE:
-                remove(groundItem.getItemId(), groundItem.getPosition());
-                // TODO check for tradeable
-                World.getWorld().getGroundItems().add(groundItem.getItemId(), groundItem.getAmount(), groundItem.getPosition());
-                break;
-            case WORLD:
-                remove(groundItem.getItemId(), groundItem.getPosition());
-                break;
+            if (groundItem.getOwner() == PUBLIC_ITEM) {
+                remove(groundItem);
+            } else {
+                groundItem.setOwner(PUBLIC_ITEM);
+                for (GroundItemListener listener : listeners) {
+                    if (listener.shouldFireEvents(groundItem)) {
+                        listener.groundItemCreated(groundItem);
+                    }
+                }
             }
         }
 
     }
-
 }

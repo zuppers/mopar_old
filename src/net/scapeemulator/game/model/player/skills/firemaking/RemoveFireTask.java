@@ -20,7 +20,7 @@ class RemoveFireTask extends Task {
 
     @Override
     public void execute() {
-        World.getWorld().getGroundItems().add(ASHES, 1, fire.getPosition());
+        World.getWorld().getGroundItems().add(ASHES, 1, fire.getPosition(), null);
         if (World.getWorld().getGroundObjects().contains(fire.getId(), fire.getPosition())) {
             World.getWorld().getGroundObjects().remove(fire.getPosition(), fire.getType().getObjectGroup());
         }

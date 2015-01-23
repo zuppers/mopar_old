@@ -1,6 +1,5 @@
 package net.scapeemulator.game.dispatcher.item;
 
-import net.scapeemulator.game.model.grounditem.GroundItemList;
 import net.scapeemulator.game.model.grounditem.GroundItemList.GroundItem;
 import net.scapeemulator.game.model.player.Player;
 import net.scapeemulator.game.model.player.SlottedItem;
@@ -26,7 +25,7 @@ public abstract class ItemOnGroundItemHandler {
      * @param itemOne the item that was used on the ground item
      * @param groundItem the ground item the item was used on
      */
-    public abstract void handle(Player player, SlottedItem item, GroundItem groundItem, GroundItemList list);
+    public abstract void handle(Player player, SlottedItem item, GroundItem groundItem);
 
     public int getItemId() {
         return itemId;

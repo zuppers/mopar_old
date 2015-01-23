@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.scapeemulator.cache.def.ItemDefinition;
+import net.scapeemulator.game.model.World;
 import net.scapeemulator.game.model.definition.ItemDefinitions;
-import net.scapeemulator.game.model.grounditem.GroundItemList;
 import net.scapeemulator.game.model.mob.Mob;
 import net.scapeemulator.game.model.player.Item;
 import net.scapeemulator.game.model.player.Player;
@@ -466,10 +466,9 @@ public final class Inventory {
     }
 
     public void dropAll(Mob receiver) {
-        GroundItemList groundItemList = receiver instanceof Player ? ((Player) receiver).getGroundItems() : player.getGroundItems();
         for (Item item : items) {
             if (item != null) {
-                groundItemList.add(item.getId(), item.getAmount(), player.getPosition());
+                World.getWorld().getGroundItems().add(item.getId(), item.getAmount(), player.getPosition(), receiver instanceof Player ? (Player) receiver : player);
             }
         }
         for (int slot = 0; slot < items.length; slot++)

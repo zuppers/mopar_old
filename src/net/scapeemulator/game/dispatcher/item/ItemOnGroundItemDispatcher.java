@@ -36,12 +36,7 @@ public final class ItemOnGroundItemDispatcher {
         if (!player.getPosition().isWithinScene(position)) {
             return;
         }
-        GroundItemList groundItems = World.getWorld().getGroundItems();
-        GroundItem groundItem = groundItems.get(groundItemId, position);
-        if (groundItem == null) {
-            groundItems = player.getGroundItems();
-            groundItem = groundItems.get(groundItemId, position);
-        }
+        GroundItem groundItem = World.getWorld().getGroundItems().get(player, groundItemId, position);
         if (groundItem == null) {
             return;
         }
@@ -54,7 +49,7 @@ public final class ItemOnGroundItemDispatcher {
         ItemOnGroundItemHandler handler = handlers.get(getHash(itemId, groundItemId));
 
         if (handler != null) {
-            handler.handle(player, item, groundItem, groundItems);
+            handler.handle(player, item, groundItem);
         } else {
             player.sendMessage("Nothing interesting happens.");
         }

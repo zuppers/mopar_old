@@ -11,8 +11,6 @@ import net.scapeemulator.game.GameServer;
 import net.scapeemulator.game.model.Position;
 import net.scapeemulator.game.model.World;
 import net.scapeemulator.game.model.definition.NPCDefinitions;
-import net.scapeemulator.game.model.grounditem.GroundItemList;
-import net.scapeemulator.game.model.grounditem.GroundItemList.Type;
 import net.scapeemulator.game.model.grounditem.GroundItemSynchronizer;
 import net.scapeemulator.game.model.mob.Animation;
 import net.scapeemulator.game.model.mob.Mob;
@@ -107,7 +105,6 @@ public final class Player extends Mob {
     private Spellbook spellbook = Spellbook.NORMAL_SPELLBOOK;
     private final AccessSet accessSet = new AccessSet(this);
     private final EquipmentBonuses equipmentBonuses = new EquipmentBonuses();
-    private final GroundItemList groundItems = new GroundItemList(Type.PRIVATE);
     private final GroundItemSynchronizer groundItemSync = new GroundItemSynchronizer(this);
     private final GroundObjectSynchronizer groundObjSync = new GroundObjectSynchronizer(this);
     private int[] appearanceTickets = new int[World.MAX_PLAYERS];
@@ -255,10 +252,6 @@ public final class Player extends Mob {
 
     public GrandExchangeHandler getGrandExchangeHandler() {
         return grandExchangeHandler;
-    }
-
-    public GroundItemList getGroundItems() {
-        return groundItems;
     }
 
     @Override
@@ -421,7 +414,6 @@ public final class Player extends Mob {
         skillSet.addListener(new SkillAppearanceListener(this));
         World.getWorld().getGroundObjects().addListener(groundObjSync);
         World.getWorld().getGroundItems().addListener(groundItemSync);
-        groundItems.addListener(groundItemSync);
 
         /* Initialize all the player options */
         for (int i = 0; i < options.length; i++) {
@@ -469,7 +461,6 @@ public final class Player extends Mob {
     public void refreshGroundItems() {
         groundItemSync.purge();
         World.getWorld().getGroundItems().fireEvents(groundItemSync);
-        groundItems.fireEvents(groundItemSync);
     }
 
     public void refreshGroundObjects() {
@@ -581,7 +572,7 @@ public final class Player extends Mob {
         max = null;
         sendMessage("Min/max reset.");
     }
-    
+
     public void setMax() {
         max = position;
         sendMessage("Top right bounds set to " + max);
@@ -616,12 +607,12 @@ public final class Player extends Mob {
 
     public void setSpawnPos(int id) {
         sendMessage("Spawn for " + NPCDefinitions.forId(id).getName() + " sent to console.");
-        if(min == null || max == null) {
-            System.out.println("INSERT INTO `npcspawns`(`type`, `x`, `y`, `height`, `roam`) " + "VALUES (" + id + "," + position.getX() + "," + position.getY() + ","
-                    + position.getHeight() + "," + 0 + ");");
+        if (min == null || max == null) {
+            System.out.println("INSERT INTO `npcspawns`(`type`, `x`, `y`, `height`, `roam`) " + "VALUES (" + id + "," + position.getX() + "," + position.getY() + "," + position.getHeight() + "," + 0
+                    + ");");
         } else {
-        System.out.println("INSERT INTO `npcspawns`(`type`, `x`, `y`, `height`, `roam`, `min_x`, `min_y`, `max_x`, `max_y`) " + "VALUES (" + id + "," + position.getX() + "," + position.getY() + ","
-                + position.getHeight() + "," + 1 + "," + min.getX() + "," + min.getY() + "," + max.getX() + "," + max.getY() + ");");
+            System.out.println("INSERT INTO `npcspawns`(`type`, `x`, `y`, `height`, `roam`, `min_x`, `min_y`, `max_x`, `max_y`) " + "VALUES (" + id + "," + position.getX() + "," + position.getY()
+                    + "," + position.getHeight() + "," + 1 + "," + min.getX() + "," + min.getY() + "," + max.getX() + "," + max.getY() + ");");
         }
     }
 

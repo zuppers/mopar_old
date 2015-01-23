@@ -2,6 +2,7 @@ package net.scapeemulator.game.model.player.skills.firemaking;
 
 import net.scapeemulator.game.model.Position;
 import net.scapeemulator.game.model.World;
+import net.scapeemulator.game.model.grounditem.GroundItemList.GroundItem;
 import net.scapeemulator.game.model.mob.Animation;
 import net.scapeemulator.game.model.mob.Direction;
 import net.scapeemulator.game.model.object.GroundObjectList.GroundObject;
@@ -25,7 +26,8 @@ public class FiremakingAction extends Action<Player> {
     private final Log log;
     private final SlottedItem slottedLog;
     private int status = -2;
-
+    private GroundItem groundLogs;
+    
     public FiremakingAction(Player player, Log log, SlottedItem slottedLog) {
         super(player, 2, true);
         this.log = log;
@@ -59,14 +61,14 @@ public class FiremakingAction extends Action<Player> {
                 stop();
                 return;
             }
-            mob.getGroundItems().add(log.getItemId(), 1, mob.getPosition());
+            groundLogs = World.getWorld().getGroundItems().add(log.getItemId(), 1, mob.getPosition(), mob);
             mob.playAnimation(ANIMATION);
             int dif = mob.getSkillSet().getCurrentLevel(Skill.FIREMAKING) - log.getLevel();
             dif = dif > 15 ? 15 : dif;
             status = (int) (Math.random() * (16 - dif)) + 1;
         }
 
-        if (!mob.getGroundItems().contains(log.getItemId(), mob.getPosition())) {
+        if (!World.getWorld().getGroundItems().contains(groundLogs)) {
             mob.sendMessage("Your logs have disappeared!");
             stop();
             return;
@@ -75,6 +77,7 @@ public class FiremakingAction extends Action<Player> {
         status -= 1;
 
         if (status == 0) {
+            World.getWorld().getGroundItems().remove(groundLogs);
             GroundObject fire = World.getWorld().getGroundObjects().put(mob.getPosition(), log.getFireId(), ObjectOrientation.WEST, ObjectType.PROP);
             if (fire != null) {
                 World.getWorld().getTaskScheduler().schedule(new RemoveFireTask(fire));
@@ -83,7 +86,6 @@ public class FiremakingAction extends Action<Player> {
             mob.getSkillSet().addExperience(Skill.FIREMAKING, log.getXp());
             mob.cancelAnimation();
             mob.sendMessage("The fire catches and the logs begin to burn.");
-            mob.getGroundItems().remove(log.getItemId(), mob.getPosition());
             for (Direction direction : PREFERRED_DIRECTIONS) {
                 if (mob.canTraverse(direction)) {
                     Path path = new Path();

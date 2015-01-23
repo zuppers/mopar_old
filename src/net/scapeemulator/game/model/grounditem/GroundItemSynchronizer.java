@@ -6,10 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import net.scapeemulator.game.model.Position;
-import net.scapeemulator.game.model.World;
-import net.scapeemulator.game.model.definition.ItemDefinitions;
 import net.scapeemulator.game.model.grounditem.GroundItemList.GroundItem;
-import net.scapeemulator.game.model.grounditem.GroundItemList.Type;
 import net.scapeemulator.game.model.player.Player;
 import net.scapeemulator.game.msg.impl.PlacementCoordsMessage;
 import net.scapeemulator.game.msg.impl.grounditem.GroundItemCreateMessage;
@@ -18,6 +15,7 @@ import net.scapeemulator.game.msg.impl.grounditem.GroundItemUpdateMessage;
 
 /**
  * @author Hadyn Richard
+ * @author David Insley
  */
 public final class GroundItemSynchronizer extends GroundItemListener {
 
@@ -27,7 +25,7 @@ public final class GroundItemSynchronizer extends GroundItemListener {
     private final Player player;
 
     /**
-     * The ids of all the ground items that the synchronized has handled.
+     * The ids of all the ground items that the synchronizer has handled.
      */
     private final Set<Integer> uids = new HashSet<>();
 
@@ -46,22 +44,19 @@ public final class GroundItemSynchronizer extends GroundItemListener {
     }
 
     @Override
-    public void groundItemCreated(GroundItem groundItem, Type type) {
+    public boolean shouldFireEvents(GroundItem groundItem) {
+        int owner = groundItem.getOwner();
+        return (owner == -1) || (owner == player.getDatabaseId());
+    }
+
+    @Override
+    public void groundItemCreated(GroundItem groundItem) {
         Position position = groundItem.getPosition();
         boolean withinScene = player.getLastKnownRegion().isWithinScene(position);
         boolean sameHeight = player.getPosition().getHeight() == position.getHeight();
         if (withinScene && sameHeight && !uids.contains(groundItem.getUid())) {
             uids.add(groundItem.getUid());
             sendPlacementCoords(position);
-            if (ItemDefinitions.forId(groundItem.getItemId()).isStackable()) {
-                GroundItemList list = getAlternateList(type);
-                if (list.contains(groundItem.getItemId(), groundItem.getPosition())) {
-                    int prevAmount = list.get(groundItem.getItemId(), groundItem.getPosition()).getAmount();
-                    int newAmount = groundItem.getAmount() + prevAmount;
-                    player.send(new GroundItemUpdateMessage(groundItem.getItemId(), newAmount, position, prevAmount));
-                    return;
-                }
-            }
             player.send(new GroundItemCreateMessage(groundItem.getItemId(), groundItem.getAmount(), position));
             return;
         }
@@ -73,7 +68,7 @@ public final class GroundItemSynchronizer extends GroundItemListener {
     }
 
     @Override
-    public void groundItemUpdated(GroundItem groundItem, int previousAmount, Type type) {
+    public void groundItemUpdated(GroundItem groundItem, int previousAmount) {
         Position position = groundItem.getPosition();
         if (uids.contains(groundItem.getUid()) && player.getPosition().isWithinScene(position)) {
             sendPlacementCoords(position);
@@ -82,22 +77,13 @@ public final class GroundItemSynchronizer extends GroundItemListener {
     }
 
     @Override
-    public void groundItemRemoved(GroundItem groundItem, Type type) {
+    public void groundItemRemoved(GroundItem groundItem) {
         Position position = groundItem.getPosition();
 
         boolean sameHeight = player.getPosition().getHeight() == position.getHeight();
         uids.remove(groundItem.getUid());
         if (sameHeight && player.getPosition().isWithinScene(position)) {
             sendPlacementCoords(position);
-            if (ItemDefinitions.forId(groundItem.getItemId()).isStackable()) {
-                GroundItemList list = getAlternateList(type);
-                if (list.contains(groundItem.getItemId(), groundItem.getPosition())) {
-                    int prevAmount = list.get(groundItem.getItemId(), groundItem.getPosition()).getAmount();
-                    int newAmount = groundItem.getAmount() + prevAmount;
-                    player.send(new GroundItemUpdateMessage(groundItem.getItemId(), newAmount, position, prevAmount));
-                    return;
-                }
-            }
             player.send(new GroundItemRemoveMessage(groundItem.getItemId(), groundItem.getPosition()));
         }
 
@@ -129,14 +115,4 @@ public final class GroundItemSynchronizer extends GroundItemListener {
         player.send(new PlacementCoordsMessage(localX, localY));
     }
 
-    private GroundItemList getAlternateList(Type type) {
-        switch (type) {
-        case PRIVATE:
-            return World.getWorld().getGroundItems();
-        case WORLD:
-            return player.getGroundItems();
-        default:
-            throw new RuntimeException();
-        }
-    }
 }

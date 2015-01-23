@@ -24,6 +24,7 @@ package net.scapeemulator.game.dispatcher.grounditem;
 
 import net.scapeemulator.game.model.Option;
 import net.scapeemulator.game.model.Position;
+import net.scapeemulator.game.model.grounditem.GroundItemList.GroundItem;
 import net.scapeemulator.game.model.player.Player;
 import net.scapeemulator.game.model.player.action.PickupItemAction;
 
@@ -42,11 +43,11 @@ public final class TakeGroundItemHandler extends GroundItemHandler {
     }
 
     @Override
-    public boolean handle(Player player, Position position, int id, String option) {
+    public boolean handle(Player player, GroundItem groundItem, String option) {
         if(!option.equals("take")) {
             return false;
         }
-        player.startAction(new PickupItemAction(player, id, position));
+        player.startAction(new PickupItemAction(player, groundItem));
         return true;
     }
 }

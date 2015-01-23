@@ -2,7 +2,6 @@ package net.scapeemulator.game.model;
 
 import net.scapeemulator.game.model.grandexchange.GrandExchange;
 import net.scapeemulator.game.model.grounditem.GroundItemList;
-import net.scapeemulator.game.model.grounditem.GroundItemList.Type;
 import net.scapeemulator.game.model.npc.NPC;
 import net.scapeemulator.game.model.object.GroundObjectList;
 import net.scapeemulator.game.model.pathfinding.ObjectDataListener;
@@ -38,7 +37,7 @@ public final class World {
     private final TaskScheduler taskScheduler = new TaskScheduler();
     private final GrandExchange grandExchange = new GrandExchange();
     private final PlayerUpdater updater = new PlayerUpdater(this);
-    private final GroundItemList groundItems = new GroundItemList(Type.WORLD);
+    private final GroundItemList groundItems = new GroundItemList();
     private final GroundObjectList groundObjects = new GroundObjectList();
     private final TraversalMap traversalMap = new TraversalMap();
 

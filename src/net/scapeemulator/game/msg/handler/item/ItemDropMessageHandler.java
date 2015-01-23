@@ -1,5 +1,6 @@
 package net.scapeemulator.game.msg.handler.item;
 
+import net.scapeemulator.game.model.World;
 import net.scapeemulator.game.model.player.Item;
 import net.scapeemulator.game.model.player.Player;
 import net.scapeemulator.game.msg.MessageHandler;
@@ -24,7 +25,7 @@ public final class ItemDropMessageHandler extends MessageHandler<ItemDropMessage
         }
         Item removed = player.getInventory().remove(player.getInventory().get(msg.getSlot()), msg.getSlot());
         if (removed != null && removed.getAmount() > 0) {
-            player.getGroundItems().add(removed.getId(), removed.getAmount(), player.getPosition());
+            World.getWorld().getGroundItems().add(removed.getId(), removed.getAmount(), player.getPosition(), player);
         }
     }
 }

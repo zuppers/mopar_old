@@ -1,25 +1,3 @@
-/**
- * Copyright (c) 2012, Hadyn Richard
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy 
- * of this software and associated documentation files (the "Software"), to deal 
- * in the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
- * of the Software, and to permit persons to whom the Software is furnished to do
- * so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in 
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
- * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN 
- * THE SOFTWARE.
- */
-
 package net.scapeemulator.game.dispatcher.grounditem;
 
 import java.util.HashMap;
@@ -30,12 +8,14 @@ import java.util.Map.Entry;
 
 import net.scapeemulator.game.model.Option;
 import net.scapeemulator.game.model.Position;
+import net.scapeemulator.game.model.World;
 import net.scapeemulator.game.model.definition.ItemDefinitions;
-import net.scapeemulator.game.model.grounditem.GroundItems;
+import net.scapeemulator.game.model.grounditem.GroundItemList.GroundItem;
 import net.scapeemulator.game.model.player.Player;
 
 /**
- * Created by Hadyn Richard
+ * @author Hadyn Richard
+ * @author David Insley
  */
 public final class GroundItemDispatcher {
 
@@ -48,8 +28,8 @@ public final class GroundItemDispatcher {
      * Constructs a new {@link GroundItemDispatcher};
      */
     public GroundItemDispatcher() {
-        for(Option option : Option.values()) {
-            if(option.equals(Option.ALL)) {
+        for (Option option : Option.values()) {
+            if (option.equals(Option.ALL)) {
                 continue;
             }
             handlerLists.put(option, new LinkedList<GroundItemHandler>());
@@ -61,11 +41,12 @@ public final class GroundItemDispatcher {
 
     /**
      * Binds a handler to this dispatcher.
+     * 
      * @param handler The handler to bind.
      */
     public void bind(GroundItemHandler handler) {
-        if(handler.getOption().equals(Option.ALL)) {
-            for(Entry<Option, List<GroundItemHandler>> entry : handlerLists.entrySet()) {
+        if (handler.getOption().equals(Option.ALL)) {
+            for (Entry<Option, List<GroundItemHandler>> entry : handlerLists.entrySet()) {
                 entry.getValue().add(handler);
             }
         } else {
@@ -76,7 +57,8 @@ public final class GroundItemDispatcher {
 
     /**
      * Gets the name of the option for an item.
-     * @param id  The item id.
+     * 
+     * @param id The item id.
      * @param option The option.
      * @return The option name.
      */
@@ -87,28 +69,25 @@ public final class GroundItemDispatcher {
 
     /**
      * Handles the parameters of a ground item message.
+     * 
      * @param player The player that the message came from.
      * @param id The item id.
      * @param position The position of the ground item.
      * @param option The option that was selected.
      */
     public void handle(Player player, int id, Position position, Option option) {
-		if(player.actionsBlocked()) {
-			return;
-		}
+        if (player.actionsBlocked()) {
+            return;
+        }
+        GroundItem groundItem = World.getWorld().getGroundItems().get(player, id, position);
+        if (groundItem == null) {
+            return;
+        }
+        String optionName = getOptionName(id, option);
         List<GroundItemHandler> handlers = handlerLists.get(option);
-        if(handlers != null) {
-
-            /* Check if the ground item exists before going further */
-            if(!GroundItems.exists(player, id, position)) {
-                return;
-            }
-
-            String optionName = getOptionName(id, option);
-            for(GroundItemHandler handler : handlers) {
-
-                /* Handle the message parameters */
-                if(!handler.handle(player, position, id, optionName)) {
+        if (handlers != null) {
+            for (GroundItemHandler handler : handlers) {
+                if (!handler.handle(player, groundItem, optionName)) {
                     break;
                 }
             }
