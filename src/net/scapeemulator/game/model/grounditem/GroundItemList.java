@@ -1,10 +1,13 @@
 package net.scapeemulator.game.model.grounditem;
 
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import net.scapeemulator.game.model.Entity;
@@ -106,28 +109,44 @@ public final class GroundItemList {
         }
 
         /**
-         * Gets if the stack is empty.
-         * 
-         * @return If the ground item map is empty.
-         */
-        public boolean isEmpty() {
-            return groundItems.isEmpty();
-        }
-
-        /**
-         * Gets the ground item in the list with the specified item id.
+         * Gets the first ground item in the list with the specified item id that is visible to the
+         * specified owner.
          * 
          * @param itemId The item id for the ground item to get.
          * @return The found ground item.
          */
         public GroundItem get(int itemId, int owner) {
             for (GroundItem groundItem : groundItems) {
-                if (groundItem.getItemId() != itemId || (groundItem.getOwner() != -1 && groundItem.getOwner() != owner)) {
+                if (groundItem.getItemId() != itemId) {
+                    continue;
+                }
+                if (groundItem.getOwner() != PUBLIC_ITEM && groundItem.getOwner() != owner) {
                     continue;
                 }
                 return groundItem;
             }
             return null;
+        }
+
+        /**
+         * Removes the first ground item in the stack with the given item id that is visible to the
+         * specified owner.
+         * 
+         * @param itemId the item id to check for
+         * @param owner the owner to check visibility for
+         * @return the GroundItem that was removed
+         */
+        private GroundItem remove(int itemId, int owner) {
+            GroundItem groundItem = get(itemId, owner);
+            if (groundItem != null) {
+                groundItems.remove(groundItem);
+                for (GroundItemListener listener : listeners) {
+                    if (listener.shouldFireEvents(groundItem)) {
+                        listener.groundItemRemoved(groundItem);
+                    }
+                }
+            }
+            return groundItem;
         }
 
         /**
@@ -138,35 +157,24 @@ public final class GroundItemList {
          * @param itemId the item id for the ground item to check
          * @return true if the ground item with the item id exists
          */
-        public boolean contains(Player player, int itemId) {
-            for (GroundItem groundItem : groundItems) {
-                if (groundItem.getItemId() != itemId) {
-                    continue;
-                }
-                if (groundItem.getOwner() != PUBLIC_ITEM && groundItem.getOwner() != player.getDatabaseId()) {
-                    continue;
-                }
-                return true;
-            }
-            return false;
+        public boolean contains(int itemId, int owner) {
+            return get(itemId, owner) != null;
+
         }
 
-        public GroundItem remove(GroundItem toRemove) {
-            if (groundItems.remove(toRemove)) {
-                for (GroundItemListener listener : listeners) {
-                    if (listener.shouldFireEvents(toRemove)) {
-                        listener.groundItemRemoved(toRemove);
-                    }
-                }
-                return toRemove;
-            }
-            return null;
+        /**
+         * Gets if the stack is empty.
+         * 
+         * @return If the ground item map is empty.
+         */
+        public boolean isEmpty() {
+            return groundItems.isEmpty();
         }
 
         /**
          * Gets the ground items in the stack.
          * 
-         * @return The ground item list.
+         * @return the ground item list
          */
         public List<GroundItem> getGroundItems() {
             return groundItems;
@@ -288,6 +296,29 @@ public final class GroundItemList {
             return new Item(itemId, amount);
         }
 
+        @Override
+        public boolean equals(Object other) {
+            if (this == other) {
+                return true;
+            }
+            if (other == null) {
+                return false;
+            }
+            if (getClass() != other.getClass()) {
+                return false;
+            }
+            GroundItem groundItem = (GroundItem) other;
+            if (itemId != groundItem.itemId) {
+                return false;
+            }
+            if (amount != groundItem.amount) {
+                return false;
+            }
+            if (!position.equals(groundItem.position)) {
+                return false;
+            }
+            return true;
+        }
     }
 
     /**
@@ -325,28 +356,29 @@ public final class GroundItemList {
      * @param position The position of the ground item.
      * @return
      */
-    public GroundItem add(int itemId, int amount, Position position, Player owner) {
+    public GroundItem add(int itemId, int amount, Position position, Player player) {
         GroundItemStack stack = stacks.get(position);
         if (stack == null) {
             stack = new GroundItemStack(position);
             stacks.put(position, stack);
         }
-        return stack.add(itemId, amount, owner != null ? owner.getDatabaseId() : PUBLIC_ITEM);
+        return stack.add(itemId, amount, player != null ? player.getDatabaseId() : PUBLIC_ITEM);
     }
 
     /**
-     * Gets a ground item.
+     * Gets the first ground item at the given position that has the given item id and is visible to
+     * the specified player.
      * 
      * @param itemId The item id.
      * @param position The position of the item.
      * @return The ground item.
      */
-    public GroundItem get(Player player, int itemId, Position position) {
+    public GroundItem get(int itemId, Position position, Player player) {
         GroundItemStack stack = stacks.get(position);
         if (stack == null) {
             return null;
         }
-        return stack.get(itemId, player.getDatabaseId());
+        return stack.get(itemId, player != null ? player.getDatabaseId() : PUBLIC_ITEM);
     }
 
     /**
@@ -357,42 +389,32 @@ public final class GroundItemList {
      * @param position the position of the item
      * @return If the ground item exists.
      */
-    public boolean contains(Player player, int itemId, Position position) {
+    public boolean contains(int itemId, Position position, Player player) {
         GroundItemStack stack = stacks.get(position);
         if (stack == null) {
             return false;
         }
-        return stack.contains(player, itemId);
+        return stack.contains(itemId, player != null ? player.getDatabaseId() : PUBLIC_ITEM);
     }
 
     /**
-     * Checks if a ground item is still in the ground item list.
+     * Removes the first ground item at the given position that has the given item id and is visible
+     * to the specified player.
      * 
-     * @param groundItem the ground item to search for
-     * @return true if the ground item still exists
+     * @param itemId
+     * @param position
+     * @param player
+     * @return the ground item that was removed
      */
-    public boolean contains(GroundItem groundItem) {
-        GroundItemStack stack = stacks.get(groundItem.getPosition());
-        if (stack == null) {
-            return false;
-        }
-        return stack.getGroundItems().contains(groundItem);
-    }
-
-    public GroundItem remove(GroundItem groundItem) {
-        GroundItemStack stack = stacks.get(groundItem.getPosition());
+    public GroundItem remove(int itemId, Position position, Player player) {
+        GroundItemStack stack = stacks.get(position);
         if (stack == null) {
             return null;
         }
-
-        /* Will be null if not removed */
-        GroundItem removed = stack.remove(groundItem);
-
-        /* Remove the stack if its empty */
+        GroundItem removed = stack.remove(itemId, player != null ? player.getDatabaseId() : PUBLIC_ITEM);
         if (stack.isEmpty()) {
-            stacks.remove(groundItem.getPosition());
+            stacks.remove(position);
         }
-
         return removed;
     }
 
@@ -408,9 +430,17 @@ public final class GroundItemList {
         }
         for (GroundItem groundItem : toRemove) {
             if (groundItem.getOwner() == PUBLIC_ITEM) {
-                remove(groundItem);
+                /*
+                 * Because the remove ground item packet will remove the first item in the clients
+                 * deque that matches the id and position, it is impossible to remove an item below
+                 * another with the same id. TODO - Fix this somehow, in the meantime there may be
+                 * visual inconsistencies if two stackable items with the same ID are dropped and
+                 * the public item expires first
+                 */
+                GroundItem removed = remove(groundItem.getItemId(), groundItem.getPosition(), null);
             } else {
                 groundItem.setOwner(PUBLIC_ITEM);
+                groundItem.resetTimer();
                 for (GroundItemListener listener : listeners) {
                     if (listener.shouldFireEvents(groundItem)) {
                         listener.groundItemCreated(groundItem);

@@ -10,7 +10,6 @@ import net.scapeemulator.game.model.Option;
 import net.scapeemulator.game.model.Position;
 import net.scapeemulator.game.model.World;
 import net.scapeemulator.game.model.definition.ItemDefinitions;
-import net.scapeemulator.game.model.grounditem.GroundItemList.GroundItem;
 import net.scapeemulator.game.model.player.Player;
 
 /**
@@ -75,19 +74,18 @@ public final class GroundItemDispatcher {
      * @param position The position of the ground item.
      * @param option The option that was selected.
      */
-    public void handle(Player player, int id, Position position, Option option) {
+    public void handle(Player player, int itemId, Position position, Option option) {
         if (player.actionsBlocked()) {
             return;
         }
-        GroundItem groundItem = World.getWorld().getGroundItems().get(player, id, position);
-        if (groundItem == null) {
+        if (!World.getWorld().getGroundItems().contains(itemId, position, player)) {
             return;
         }
-        String optionName = getOptionName(id, option);
+        String optionName = getOptionName(itemId, option);
         List<GroundItemHandler> handlers = handlerLists.get(option);
         if (handlers != null) {
             for (GroundItemHandler handler : handlers) {
-                if (!handler.handle(player, groundItem, optionName)) {
+                if (!handler.handle(player, itemId, position, optionName)) {
                     break;
                 }
             }

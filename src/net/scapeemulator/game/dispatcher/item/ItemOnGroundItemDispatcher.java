@@ -36,7 +36,7 @@ public final class ItemOnGroundItemDispatcher {
         if (!player.getPosition().isWithinScene(position)) {
             return;
         }
-        GroundItem groundItem = World.getWorld().getGroundItems().get(player, groundItemId, position);
+        GroundItem groundItem = World.getWorld().getGroundItems().get(groundItemId, position, player);
         if (groundItem == null) {
             return;
         }
