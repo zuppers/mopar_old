@@ -6,11 +6,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import net.scapeemulator.game.GameServer;
 import net.scapeemulator.game.model.Option;
 import net.scapeemulator.game.model.Position;
 import net.scapeemulator.game.model.World;
 import net.scapeemulator.game.model.definition.ItemDefinitions;
 import net.scapeemulator.game.model.player.Player;
+import net.scapeemulator.game.util.HandlerContext;
 
 /**
  * @author Hadyn Richard
@@ -84,11 +86,17 @@ public final class GroundItemDispatcher {
         String optionName = getOptionName(itemId, option);
         List<GroundItemHandler> handlers = handlerLists.get(option);
         if (handlers != null) {
+            HandlerContext context = new HandlerContext();
             for (GroundItemHandler handler : handlers) {
-                if (!handler.handle(player, itemId, position, optionName)) {
+                handler.handle(player, itemId, position, optionName, context);
+                if (context.doStop()) {
                     break;
                 }
             }
         }
+    }
+
+    public static GroundItemDispatcher getInstance() {
+        return GameServer.getInstance().getMessageDispatcher().getGroundItemDispatcher();
     }
 }

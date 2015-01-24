@@ -2,8 +2,8 @@ package net.scapeemulator.game.dispatcher.grounditem;
 
 import net.scapeemulator.game.model.Option;
 import net.scapeemulator.game.model.Position;
-import net.scapeemulator.game.model.grounditem.GroundItemList.GroundItem;
 import net.scapeemulator.game.model.player.Player;
+import net.scapeemulator.game.util.HandlerContext;
 
 /**
  * @author Hadyn Richard
@@ -24,7 +24,7 @@ public abstract class GroundItemHandler {
         this.option = option;
     }
 
-    public abstract boolean handle(Player player, int itemId, Position position, String option);
+    public abstract void handle(Player player, int itemId, Position position, String option, HandlerContext context);
 
     /**
      * Gets the option that this handler will be for.

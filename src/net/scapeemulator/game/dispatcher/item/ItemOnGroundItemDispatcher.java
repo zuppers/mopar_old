@@ -6,8 +6,6 @@ import java.util.Map;
 import net.scapeemulator.game.GameServer;
 import net.scapeemulator.game.model.Position;
 import net.scapeemulator.game.model.World;
-import net.scapeemulator.game.model.grounditem.GroundItemList;
-import net.scapeemulator.game.model.grounditem.GroundItemList.GroundItem;
 import net.scapeemulator.game.model.player.Player;
 import net.scapeemulator.game.model.player.SlottedItem;
 import net.scapeemulator.game.model.player.inventory.Inventory;
@@ -36,8 +34,7 @@ public final class ItemOnGroundItemDispatcher {
         if (!player.getPosition().isWithinScene(position)) {
             return;
         }
-        GroundItem groundItem = World.getWorld().getGroundItems().get(groundItemId, position, player);
-        if (groundItem == null) {
+        if (!World.getWorld().getGroundItems().contains(groundItemId, position, player)) {
             return;
         }
         Inventory inventory = player.getInventorySet().get(widgetHash);
@@ -49,7 +46,7 @@ public final class ItemOnGroundItemDispatcher {
         ItemOnGroundItemHandler handler = handlers.get(getHash(itemId, groundItemId));
 
         if (handler != null) {
-            handler.handle(player, item, groundItem);
+            handler.handle(player, item, position);
         } else {
             player.sendMessage("Nothing interesting happens.");
         }
