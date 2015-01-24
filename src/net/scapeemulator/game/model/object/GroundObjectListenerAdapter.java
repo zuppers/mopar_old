@@ -8,17 +8,22 @@ import net.scapeemulator.game.model.object.GroundObjectList.GroundObject;
 public abstract class GroundObjectListenerAdapter extends GroundObjectListener {
 
     @Override
-    public void groundObjectRotationUpdated(GroundObject object, int oldRotation) {}
+    public void groundObjectAdded(GroundObject object) {
+    }
 
     @Override
-    public void groundObjectAdded(GroundObject object) {}
+    public void groundObjectIdUpdated(GroundObject object, int oldId) {
+    }
 
     @Override
-    public void groundObjectUpdated(GroundObject object) {}
+    public void groundObjectRotationUpdated(GroundObject object, int oldRotation) {
+    }
 
     @Override
-    public void groundObjectAnimated(GroundObject object) {}
+    public void groundObjectAnimated(GroundObject object) {
+    }
 
     @Override
-    public void groundObjectRemoved(GroundObject object) {}
+    public void groundObjectRemoved(GroundObject object) {
+    }
 }

@@ -180,14 +180,14 @@ public final class GroundObjectList {
             if (this.id == id) {
                 return;
             }
-
+            int oldId = this.id;
             this.id = id;
 
             if (!isHidden) {
 
                 /* Update the listeners */
                 for (GroundObjectListener listener : listeners) {
-                    listener.groundObjectUpdated(this);
+                    listener.groundObjectIdUpdated(this, oldId);
                 }
             }
 
@@ -246,10 +246,6 @@ public final class GroundObjectList {
                 /* Update the listeners */
                 for (GroundObjectListener listener : listeners) {
                     listener.groundObjectRotationUpdated(this, oldRotation);
-                }
-
-                for (GroundObjectListener listener : listeners) {
-                    listener.groundObjectUpdated(this);
                 }
             }
 
@@ -423,7 +419,7 @@ public final class GroundObjectList {
                 width = def.getLength();
                 length = def.getWidth();
             }
-            return new QuadArea(position.getX(), position.getY(), position.getX() + width, position.getY() + length);
+            return new QuadArea(position.getX(), position.getY(), position.getX() + (width - 1), position.getY() + (length - 1));
         }
     }
 

@@ -55,7 +55,18 @@ public final class GroundObjectSynchronizer extends GroundObjectListenerAdapter 
     }
 
     @Override
-    public void groundObjectUpdated(GroundObject object) {
+    public void groundObjectIdUpdated(GroundObject object, int oldId) {
+        Position position = object.getPosition();
+        boolean sameHeight = player.getPosition().getHeight() == position.getHeight();
+        if (sameHeight && player.getLastKnownRegion().isWithinScene(position)) {
+            uids.add(object.getUid());
+            sendPlacementCoords(position);
+            player.send(new GroundObjectUpdateMessage(object.getPosition(), object.getId(), object.getType().getId(), object.getRotation()));
+        }
+    }
+
+    @Override
+    public void groundObjectRotationUpdated(GroundObject object, int oldRotation) {
         Position position = object.getPosition();
         boolean sameHeight = player.getPosition().getHeight() == position.getHeight();
         if (sameHeight && player.getLastKnownRegion().isWithinScene(position)) {
