@@ -382,7 +382,18 @@ public final class TraversalMap {
             }
         }
     }
-
+    
+    public void unmarkOccupant(int plane, int x, int y, int width, int length, boolean impenetrable) {
+        for (int offsetX = 0; offsetX < width; offsetX++) {
+            for (int offsetY = 0; offsetY < length; offsetY++) {
+                unset(plane, x + offsetX, y + offsetY, OCCUPANT);
+                if (impenetrable) {
+                    unset(plane, x + offsetX, y + offsetY, IMPENETRABLE_OCCUPANT);
+                }
+            }
+        }
+    }
+    
     public void markBridge(int plane, int x, int y) {
         set(plane, x, y, BRIDGE);
     }
