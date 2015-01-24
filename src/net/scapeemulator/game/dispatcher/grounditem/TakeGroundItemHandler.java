@@ -4,6 +4,7 @@ import net.scapeemulator.game.model.Option;
 import net.scapeemulator.game.model.Position;
 import net.scapeemulator.game.model.player.Player;
 import net.scapeemulator.game.model.player.action.PickupItemAction;
+import net.scapeemulator.game.util.HandlerContext;
 
 public final class TakeGroundItemHandler extends GroundItemHandler {
 
@@ -15,11 +16,11 @@ public final class TakeGroundItemHandler extends GroundItemHandler {
     }
 
     @Override
-    public boolean handle(Player player, int itemId, Position position, String option) {
+    public void handle(Player player, int itemId, Position position, String option, HandlerContext context) {
         if (!option.equals("take")) {
-            return false;
+            return;
         }
         player.startAction(new PickupItemAction(player, itemId, position));
-        return true;
+        context.stop();
     }
 }

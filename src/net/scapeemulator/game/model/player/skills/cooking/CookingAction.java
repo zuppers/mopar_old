@@ -11,16 +11,16 @@ import net.scapeemulator.game.model.player.Item;
 import net.scapeemulator.game.model.player.Player;
 import net.scapeemulator.game.model.player.ScriptInputListener;
 import net.scapeemulator.game.model.player.SlottedItem;
+import net.scapeemulator.game.model.player.action.ReachDistancedAction;
 import net.scapeemulator.game.model.player.interfaces.ComponentListener;
 import net.scapeemulator.game.model.player.interfaces.InterfaceSet.Component;
 import net.scapeemulator.game.model.player.skills.Skill;
 import net.scapeemulator.game.msg.impl.inter.InterfaceItemMessage;
-import net.scapeemulator.game.task.DistancedAction;
 
 /**
  * @author David Insley
  */
-public class CookingAction extends DistancedAction<Player> {
+public class CookingAction extends ReachDistancedAction {
 
     private static final int COOKING_INTERFACE = 307;
     private static final Random random = new Random();
@@ -171,7 +171,7 @@ public class CookingAction extends DistancedAction<Player> {
     private class FireObjectListener extends GroundObjectListenerAdapter {
 
         @Override
-        public void groundObjectUpdated(GroundObject updated) {
+        public void groundObjectIdUpdated(GroundObject updated, int oldId) {
             if (object == updated) {
                 fireOut();
             }

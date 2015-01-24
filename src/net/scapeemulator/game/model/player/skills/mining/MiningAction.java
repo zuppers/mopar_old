@@ -7,12 +7,12 @@ import net.scapeemulator.game.model.World;
 import net.scapeemulator.game.model.object.GroundObjectList.GroundObject;
 import net.scapeemulator.game.model.player.Item;
 import net.scapeemulator.game.model.player.Player;
-import net.scapeemulator.game.task.DistancedAction;
+import net.scapeemulator.game.model.player.action.ReachDistancedAction;
 
 /**
  * @author David Insley
  */
-public class MiningAction extends DistancedAction<Player> {
+public class MiningAction extends ReachDistancedAction {
 
     private enum State {
         WALKING, START, MINING
@@ -39,7 +39,9 @@ public class MiningAction extends DistancedAction<Player> {
     public void executeAction() {
         switch (state) {
         case WALKING:
-            mob.getWalkingQueue().reset();
+            if (!mob.getWalkingQueue().isEmpty()) {
+                return;
+            }
             mob.turnToPosition(object.getCenterPosition());
             state = State.START;
             return;

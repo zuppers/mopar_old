@@ -5,13 +5,13 @@ import net.scapeemulator.game.model.definition.ItemDefinitions;
 import net.scapeemulator.game.model.npc.NPC;
 import net.scapeemulator.game.model.player.Item;
 import net.scapeemulator.game.model.player.Player;
+import net.scapeemulator.game.model.player.action.ReachDistancedAction;
 import net.scapeemulator.game.model.player.skills.Skill;
-import net.scapeemulator.game.task.DistancedAction;
 
 /**
  * @author David Insley
  */
-public class FishingAction extends DistancedAction<Player> {
+public class FishingAction extends ReachDistancedAction {
 
     private final FishingTool fishingTool;
     private final Fish[] fish;

@@ -19,7 +19,6 @@ public class LogOnTinderboxHandler extends ItemOnItemHandler {
     @Override
     public void handle(Player player, SlottedItem itemOne, SlottedItem itemTwo) {
         player.startAction(new FiremakingAction(player, log, itemOne.getItem().getId() == log.getItemId() ? itemOne : itemTwo));
-
     }
 
 }

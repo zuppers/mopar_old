@@ -8,12 +8,12 @@ import net.scapeemulator.game.model.World;
 import net.scapeemulator.game.model.object.GroundObjectList.GroundObject;
 import net.scapeemulator.game.model.player.Item;
 import net.scapeemulator.game.model.player.Player;
-import net.scapeemulator.game.task.DistancedAction;
+import net.scapeemulator.game.model.player.action.ReachDistancedAction;
 
 /**
  * @author David Insley
  */
-public class WoodcuttingAction extends DistancedAction<Player> {
+public class WoodcuttingAction extends ReachDistancedAction {
 
     private enum State {
         WALKING, START, CHOPPING
@@ -60,14 +60,14 @@ public class WoodcuttingAction extends DistancedAction<Player> {
             }
             mob.playAnimation(hatchet.getAnimation());
             int levelDifference = wcLvl() - type.getLevel();
-            //TODO actual formula
+            // TODO actual formula
             boolean shouldGetLog = rand.nextInt(4) == 0;
             if (shouldGetLog) {
                 mob.getSkillSet().addExperience(WOODCUTTING, type.getXp());
                 Item log = new Item(type.getLogId());
                 mob.getInventory().add(log);
                 mob.sendMessage("You get some " + log.getDefinition().getName().toLowerCase() + ".");
-                
+
                 /*
                  * The chance of the tree depleting is determined by the players level and the
                  * average number of logs the tree should give.

@@ -10,7 +10,7 @@ require 'java'
 java_import 'net.scapeemulator.game.task.Action'
 java_import 'net.scapeemulator.game.model.mob.Animation'
 java_import 'net.scapeemulator.game.model.SpotAnimation'
-java_import 'net.scapeemulator.game.task.DistancedAction'
+java_import 'net.scapeemulator.game.model.player.action.ReachDistancedAction'
 java_import 'net.scapeemulator.game.model.player.interfaces.ComponentListenerAdapter'
 java_import 'net.scapeemulator.game.msg.impl.ScriptMessage'
 java_import 'net.scapeemulator.game.model.player.ScriptInputListener'
@@ -81,7 +81,7 @@ module Smithing
     end    
   end
 
-  class AnvilAction < DistancedAction
+  class AnvilAction < ReachDistancedAction
     def initialize(player, anvil, bar)
       super(1, true, player, anvil.position, 1)
       @anvil = anvil
@@ -141,7 +141,7 @@ module Smithing
 
   end
   
-  class FurnaceAction < DistancedAction
+  class FurnaceAction < ReachDistancedAction
     def initialize(player, furnace)
       super(1, true, player, furnace.position, 3)
       @furnace = furnace

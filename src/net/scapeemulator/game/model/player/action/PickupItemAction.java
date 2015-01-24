@@ -5,13 +5,12 @@ import net.scapeemulator.game.model.World;
 import net.scapeemulator.game.model.grounditem.GroundItemList.GroundItem;
 import net.scapeemulator.game.model.player.Item;
 import net.scapeemulator.game.model.player.Player;
-import net.scapeemulator.game.task.DistancedAction;
 
 /**
  * @author Hadyn Richard
  * @author David Insley
  */
-public final class PickupItemAction extends DistancedAction<Player> {
+public final class PickupItemAction extends ReachDistancedAction {
 
     private final int itemId;
     private final Position position;

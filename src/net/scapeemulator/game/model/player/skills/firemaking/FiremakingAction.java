@@ -2,7 +2,6 @@ package net.scapeemulator.game.model.player.skills.firemaking;
 
 import net.scapeemulator.game.model.Position;
 import net.scapeemulator.game.model.World;
-import net.scapeemulator.game.model.grounditem.GroundItemList.GroundItem;
 import net.scapeemulator.game.model.mob.Animation;
 import net.scapeemulator.game.model.mob.Direction;
 import net.scapeemulator.game.model.object.GroundObjectList.GroundObject;
@@ -45,6 +44,12 @@ public class FiremakingAction extends Action<Player> {
             return;
         }
 
+        if (!mob.getInventory().contains(Firemaking.TINDERBOX)) {
+            mob.sendMessage("You need a tinderbox to light a fire.");
+            stop();
+            return;
+        }
+
         // See if the ground object list has an empty space for us here.
         // TODO add areas for banks etc where you can't light fires
         if (!World.getWorld().getGroundObjects().isEmpty(mob.getPosition())) {
@@ -55,11 +60,15 @@ public class FiremakingAction extends Action<Player> {
 
         if (status == -1) {
             log.getRequirements().fulfillAll(mob);
-            Item removed = mob.getInventory().remove(slottedLog.getItem(), slottedLog.getSlot());
-            if (!removed.equals(slottedLog.getItem())) {
-                stop();
-                return;
+            if (slottedLog != null) {
+                Item removed = mob.getInventory().remove(slottedLog.getItem(), slottedLog.getSlot());
+                if (!removed.equals(slottedLog.getItem())) {
+                    stop();
+                    return;
+                }
+                World.getWorld().getGroundItems().add(log.getItemId(), 1, mob.getPosition(), mob);
             }
+
             mob.playAnimation(ANIMATION);
             int dif = mob.getSkillSet().getCurrentLevel(Skill.FIREMAKING) - log.getLevel();
             dif = dif > 15 ? 15 : dif;
