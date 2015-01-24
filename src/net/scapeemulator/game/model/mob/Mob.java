@@ -5,6 +5,7 @@ import net.scapeemulator.game.model.Position;
 import net.scapeemulator.game.model.SpotAnimation;
 import net.scapeemulator.game.model.World;
 import net.scapeemulator.game.model.area.Area;
+import net.scapeemulator.game.model.area.PositionArea;
 import net.scapeemulator.game.model.area.QuadArea;
 import net.scapeemulator.game.model.mob.action.CombatAction;
 import net.scapeemulator.game.model.mob.combat.CombatHandler;
@@ -31,7 +32,7 @@ public abstract class Mob extends Entity {
     protected Direction firstDirection = Direction.NONE;
     protected Direction secondDirection = Direction.NONE;
     protected Direction mostRecentDirection = Direction.SOUTH;
-    protected int size;
+    protected int size = 1;
     protected Animation animation;
     protected SpotAnimation spotAnimation;
     protected Position turnToPosition;
@@ -44,14 +45,6 @@ public abstract class Mob extends Entity {
     protected Action<? extends Mob> action;
     protected boolean hidden;
     protected CombatHandler<? extends Mob> combatHandler;
-
-    /**
-     * Create a {@link Mob} with {@link getSize()} equal to 1 and {@link getMostRecentDirection}
-     * equal to {@link Direction#SOUTH}.
-     */
-    public Mob() {
-        size = 1;
-    }
 
     /**
      * Gets the id of this {@link Mob}.
@@ -84,7 +77,9 @@ public abstract class Mob extends Entity {
      * @param size The size to set it to.
      */
     public void setSize(int size) {
-        this.size = size;
+        if (size > 0) {
+            this.size = size;
+        }
     }
 
     /**
@@ -658,6 +653,9 @@ public abstract class Mob extends Entity {
     }
 
     public Area getBounds() {
+        if (size == 1) {
+            return new PositionArea(position);
+        }
         return new QuadArea(position.getX(), position.getY(), position.getX() + size - 1, position.getY() + size - 1);
     }
 
