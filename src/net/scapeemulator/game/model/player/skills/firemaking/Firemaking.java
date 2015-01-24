@@ -13,6 +13,7 @@ public class Firemaking {
     public static void initialize() {
         for (Log log : Log.values()) {
             GameServer.getInstance().getMessageDispatcher().getItemOnItemDispatcher().bind(new LogOnTinderboxHandler(log));
+            GameServer.getInstance().getMessageDispatcher().getItemOnGroundItemDispatcher().bind(new TinderboxOnGroundLogHandler(log));
         }
         GroundItemDispatcher.getInstance().bind(new LightGroundLogHandler());
     }
