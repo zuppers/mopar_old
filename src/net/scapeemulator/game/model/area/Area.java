@@ -4,6 +4,7 @@ import net.scapeemulator.game.model.Position;
 
 /**
  * @author Hadyn Richard
+ * @author David Insley
  */
 public abstract class Area {
 
@@ -13,14 +14,15 @@ public abstract class Area {
      * 
      * @param position The bottom left corner of the area to check
      * @param offset The area length and width
+     * @param corners whether or not corners count as inside the area
      * @return true if the square area is entirely within the specified area.
      */
-    public boolean allWithinArea(Position position, int offset, int padding) {
+    public boolean allWithinArea(Position position, int offset, int padding, boolean corners) {
         for (int xOffset = 0; xOffset < offset; xOffset++) {
             for (int yOffset = 0; yOffset < offset; yOffset++) {
 
                 /* Check if the position at the new x and y offset is within the area */
-                if (!withinArea(position.getX() + xOffset, position.getY() + yOffset, padding)) {
+                if (!withinArea(position.getX() + xOffset, position.getY() + yOffset, padding, corners)) {
                     return false;
                 }
             }
@@ -34,14 +36,16 @@ public abstract class Area {
      * 
      * @param position The bottom left corner of the area to check
      * @param offset The area length and width
+     * @param corners whether or not corners count as inside the area
      * @return true if the square area is at least partially within the specified area.
      */
-    public boolean anyWithinArea(Position position, int offset, int padding) {
+    public boolean anyWithinArea(Position position, int offset, int padding, boolean corners) {
+        System.out.println("AWA: " + position + ", " + offset + ", " + padding);
         for (int xOffset = 0; xOffset < offset; xOffset++) {
             for (int yOffset = 0; yOffset < offset; yOffset++) {
-
+                System.out.println("WA: " + (position.getX() + xOffset) + ", " + (position.getY() + yOffset) + ", " + offset + ", " + padding);
                 /* Check if the position at the new x and y offset is within the area */
-                if (withinArea(position.getX() + xOffset, position.getY() + yOffset, padding)) {
+                if (withinArea(position.getX() + xOffset, position.getY() + yOffset, padding, corners)) {
                     return true;
                 }
             }
@@ -55,9 +59,10 @@ public abstract class Area {
      * @param x The x coordinate.
      * @param y The y coordinate.
      * @param padding The padding around the area to also include in calculation
+     * @param corners whether or not corners count as inside the area
      * @return true if the coordinate is within the area
      */
-    public abstract boolean withinArea(int x, int y, int padding);
+    public abstract boolean withinArea(int x, int y, int padding, boolean corners);
 
     public abstract Position center();
 

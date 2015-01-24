@@ -66,12 +66,15 @@ public abstract class DistancedAction<T extends Mob> extends Action<T> {
             // some actions (e.g. agility) will cause the player to move away again
             // so we don't check once the player got close enough once
             executeAction();
-        } else if (bounds.withinArea(mob.getPosition().getX(), mob.getPosition().getY(), distance)) {
+        } else if (bounds.withinArea(mob.getPosition().getX(), mob.getPosition().getY(), distance, false)) {
             reached = true;
             setDelay(delay);
             if (immediate) {
                 executeAction();
             }
+        } else if (mob.getWalkingQueue().isEmpty()) {
+            cantReach();
+            stop();
         }
     }
 
@@ -79,5 +82,10 @@ public abstract class DistancedAction<T extends Mob> extends Action<T> {
      * Executes the actual action. Called when the distance requirement is met.
      */
     public abstract void executeAction();
+
+    /**
+     * Called when the mobs walking queue is empty if they haven't yet reached the destination.
+     */
+    public abstract void cantReach();
 
 }

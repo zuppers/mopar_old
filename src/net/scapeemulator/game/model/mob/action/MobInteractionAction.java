@@ -10,12 +10,12 @@ import net.scapeemulator.game.task.Action;
  * @author David Insley
  */
 public abstract class MobInteractionAction<T extends Mob, O extends Mob> extends Action<T> {
-    
+
     private FollowAction followAction;
     private boolean reached;
     private int distance;
     protected O target;
-    
+
     public MobInteractionAction(T mob, O target, int distance) {
         super(mob, 1, true);
         followAction = new FollowAction(mob, target, false, distance);
@@ -24,24 +24,24 @@ public abstract class MobInteractionAction<T extends Mob, O extends Mob> extends
         this.distance = distance;
         init();
     }
-    
-    private void init() {     
+
+    private void init() {
         mob.turnToTarget(target);
     }
 
     @Override
-    public void execute() {        
-        if(reached) {
+    public void execute() {
+        if (reached) {
             executeAction();
             return;
-        } else if(mob.getWalkingQueue().isEmpty() && !target.getBounds().anyWithinArea(mob.getPosition(), mob.getSize(), distance)) {
+        } else if (mob.getWalkingQueue().isEmpty() && !target.getBounds().anyWithinArea(mob.getPosition(), mob.getSize(), distance, false)) {
             followAction.execute();
         } else {
             reached = true;
             executeAction();
         }
-        
+
     }
-    
+
     public abstract void executeAction();
 }

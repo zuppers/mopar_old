@@ -53,18 +53,18 @@ public class FollowAction extends Action<Mob> {
         }
 
         // Check if we are inside the mob (and not supposed to be)
-        if (distance > 0 && target.getBounds().anyWithinArea(mob.getPosition(), mob.getSize(), 0)) {
+        if (distance > 0 && mob.getBounds().anyWithinArea(target.getPosition(), target.getSize(), 0, true)) {
             Position p = Direction.getNearbyTraversableTiles(mob.getPosition(), mob.getSize()).get(0);
             mob.getWalkingQueue().addPoint(p);
             return;
         }
 
         // Check if we are inside the target area (don't move)
-        if (targetBounds.anyWithinArea(mob.getPosition(), mob.getSize(), distance)) {
+        if (targetBounds.anyWithinArea(mob.getPosition(), mob.getSize(), distance, false)) {
             return;
         }
 
-        path = DumbPathFinder.find(mob.getPosition(), targetBounds.center(), mob.getSize(), 2);
+        path = DumbPathFinder.find(mob.getPosition(), targetBounds.center(), mob.getSize(), 2, false);
         if (path == null || path.isEmpty()) {
             return;
         }
@@ -77,7 +77,7 @@ public class FollowAction extends Action<Mob> {
             if (!((Player) mob).getSettings().isRunning()) {
                 return;
             }
-            if ((targetBounds.anyWithinArea(path.peek(), mob.getSize(), distance == 0 ? 0 : distance - 1) && !behind)) {
+            if ((targetBounds.anyWithinArea(path.peek(), mob.getSize(), distance == 0 ? 0 : distance - 1, false) && !behind)) {
                 return;
             }
 

@@ -25,7 +25,7 @@ public final class CombatAction extends FollowAction {
             return;
         }
         distance = mob.getCombatHandler().getAttackRange();
-        if (target.getBounds().anyWithinArea(mob.getPosition(), mob.getSize(), distance) && !target.getBounds().anyWithinArea(mob.getPosition(), mob.getSize(), 0)) {
+        if (mob.getBounds().anyWithinArea(target.getPosition(), target.getSize(), distance, false) && !target.getBounds().anyWithinArea(mob.getPosition(), mob.getSize(), 0, true)) {
             if (!World.getWorld().getTraversalMap().attackPathClear(mob, target.getPosition(), distance > 2)) {
                 super.execute();
                 return;

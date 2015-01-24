@@ -3,7 +3,7 @@ package net.scapeemulator.game.model.area;
 import net.scapeemulator.game.model.Position;
 
 /**
- * Area wrapping for Position
+ * Area wrapping for standard position.
  * 
  * @author David Insley
  */
@@ -16,8 +16,13 @@ public final class PositionArea extends Area {
     }
 
     @Override
-    public boolean withinArea(int x, int y, int padding) {
-        return x >= (position.getX() - padding) && x <= (position.getX() + padding) && y >= (position.getY() - padding) && y <= (position.getY() + padding);
+    public boolean withinArea(int x, int y, int padding, boolean corners) {
+        int deltaX = Math.abs(position.getX() - x);
+        int deltaY = Math.abs(position.getY() - y);
+        if (deltaX == padding && deltaY == padding && !corners) {
+            return false;
+        }
+        return deltaX <= padding && deltaY <= padding;
     }
 
     @Override

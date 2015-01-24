@@ -34,7 +34,7 @@ public final class InitiateCombatAction extends Action<Player> {
             mob.startAction(new CombatAction(mob, target, once));
             return;
         }
-        if (target.getBounds().anyWithinArea(mob.getPosition(), mob.getSize(), mob.getCombatHandler().getAttackRange())) {
+        if (target.getBounds().anyWithinArea(mob.getPosition(), mob.getSize(), mob.getCombatHandler().getAttackRange(), false)) {
             if (World.getWorld().getTraversalMap().attackPathClear(mob, target.getPosition(), mob.getCombatHandler().getAttackRange() > 2)) {
                 mob.startAction(new CombatAction(mob, target, once));
             }
