@@ -11,6 +11,9 @@ import net.scapeemulator.cache.Container;
 import net.scapeemulator.cache.ReferenceTable;
 import net.scapeemulator.cache.util.ByteBufferUtils;
 import net.scapeemulator.game.model.Position;
+import net.scapeemulator.game.model.World;
+import net.scapeemulator.game.model.npc.NPC;
+import net.scapeemulator.game.model.npc.stateful.impl.NormalNPC;
 import net.scapeemulator.game.model.object.ObjectType;
 import net.scapeemulator.game.util.LandscapeKeyTable;
 
@@ -19,15 +22,17 @@ import org.slf4j.LoggerFactory;
 
 public final class MapLoader {
 
-    public static final int FLAG_CLIP = 0x1;
-    public static final int BRIDGE_FLAG = 0x2;
-    
     /**
      * Flags that the tile is below a roof, for removing the roof during rendering.
      */
     public static final int ROOF_FLAG = 0x4;
-    
+    public static final int FLAG_CLIP = 0x1;
+    public static final int BRIDGE_FLAG = 0x2;
+
+    public static final boolean LOAD_NPCS = false;
+
     private static final Logger logger = LoggerFactory.getLogger(MapLoader.class);
+
     private final List<MapListener> listeners = new LinkedList<MapListener>();
     private final Cache cache;
     private final LandscapeKeyTable keyTable;
@@ -48,8 +53,8 @@ public final class MapLoader {
         rt = ReferenceTable.decode(Container.decode(cache.getStore().read(255, 5)).getData());
         if (loadAll) {
             logger.info("Reading all map and landscape files...");
-            for (int x = 0; x < 256; x++) {
-                for (int y = 0; y < 256; y++) {
+            for (int x = 0; x < loaded.length; x++) {
+                for (int y = 0; y < loaded[x].length; y++) {
                     load(x, y);
                 }
             }
@@ -57,11 +62,11 @@ public final class MapLoader {
     }
 
     public void load(int mX, int mY) {
-        for (int x = mX - 4; x <= mX + 4 && x <= loaded.length; x++) {
+        for (int x = mX - 4; x <= mX + 4 && x < loaded.length; x++) {
             if (x < 0) {
                 continue;
             }
-            for (int y = mY - 4; y <= mY + 4 && y <= loaded[x].length; y++) {
+            for (int y = mY - 4; y <= mY + 4 && y < loaded[x].length; y++) {
                 if (y < 0) {
                     continue;
                 }
@@ -77,6 +82,11 @@ public final class MapLoader {
                     int mapId = rt.getEntryId("m" + x + "_" + y);
                     if (mapId != -1) {
                         readMap(x, y, mapId);
+                    }
+
+                    int npcId = rt.getEntryId("n" + x + "_" + y);
+                    if (LOAD_NPCS && npcId != -1) {
+                        readNPC(x, y, npcId);
                     }
 
                     loaded[x][y] = true;
@@ -173,4 +183,19 @@ public final class MapLoader {
             }
         }
     }
+
+    private void readNPC(int x, int y, int fileId) throws IOException {
+        ByteBuffer buffer = cache.read(5, fileId).getData();
+        while (buffer.hasRemaining()) {
+            int compressedData = buffer.getShort() & 0xFFFFF;
+            int height = compressedData >> 14;
+            int localX = 63 & compressedData >> 7;
+            int localY = compressedData & 63;
+            int npcId = buffer.getShort();
+            NPC npc = new NormalNPC(npcId);
+            npc.setPosition(new Position((x * 64) + localX, (y * 64) + localY, height));
+            World.getWorld().addNpc(npc);
+        }
+    }
+
 }
