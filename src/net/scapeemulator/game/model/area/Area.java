@@ -40,10 +40,8 @@ public abstract class Area {
      * @return true if the square area is at least partially within the specified area.
      */
     public boolean anyWithinArea(Position position, int offset, int padding, boolean corners) {
-        System.out.println("AWA: " + position + ", " + offset + ", " + padding);
         for (int xOffset = 0; xOffset < offset; xOffset++) {
             for (int yOffset = 0; yOffset < offset; yOffset++) {
-                System.out.println("WA: " + (position.getX() + xOffset) + ", " + (position.getY() + yOffset) + ", " + offset + ", " + padding);
                 /* Check if the position at the new x and y offset is within the area */
                 if (withinArea(position.getX() + xOffset, position.getY() + yOffset, padding, corners)) {
                     return true;
