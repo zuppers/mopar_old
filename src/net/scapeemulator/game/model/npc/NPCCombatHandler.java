@@ -78,7 +78,7 @@ public class NPCCombatHandler extends CombatHandler<NPC> {
     @Override
     public double attackRoll() {
         double power = 1.0;
-        power += mob.getDefinition().getCombatLevel() * 2.0;
+        power += mob.getDefinition().getCombatLevel() * 1.25;
         power *= 1.0; // TODO other modifiers?
         System.out.println("NPC AR: " + power);
         return Math.random() * power;
@@ -87,7 +87,7 @@ public class NPCCombatHandler extends CombatHandler<NPC> {
     @Override
     public double defenceRoll(AttackType other) {
         double power = 1.0;
-        power += mob.getDefinition().getCombatLevel() * 2.0;
+        power += mob.getDefinition().getCombatLevel() * 1.25;
         if (mob.getDefinition().getWeakness() == other) {
             power *= 0.7;
         }
