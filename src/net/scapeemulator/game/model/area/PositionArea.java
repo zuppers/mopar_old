@@ -19,7 +19,7 @@ public final class PositionArea extends Area {
     public boolean withinArea(int x, int y, int padding, boolean corners) {
         int deltaX = Math.abs(position.getX() - x);
         int deltaY = Math.abs(position.getY() - y);
-        if (deltaX == padding && deltaY == padding && !corners) {
+        if (padding != 0 && deltaX == padding && deltaY == padding && !corners) {
             return false;
         }
         return deltaX <= padding && deltaY <= padding;
