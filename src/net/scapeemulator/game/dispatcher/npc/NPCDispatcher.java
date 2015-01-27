@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import net.scapeemulator.game.GameServer;
 import net.scapeemulator.game.model.Option;
 import net.scapeemulator.game.model.World;
 import net.scapeemulator.game.model.definition.NPCDefinitions;
@@ -19,7 +20,7 @@ import net.scapeemulator.game.model.player.skills.magic.Spellbook;
 import net.scapeemulator.game.util.HandlerContext;
 
 /**
- * Written by Hadyn Richard
+ * @author Hadyn Richard
  */
 public class NPCDispatcher {
 
@@ -145,5 +146,9 @@ public class NPCDispatcher {
                 }
             }
         }
+    }
+
+    public static NPCDispatcher getInstance() {
+        return GameServer.getInstance().getMessageDispatcher().getNpcDispatcher();
     }
 }
