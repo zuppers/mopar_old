@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import net.scapeemulator.game.GameServer;
 import net.scapeemulator.game.model.Option;
 import net.scapeemulator.game.model.Position;
 import net.scapeemulator.game.model.World;
@@ -88,5 +89,9 @@ public final class ObjectDispatcher {
                 }
             }
         }
+    }
+
+    public static ObjectDispatcher getInstance() {
+        return GameServer.getInstance().getMessageDispatcher().getObjectDispatcher();
     }
 }
