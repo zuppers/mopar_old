@@ -34,6 +34,31 @@ public final class Position {
     }
 
     /**
+     * Creates a new Position with the current coordinates that are translated with the given
+     * values. The height is not changed.
+     * 
+     * @param deltaX the modification to the current x coordinate to apply to the new Position
+     * @param deltaY the modification to the current y coordinate to apply to the new Position
+     * @return a new Position based on the given changes
+     */
+    public Position copy(int deltaX, int deltaY) {
+        return copy(deltaX, deltaY, 0);
+    }
+
+    /**
+     * Creates a new Position with the current coordinates that are translated with the given
+     * values.
+     * 
+     * @param deltaX the modification to the current x coordinate to apply to the new Position
+     * @param deltaY the modification to the current y coordinate to apply to the new Position
+     * @param deltaHeight the modification to the current height to apply to the new Position
+     * @return a new Position based on the given changes
+     */
+    public Position copy(int deltaX, int deltaY, int deltaHeight) {
+        return new Position(x + deltaX, y + deltaY, height + deltaHeight);
+    }
+
+    /**
      * Gets the x-coordinate of this position.
      * 
      * @return The x-coordinate.
