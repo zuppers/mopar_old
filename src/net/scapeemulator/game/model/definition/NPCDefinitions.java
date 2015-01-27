@@ -57,6 +57,10 @@ public final class NPCDefinitions {
     }
 
     public static NPCDefinition forId(int id) {
-        return definitions[id];
+        try {
+            return definitions[id];
+        } catch (IndexOutOfBoundsException e) {
+            return null;
+        }
     }
 }
