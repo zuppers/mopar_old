@@ -23,6 +23,7 @@ import net.scapeemulator.cache.Cache;
 import net.scapeemulator.cache.ChecksumTable;
 import net.scapeemulator.cache.FileStore;
 import net.scapeemulator.game.cache.MapLoader;
+import net.scapeemulator.game.content.Content;
 import net.scapeemulator.game.io.DummyPlayerSerializer;
 import net.scapeemulator.game.io.JdbcSerializer;
 import net.scapeemulator.game.io.Serializer;
@@ -203,7 +204,8 @@ public final class GameServer {
         /* bind other content */
         Consumables.initialize();
         messageDispatcher.getNpcDispatcher().bind(new BankerAction());
-
+        Content.init();
+        
         /* load player serializer from config file */
         serializer = createPlayerSerializer();
         logger.info("Using serializer: " + serializer + ".");
