@@ -10,9 +10,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.TreeSet;
 
-import net.scapeemulator.game.model.grandexchange.GEOffer;
-import net.scapeemulator.game.model.grandexchange.GrandExchange;
-import net.scapeemulator.game.model.grandexchange.OfferType;
+import net.scapeemulator.game.content.grandexchange.GEOffer;
+import net.scapeemulator.game.content.grandexchange.GrandExchange;
+import net.scapeemulator.game.content.grandexchange.OfferType;
 
 public final class GrandExchangeTable extends Table<GrandExchange> {
 

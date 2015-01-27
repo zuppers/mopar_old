@@ -1,4 +1,4 @@
-package net.scapeemulator.game.model.grandexchange;
+package net.scapeemulator.game.content.grandexchange;
 
 import java.sql.Timestamp;
 

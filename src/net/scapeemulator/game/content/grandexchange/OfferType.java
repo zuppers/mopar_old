@@ -1,4 +1,4 @@
-package net.scapeemulator.game.model.grandexchange;
+package net.scapeemulator.game.content.grandexchange;
 
 public enum OfferType {
 	BUY(2, 5, 5), SELL(-2, -3, -3), CLEAR(0, 0, 0);

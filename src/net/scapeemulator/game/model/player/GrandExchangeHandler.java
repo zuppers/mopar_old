@@ -1,10 +1,10 @@
 package net.scapeemulator.game.model.player;
 
+import net.scapeemulator.game.content.grandexchange.GEOffer;
+import net.scapeemulator.game.content.grandexchange.OfferType;
 import net.scapeemulator.game.model.ExtendedOption;
 import net.scapeemulator.game.model.World;
 import net.scapeemulator.game.model.definition.ItemDefinitions;
-import net.scapeemulator.game.model.grandexchange.GEOffer;
-import net.scapeemulator.game.model.grandexchange.OfferType;
 import net.scapeemulator.game.msg.impl.GrandExchangeUpdateMessage;
 import net.scapeemulator.game.msg.impl.ScriptMessage;
 import net.scapeemulator.game.msg.impl.inter.InterfaceAccessMessage;

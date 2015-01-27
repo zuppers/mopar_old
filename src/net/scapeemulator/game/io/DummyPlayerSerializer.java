@@ -1,8 +1,8 @@
 package net.scapeemulator.game.io;
 
+import net.scapeemulator.game.content.grandexchange.GEOffer;
+import net.scapeemulator.game.content.grandexchange.GrandExchange;
 import net.scapeemulator.game.model.Position;
-import net.scapeemulator.game.model.grandexchange.GEOffer;
-import net.scapeemulator.game.model.grandexchange.GrandExchange;
 import net.scapeemulator.game.model.player.Player;
 import net.scapeemulator.game.net.login.LoginResponse;
 

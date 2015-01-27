@@ -1,4 +1,4 @@
-package net.scapeemulator.game.model.shop;
+package net.scapeemulator.game.content.shop;
 
 import net.scapeemulator.game.dispatcher.button.WindowHandler;
 import net.scapeemulator.game.model.ExtendedOption;

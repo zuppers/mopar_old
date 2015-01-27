@@ -4,7 +4,8 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import net.scapeemulator.game.model.grandexchange.GEOffer;
+
+import net.scapeemulator.game.content.grandexchange.GEOffer;
 
 public final class GrandExchangeOfferTable extends Table<GEOffer> {
 

@@ -7,8 +7,13 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 
 import net.scapeemulator.cache.def.NPCDefinition;
+import net.scapeemulator.game.cache.MapLoader;
+import net.scapeemulator.game.content.grandexchange.GEOffer;
+import net.scapeemulator.game.content.grandexchange.GrandExchange;
+import net.scapeemulator.game.content.shop.Shop;
 import net.scapeemulator.game.io.jdbc.AppearanceTable;
 import net.scapeemulator.game.io.jdbc.FriendsTable;
 import net.scapeemulator.game.io.jdbc.GrandExchangeOfferTable;
@@ -23,8 +28,6 @@ import net.scapeemulator.game.model.Position;
 import net.scapeemulator.game.model.World;
 import net.scapeemulator.game.model.area.QuadArea;
 import net.scapeemulator.game.model.definition.NPCDefinitions;
-import net.scapeemulator.game.model.grandexchange.GEOffer;
-import net.scapeemulator.game.model.grandexchange.GrandExchange;
 import net.scapeemulator.game.model.mob.Direction;
 import net.scapeemulator.game.model.mob.combat.AttackType;
 import net.scapeemulator.game.model.npc.NPC;
@@ -34,7 +37,6 @@ import net.scapeemulator.game.model.npc.stateful.impl.NormalNPC;
 import net.scapeemulator.game.model.player.Player;
 import net.scapeemulator.game.model.player.ShopHandler;
 import net.scapeemulator.game.model.player.inventory.Inventory;
-import net.scapeemulator.game.model.shop.Shop;
 import net.scapeemulator.game.net.login.LoginResponse;
 
 import org.mindrot.jbcrypt.BCrypt;
@@ -50,6 +52,7 @@ public final class JdbcSerializer extends Serializer implements Closeable {
     private final Connection connection;
     private final PreparedStatement loginStatement;
     private final PreparedStatement registerStatement;
+    private final PreparedStatement saveSpawnStatement;
     private final Table<Player>[] playerTables;
     private final Table<GrandExchange> geTable;
     private final Table<GEOffer> geOfferTable;
@@ -59,6 +62,7 @@ public final class JdbcSerializer extends Serializer implements Closeable {
         connection = DriverManager.getConnection(url, username, password);
         connection.setAutoCommit(false);
         loginStatement = connection.prepareStatement("SELECT id, password FROM players WHERE username = ?;");
+        saveSpawnStatement = connection.prepareStatement("INSERT INTO npcspawns (type, x, y, height, roam, min_x, min_y, max_x, max_y) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);");
         registerStatement = connection.prepareStatement("INSERT INTO players (ip, username, password, rights, x, y, height) VALUES (?, ?, ?, 0, 3222, 3222, 0);", Statement.RETURN_GENERATED_KEYS);
 
         playerTables = new Table[] { new PlayersTable(connection), new FriendsTable(connection), new SettingsTable(connection), new VariablesTable(connection), new AppearanceTable(connection),
@@ -219,6 +223,9 @@ public final class JdbcSerializer extends Serializer implements Closeable {
     @Override
     public void loadNPCSpawns() {
         System.out.print("Loading NPC spawns... ");
+        if (MapLoader.LOAD_NPCS) {
+            return;
+        }
         int count = 0;
         try (ResultSet set = connection.prepareStatement("SELECT * FROM npcspawns").executeQuery()) {
             while (set.next()) {
@@ -242,6 +249,33 @@ public final class JdbcSerializer extends Serializer implements Closeable {
             System.out.println("complete! Loaded " + count);
 
         } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void saveNPCSpawn(int npcType, Position spawnPosition, Position min, Position max) {
+        try {
+            saveSpawnStatement.setInt(1, npcType);
+            saveSpawnStatement.setInt(2, spawnPosition.getX());
+            saveSpawnStatement.setInt(3, spawnPosition.getY());
+            saveSpawnStatement.setInt(4, spawnPosition.getHeight());
+
+            if (min != null && max != null) {
+                saveSpawnStatement.setInt(5, 1);
+                saveSpawnStatement.setInt(6, min.getX());
+                saveSpawnStatement.setInt(7, min.getY());
+                saveSpawnStatement.setInt(8, max.getX());
+                saveSpawnStatement.setInt(9, max.getY());
+            } else {
+                saveSpawnStatement.setInt(5, 0);
+                saveSpawnStatement.setNull(6, Types.SMALLINT);
+                saveSpawnStatement.setNull(7, Types.SMALLINT);
+                saveSpawnStatement.setNull(8, Types.SMALLINT);
+                saveSpawnStatement.setNull(9, Types.SMALLINT);
+            }
+            saveSpawnStatement.execute();
+            connection.commit();
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

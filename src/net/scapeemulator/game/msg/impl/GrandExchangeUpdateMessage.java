@@ -1,6 +1,6 @@
 package net.scapeemulator.game.msg.impl;
 
-import net.scapeemulator.game.model.grandexchange.GEOffer;
+import net.scapeemulator.game.content.grandexchange.GEOffer;
 import net.scapeemulator.game.msg.Message;
 
 public final class GrandExchangeUpdateMessage extends Message {

@@ -1,6 +1,6 @@
 package net.scapeemulator.game.model;
 
-import net.scapeemulator.game.model.grandexchange.GrandExchange;
+import net.scapeemulator.game.content.grandexchange.GrandExchange;
 import net.scapeemulator.game.model.grounditem.GroundItemList;
 import net.scapeemulator.game.model.npc.NPC;
 import net.scapeemulator.game.model.object.GroundObjectList;

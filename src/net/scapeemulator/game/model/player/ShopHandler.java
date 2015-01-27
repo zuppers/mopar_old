@@ -3,15 +3,15 @@ package net.scapeemulator.game.model.player;
 import java.util.HashMap;
 
 import net.scapeemulator.cache.def.ItemDefinition;
+import net.scapeemulator.game.content.shop.Shop;
+import net.scapeemulator.game.content.shop.ShopInterfaceHandler;
+import net.scapeemulator.game.content.shop.StockType;
 import net.scapeemulator.game.dispatcher.button.ButtonDispatcher;
 import net.scapeemulator.game.model.ExtendedOption;
 import net.scapeemulator.game.model.World;
 import net.scapeemulator.game.model.definition.ItemDefinitions;
 import net.scapeemulator.game.model.player.interfaces.ComponentListener;
 import net.scapeemulator.game.model.player.interfaces.InterfaceSet.Component;
-import net.scapeemulator.game.model.shop.ShopInterfaceHandler;
-import net.scapeemulator.game.model.shop.StockType;
-import net.scapeemulator.game.model.shop.Shop;
 import net.scapeemulator.game.msg.impl.ScriptMessage;
 import net.scapeemulator.game.msg.impl.inter.InterfaceAccessMessage;
 import net.scapeemulator.game.msg.impl.inter.InterfaceItemsMessage;
@@ -310,6 +310,11 @@ public class ShopHandler extends ComponentListener {
         component.removeListener();
         activeShop = null;
         activeStock = null;
+    }
+
+    @Override
+    public void componentChanged(Component component, int oldId) {
+        componentClosed(component);
     }
 
 }

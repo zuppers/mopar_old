@@ -1,4 +1,4 @@
-package net.scapeemulator.game.model.shop;
+package net.scapeemulator.game.content.shop;
 
 import net.scapeemulator.game.model.definition.ItemDefinitions;
 import net.scapeemulator.game.model.player.Item;
