@@ -7,7 +7,7 @@ import net.scapeemulator.game.model.ExtendedOption;
 import net.scapeemulator.game.model.player.ScriptInputListenerAdapter;
 import net.scapeemulator.game.model.player.Item;
 import net.scapeemulator.game.model.player.Player;
-import net.scapeemulator.game.model.player.interfaces.ComponentListener;
+import net.scapeemulator.game.model.player.interfaces.ComponentListenerAdapter;
 import net.scapeemulator.game.model.player.interfaces.InterfaceSet.Component;
 import net.scapeemulator.game.model.player.inventory.Inventory;
 import net.scapeemulator.game.msg.impl.inter.InterfaceAccessMessage;
@@ -15,7 +15,7 @@ import net.scapeemulator.game.msg.impl.inter.InterfaceAccessMessage;
 /**
  * @author David Insley
  */
-public class BankSession extends ComponentListener {
+public class BankSession extends ComponentListenerAdapter {
 
     static {
         ButtonDispatcher.getInstance().bind(new BankInterfaceHandler());
@@ -427,11 +427,12 @@ public class BankSession extends ComponentListener {
     }
 
     @Override
-    public void inputPressed(Component component, int componentId, int dynamicId) {
+    public void componentClosed(Component component) {
+        endSession();
     }
 
     @Override
-    public void componentClosed(Component component) {
-        endSession();
+    public void componentChanged(Component component, int oldId) {
+        componentClosed(component);
     }
 }

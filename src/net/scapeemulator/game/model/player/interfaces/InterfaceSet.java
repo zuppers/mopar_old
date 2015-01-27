@@ -14,7 +14,7 @@ import net.scapeemulator.game.msg.impl.inter.InterfaceOpenMessage;
 import net.scapeemulator.game.msg.impl.inter.InterfaceRootMessage;
 
 public final class InterfaceSet {
-    
+
     private static final int UNSET = -1;
     private static final int FIXED_TAB_OFFSET = 83;
     private static final int RESIZABLE_TAB_OFFSET = 93;
@@ -25,7 +25,7 @@ public final class InterfaceSet {
     public enum DisplayMode {
         FIXED, RESIZABLE;
     }
-    
+
     /**
      * The enumeration for each of the component types.
      */
@@ -95,136 +95,137 @@ public final class InterfaceSet {
          * Each of the lists for components of each display mode.
          */
         private static List<ComponentType> fixedComponents, resizableComponents;
-        
+
         private final int widgetId, componentId, defaultId, mode;
-        
+
         ComponentType(int widgetId, int componentId) {
             this(widgetId, componentId, UNSET, CLOSABLE);
         }
-        
+
         ComponentType(int widgetId, int componentId, int defaultId) {
             this(widgetId, componentId, defaultId, STATIC);
         }
-        
+
         ComponentType(int widgetId, int componentId, int defaultId, int mode) {
             this.widgetId = widgetId;
             this.componentId = componentId;
             this.defaultId = defaultId;
             this.mode = mode;
         }
-        
+
         public int getWidgetId() {
-            return widgetId; 
+            return widgetId;
         }
-        
+
         public int getComponentId() {
             return componentId;
         }
-        
+
         public int getDefaultId() {
             return defaultId;
         }
-        
+
         public int getMode() {
             return mode;
         }
-        
+
         public static ComponentType getWindow(DisplayMode mode) {
-            switch(mode) {
-                case FIXED:
-                    return WINDOW_FIXED;
-                case RESIZABLE:
-                    return WINDOW_RESIZABLE;
+            switch (mode) {
+            case FIXED:
+                return WINDOW_FIXED;
+            case RESIZABLE:
+                return WINDOW_RESIZABLE;
             }
             throw new RuntimeException();
         }
-        
+
         public static ComponentType getOverlay(DisplayMode mode) {
-            switch(mode) {
-                case FIXED:
-                    return OVERLAY_FIXED;
-                case RESIZABLE:
-                    return OVERLAY_RESIZABLE;
+            switch (mode) {
+            case FIXED:
+                return OVERLAY_FIXED;
+            case RESIZABLE:
+                return OVERLAY_RESIZABLE;
             }
             throw new RuntimeException();
         }
-        
+
         public static ComponentType getAttackTab(DisplayMode mode) {
-            switch(mode) {
-                case FIXED:
-                    return ATTACK_TAB_FIXED;
-                case RESIZABLE:
-                    return ATTACK_TAB_RESIZABLE;
+            switch (mode) {
+            case FIXED:
+                return ATTACK_TAB_FIXED;
+            case RESIZABLE:
+                return ATTACK_TAB_RESIZABLE;
             }
             throw new RuntimeException();
         }
-        
+
         public static ComponentType getInventoryTab(DisplayMode mode) {
-            switch(mode) {
-                case FIXED:
-                    return INVENTORY_TAB_FIXED;
-                case RESIZABLE:
-                    return INVENTORY_TAB_RESIZABLE;
+            switch (mode) {
+            case FIXED:
+                return INVENTORY_TAB_FIXED;
+            case RESIZABLE:
+                return INVENTORY_TAB_RESIZABLE;
             }
             throw new RuntimeException();
         }
-        
+
         public static List<ComponentType> getComponentTypes(DisplayMode mode) {
-            switch(mode) {
-                case FIXED:
-                    if(fixedComponents == null) {
-                        fixedComponents = new LinkedList<>();
-                        for(ComponentType type : values()) {
-                            if(type.name().endsWith("FIXED")) {
-                                fixedComponents.add(type);
-                            }
+            switch (mode) {
+            case FIXED:
+                if (fixedComponents == null) {
+                    fixedComponents = new LinkedList<>();
+                    for (ComponentType type : values()) {
+                        if (type.name().endsWith("FIXED")) {
+                            fixedComponents.add(type);
                         }
-                        fixedComponents.add(CHATBOX_INPUT);
-                        fixedComponents.add(CHATBOX_OVERLAY);
                     }
-                    return fixedComponents;
-                case RESIZABLE:
-                    if(resizableComponents == null) {
-                        resizableComponents = new LinkedList<>();
-                        for(ComponentType type : values()) {
-                            if(type.name().endsWith("RESIZABLE")) {
-                                resizableComponents.add(type);
-                            }
+                    fixedComponents.add(CHATBOX_INPUT);
+                    fixedComponents.add(CHATBOX_OVERLAY);
+                }
+                return fixedComponents;
+            case RESIZABLE:
+                if (resizableComponents == null) {
+                    resizableComponents = new LinkedList<>();
+                    for (ComponentType type : values()) {
+                        if (type.name().endsWith("RESIZABLE")) {
+                            resizableComponents.add(type);
                         }
-                        resizableComponents.add(CHATBOX_INPUT);
-                        resizableComponents.add(CHATBOX_OVERLAY);
                     }
-                    return resizableComponents;
+                    resizableComponents.add(CHATBOX_INPUT);
+                    resizableComponents.add(CHATBOX_OVERLAY);
+                }
+                return resizableComponents;
             }
             throw new RuntimeException();
         }
     }
-    
+
     /**
      * The component class.
      */
     public class Component {
-              
+
         private final ComponentType type;
         private ComponentListener listener;
         private int currentId;
-        
+
         /**
          * Constructs a new {@link Component};
-         * @param type The component type that this component is based off of. 
+         * 
+         * @param type The component type that this component is based off of.
          */
         public Component(ComponentType type) {
             this.type = type;
             currentId = type.getDefaultId();
         }
-        
+
         /**
          * Gets the current widget id.
          */
         public int getCurrentId() {
             return currentId;
         }
-        
+
         /**
          * Attaches a listener to the component.
          */
@@ -232,94 +233,103 @@ public final class InterfaceSet {
             this.listener = listener;
             return this;
         }
-        
+
         /**
          * Removes a listener from the component.
          */
         public void removeListener() {
             listener = null;
         }
-        
+
         /**
          * Sets the current widget id.
          */
         public Component set(int id) {
-            if(currentId != id) {
-                forceComponentClosed(); // TODO replace with a changed listener?
+            if (currentId != id) {
+                forceComponentChanged(currentId);
             }
             listener = null;
             currentId = id;
             return this;
         }
-        
+
         /**
          * Alerts the listeners that an input for the interface was pressed.
          */
         public void alertInputPressed(int componentId, int dynamicId) {
-            if(listener != null) {
+            if (listener != null) {
                 listener.inputPressed(this, componentId, dynamicId);
             }
         }
-        
+
         /**
          * Forces the component closed call to all the registered listeners.
          */
         public void forceComponentClosed() {
-            if(listener != null) {
+            if (listener != null) {
                 listener.componentClosed(this);
             }
         }
-        
+
+        /**
+         * Forces the component closed call to all the registered listeners.
+         */
+        public void forceComponentChanged(int oldId) {
+            if (listener != null) {
+                listener.componentChanged(this, oldId);
+            }
+        }
+
         /**
          * Refreshes the component by sending an open interface message to the player.
          */
         public void refresh() {
-            if(currentId != UNSET) {
+            if (currentId != UNSET) {
                 player.send(new InterfaceOpenMessage(type.getWidgetId(), type.getComponentId(), currentId, type.getMode()));
             }
         }
-        
+
         /**
          * Resets the component; if the component is static refreshes the component and if it is
          * closable will request that the client close that interface.
          */
         public void reset() {
-            switch(type.getMode()) {
-                case STATIC:
-                    if(currentId != type.getDefaultId()) {
-                        currentId = type.getDefaultId();
-                        if(currentId != UNSET) {
-                            refresh();
-                            return;
-                        }
-                        
-                        /* Close the interface if it is just going to go back to being unset */
-                        player.send(new InterfaceCloseMessage(type.getWidgetId(), type.getComponentId()));                     
+            switch (type.getMode()) {
+            case STATIC:
+                if (currentId != type.getDefaultId()) {
+                    currentId = type.getDefaultId();
+                    if (currentId != UNSET) {
+                        refresh();
+                        return;
                     }
-                    break;
-                case CLOSABLE:
-                    if(currentId != UNSET) {
-                        player.send(new InterfaceCloseMessage(type.getWidgetId(), type.getComponentId()));
-                        if(listener != null) {
-                            listener.componentClosed(this);
-                        }
-                        currentId = UNSET;
+
+                    /* Close the interface if it is just going to go back to being unset */
+                    player.send(new InterfaceCloseMessage(type.getWidgetId(), type.getComponentId()));
+                }
+                break;
+            case CLOSABLE:
+                if (currentId != UNSET) {
+                    player.send(new InterfaceCloseMessage(type.getWidgetId(), type.getComponentId()));
+                    if (listener != null) {
+                        listener.componentClosed(this);
                     }
-                    break;
+                    currentId = UNSET;
+                }
+                break;
             }
             listener = null;
         }
     }
-    
+
     /**
      * The player to send updates to when interfaces are opened or closed.
      */
     private final Player player;
-    
+
     /**
      * Each of the components that the player can have opened.
      */
-    private final Map<ComponentType, Component> components = new HashMap<>(); 
+    private final Map<ComponentType, Component> components = new HashMap<>();
     private DisplayMode mode = DisplayMode.FIXED;
 
     public InterfaceSet(Player player) {
@@ -335,68 +345,68 @@ public final class InterfaceSet {
     }
 
     public void init() {
-        
+
         /* Send the proper root widget */
-        switch(mode) {
-            case FIXED:
-                player.send(new InterfaceRootMessage(Interface.FIXED));
-                break;
-            case RESIZABLE:
-                player.send(new InterfaceRootMessage(Interface.RESIZABLE));
-                break;
+        switch (mode) {
+        case FIXED:
+            player.send(new InterfaceRootMessage(Interface.FIXED));
+            break;
+        case RESIZABLE:
+            player.send(new InterfaceRootMessage(Interface.RESIZABLE));
+            break;
         }
 
         /* Clear out all the current components if any exist */
         components.clear();
-        
+
         /* Get the components for the display mode, and refresh each one */
         List<ComponentType> types = ComponentType.getComponentTypes(mode);
-        for(ComponentType type : types) {
-            
+        for (ComponentType type : types) {
+
             /* Create and refresh the component */
             Component component = new Component(type);
             component.refresh();
-            
+
             /* Register the component to the component mapping */
             components.put(type, component);
         }
     }
-    
+
     public void openWindow(int id) {
         Component window = components.get(ComponentType.getWindow(mode));
-        window.set(id).refresh(); 
+        window.set(id).refresh();
     }
 
     public void openWindow(int id, ComponentListener listener) {
         Component window = components.get(ComponentType.getWindow(mode));
         window.set(id).setListener(listener).refresh();
     }
-    
+
     public void closeWindow() {
         Component window = components.get(ComponentType.getWindow(mode));
         window.reset();
     }
-    
+
     public Component getWindow() {
-    	Component window = components.get(ComponentType.getWindow(mode));
-    	return window;
+        Component window = components.get(ComponentType.getWindow(mode));
+        return window;
     }
-    
+
     public void openOverlay(int id) {
         Component overlay = components.get(ComponentType.getOverlay(mode));
         overlay.set(id).refresh();
     }
-    
+
     public void closeOverlay() {
         Component overlay = components.get(ComponentType.getOverlay(mode));
         overlay.reset();
     }
-    
+
     public void openChatbox(int id) {
         Component chatbox = components.get(ComponentType.CHATBOX_OVERLAY);
         chatbox.set(id).refresh();
     }
-        
+
     public void openChatbox(int id, ComponentListener listener) {
         Component chatbox = components.get(ComponentType.CHATBOX_OVERLAY);
         chatbox.set(id).setListener(listener).refresh();
@@ -405,49 +415,49 @@ public final class InterfaceSet {
     public Component getChatbox() {
         return components.get(ComponentType.CHATBOX_OVERLAY);
     }
-    
+
     public void closeChatbox() {
         Component chatbox = components.get(ComponentType.CHATBOX_OVERLAY);
         chatbox.reset();
     }
-    
+
     public Component getAttackTab() {
         return components.get(ComponentType.getAttackTab(mode));
     }
-    
+
     public void openAttackTab(int id) {
         Component tab = components.get(ComponentType.getAttackTab(mode));
         tab.set(id).refresh();
     }
-        
+
     public void openInventory(int id) {
         Component tab = components.get(ComponentType.getInventoryTab(mode));
         tab.set(id).refresh();
     }
-    
+
     public void closeInventory() {
         Component tab = components.get(ComponentType.getInventoryTab(mode));
         tab.reset();
     }
-    
+
     public Component getInventory() {
-    	return components.get(ComponentType.getInventoryTab(mode));
+        return components.get(ComponentType.getInventoryTab(mode));
     }
-    
+
     public Component getComponent(int id) {
-        for(Component component : components.values()) {
-            if(component.currentId == id) {
+        for (Component component : components.values()) {
+            if (component.currentId == id) {
                 return component;
             }
         }
         return null;
     }
-    
+
     public void resetAll() {
-        for(Component component : components.values()) {
-        	if(component.type == ComponentType.ATTACK_TAB_FIXED || component.type == ComponentType.ATTACK_TAB_RESIZABLE) {
-        		continue;
-        	}	
+        for (Component component : components.values()) {
+            if (component.type == ComponentType.ATTACK_TAB_FIXED || component.type == ComponentType.ATTACK_TAB_RESIZABLE) {
+                continue;
+            }
             component.reset();
         }
     }

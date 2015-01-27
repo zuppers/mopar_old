@@ -50,4 +50,8 @@ public class HerbloreInterfaceListener extends ComponentListener {
         player.getInterfaceSet().getChatbox().reset();
     }
 
+    @Override
+    public void componentChanged(Component component, int oldId) {
+        componentClosed(component);
+    }
 }

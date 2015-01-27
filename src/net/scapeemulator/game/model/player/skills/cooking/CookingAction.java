@@ -166,6 +166,10 @@ public class CookingAction extends ReachDistancedAction {
             stop();
         }
 
+        @Override
+        public void componentChanged(Component component, int oldId) {
+            componentClosed(component);
+        }
     }
 
     private class FireObjectListener extends GroundObjectListenerAdapter {

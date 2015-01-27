@@ -1,15 +1,15 @@
 package net.scapeemulator.game.dialogue;
 
-import net.scapeemulator.game.model.player.interfaces.ComponentListenerAdapter;
+import net.scapeemulator.game.model.player.interfaces.ComponentListener;
 import net.scapeemulator.game.model.player.interfaces.InterfaceSet.Component;
 
 /**
- * Written by Hadyn Richard
+ * @author Hadyn Richard
  */
-public final class DialogueContextListener extends ComponentListenerAdapter {
-    
+public final class DialogueContextListener extends ComponentListener {
+
     private final DialogueContext context;
-    
+
     public DialogueContextListener(DialogueContext context) {
         this.context = context;
     }
@@ -22,5 +22,10 @@ public final class DialogueContextListener extends ComponentListenerAdapter {
     @Override
     public void componentClosed(Component component) {
         context.stop();
+    }
+
+    @Override
+    public void componentChanged(Component component, int oldId) {
+        componentClosed(component);
     }
 }

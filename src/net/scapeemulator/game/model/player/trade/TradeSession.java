@@ -94,8 +94,7 @@ public class TradeSession extends ComponentListener {
         player.send(new InterfaceVisibleMessage(VERIFY_WINDOW, 37, true));
         player.send(new InterfaceVisibleMessage(VERIFY_WINDOW, 41, true));
         // player.send(new InterfaceVisibleMessage(VERIFY_WINDOW, 46, true)); TODO TRADE MODIFIED
-        player.getInterfaceSet().getWindow().removeListener();
-        player.getInterfaceSet().openWindow(VERIFY_WINDOW, this);
+        player.getInterfaceSet().openWindow(VERIFY_WINDOW);
 
         status = TradeStatus.VERIFYING;
     }
@@ -357,5 +356,12 @@ public class TradeSession extends ComponentListener {
     @Override
     public void componentClosed(Component component) {
         decline();
+    }
+    
+    @Override
+    public void componentChanged(Component component, int oldId) {
+        if(component.getCurrentId() != VERIFY_WINDOW) {
+            componentClosed(component);
+        }
     }
 }
