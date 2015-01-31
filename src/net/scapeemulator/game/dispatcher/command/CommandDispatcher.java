@@ -2,17 +2,11 @@ package net.scapeemulator.game.dispatcher.command;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import net.scapeemulator.game.dispatcher.command.impl.YellCommandHandler;
 import net.scapeemulator.game.model.player.Player;
 
 public final class CommandDispatcher {
 
     private final Map<String, CommandHandler> handlers = new HashMap<>();
-    
-    public CommandDispatcher() {
-    	bind(new YellCommandHandler("yell"));
-    }
 
     public void bind(CommandHandler handler) {
         handlers.put(handler.getName(), handler);
