@@ -46,7 +46,7 @@ public final class Tile {
                             IMPENETRABLE_WALL_SOUTH_EAST  = 0x2000, IMPENETRABLE_WALL_SOUTH_WEST = 0x4000,
 
                             /* The other flags */
-                            BLOCKED = 0x20000, BRIDGE = 0x40000, NONE = 0x0;
+                            BLOCKED = 0x20000, BRIDGE = 0x40000, LOWERED_OBJECT = 0x80000, NONE = 0x0;
 
     /**
      * The flags for the tile.
