@@ -1,12 +1,34 @@
 package net.scapeemulator.game.model.pathfinding;
 
+import static net.scapeemulator.game.model.object.ObjectOrientation.EAST;
+import static net.scapeemulator.game.model.object.ObjectOrientation.NORTH;
+import static net.scapeemulator.game.model.object.ObjectOrientation.SOUTH;
+import static net.scapeemulator.game.model.object.ObjectOrientation.WEST;
+import static net.scapeemulator.game.model.pathfinding.Tile.BLOCKED;
+import static net.scapeemulator.game.model.pathfinding.Tile.BRIDGE;
+import static net.scapeemulator.game.model.pathfinding.Tile.LOWERED_OBJECT;
+import static net.scapeemulator.game.model.pathfinding.Tile.IMPENETRABLE_OCCUPANT;
+import static net.scapeemulator.game.model.pathfinding.Tile.IMPENETRABLE_WALL_EAST;
+import static net.scapeemulator.game.model.pathfinding.Tile.IMPENETRABLE_WALL_NORTH;
+import static net.scapeemulator.game.model.pathfinding.Tile.IMPENETRABLE_WALL_NORTH_EAST;
+import static net.scapeemulator.game.model.pathfinding.Tile.IMPENETRABLE_WALL_NORTH_WEST;
+import static net.scapeemulator.game.model.pathfinding.Tile.IMPENETRABLE_WALL_SOUTH;
+import static net.scapeemulator.game.model.pathfinding.Tile.IMPENETRABLE_WALL_SOUTH_EAST;
+import static net.scapeemulator.game.model.pathfinding.Tile.IMPENETRABLE_WALL_SOUTH_WEST;
+import static net.scapeemulator.game.model.pathfinding.Tile.IMPENETRABLE_WALL_WEST;
+import static net.scapeemulator.game.model.pathfinding.Tile.OCCUPANT;
+import static net.scapeemulator.game.model.pathfinding.Tile.WALL_EAST;
+import static net.scapeemulator.game.model.pathfinding.Tile.WALL_NORTH;
+import static net.scapeemulator.game.model.pathfinding.Tile.WALL_NORTH_EAST;
+import static net.scapeemulator.game.model.pathfinding.Tile.WALL_NORTH_WEST;
+import static net.scapeemulator.game.model.pathfinding.Tile.WALL_SOUTH;
+import static net.scapeemulator.game.model.pathfinding.Tile.WALL_SOUTH_EAST;
+import static net.scapeemulator.game.model.pathfinding.Tile.WALL_SOUTH_WEST;
+import static net.scapeemulator.game.model.pathfinding.Tile.WALL_WEST;
 import net.scapeemulator.game.model.Position;
 import net.scapeemulator.game.model.mob.Direction;
 import net.scapeemulator.game.model.mob.Mob;
 import net.scapeemulator.game.model.object.ObjectType;
-
-import static net.scapeemulator.game.model.object.ObjectOrientation.*;
-import static net.scapeemulator.game.model.pathfinding.Tile.*;
 
 /**
  * @author Hadyn Richard
@@ -369,14 +391,8 @@ public final class TraversalMap {
         /* Calculate the coordinates */
         int regionX = x >> 6, regionY = y >> 6;
 
-        /* Calculate the local coordinates */
-        int localX = x & 0x3f, localY = y & 0x3f;
-
         Region region = regions[regionX + regionY * SIZE];
-        if (region == null) {
-            return false;
-        }
-        return (region.getTile(1, localX, localY).isActive(LOWERED_OBJECT));
+        return region != null && (region.getTile(1, x & 0x3f, y & 0x3f).isActive(LOWERED_OBJECT));
 
     }
 
