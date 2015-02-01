@@ -70,9 +70,6 @@ public final class ObjectDispatcher {
             if (player.getInHouse() != null) {
                 objectList = player.getInHouse().getObjectList();
             }
-            if (World.getWorld().getTraversalMap().isLowered(position.getX(),position.getY())) {
-                position = new Position(position.getX(),position.getY(),position.getHeight() + 1);
-            }
             GroundObject object = objectList.get(id, position);
             if (object == null || object.isHidden()) {
                 return;

@@ -55,10 +55,6 @@ public final class MapDataListener extends MapListenerAdapter {
         if((flags & MapLoader.FLAG_CLIP) != 0) {
             traversalMap.markBlocked(position.getHeight(), position.getX(), position.getY());
         }
-
-        if ((flags & 2) == 2 && position.getHeight() == 1) {
-            traversalMap.markLoweredObject(position.getX(), position.getY());
-        }
     }
 
     @Override
