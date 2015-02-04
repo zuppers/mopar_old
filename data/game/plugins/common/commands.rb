@@ -212,10 +212,8 @@ bind :cmd, :name => 'yell' do
   msg = args.to_a.join(' ')
 
   # convert to string has implied null-check
-  # nil.to_s = ''
-  # ''.to_s = ''
-  # ;-)
-  if str.to_s.empty?
+  # nil.to_s = '' and ''.to_s = ''  ;-)
+  if msg.to_s.empty?
     player.send_message 'You cannot yell an empty message'
   end
 
