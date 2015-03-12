@@ -196,6 +196,7 @@ public final class PluginLoader {
 
         /* Evaluate each of the scripts */
         for(String scriptName : data.getScripts()) {
+            logger.info("Loading: " + scriptName);
             scriptEnvironment.eval(new Script(new File(scriptDir, scriptName)));
         }
 
