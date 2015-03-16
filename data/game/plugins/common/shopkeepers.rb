@@ -1,5 +1,7 @@
 require 'java'
 
+java_import 'net.scapeemulator.game.task.DistancedAction'
+
 SHOPKEEPERS = {
   519 => 'Bob\'s Brilliant Axes',
   520 => 'Falador General Store', 521 => 'Falador General Store',
