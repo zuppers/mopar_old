@@ -2,6 +2,8 @@ package net.scapeemulator.game.dispatcher.command;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import net.scapeemulator.game.GameServer;
 import net.scapeemulator.game.model.player.Player;
 
 public final class CommandDispatcher {
@@ -11,15 +13,15 @@ public final class CommandDispatcher {
     public void bind(CommandHandler handler) {
         handlers.put(handler.getName(), handler);
     }
-    
+
     public void unbindAll() {
         handlers.clear();
     }
 
     public void handle(Player player, String command) {
-    	if(player.actionsBlocked()) {
-    		return;
-    	}
+        if (player.actionsBlocked()) {
+            return;
+        }
         String[] parts = command.split(" ");
 
         String name = parts[0].toLowerCase();
@@ -30,5 +32,9 @@ public final class CommandDispatcher {
         if (handler != null) {
             handler.handle(player, arguments);
         }
+    }
+
+    public static CommandDispatcher getInstance() {
+        return GameServer.getInstance().getMessageDispatcher().getCommandDispatcher();
     }
 }
