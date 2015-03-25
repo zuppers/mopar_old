@@ -51,6 +51,10 @@ public final class ItemDefinitions {
         return definitions.length;
     }
 
+    public static ItemDefinition[] getDefinitions() {
+        return definitions;
+    }
+
     public static ItemDefinition forId(int id) {
         return definitions[id];
     }
