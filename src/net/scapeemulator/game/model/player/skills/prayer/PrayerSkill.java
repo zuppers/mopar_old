@@ -1,6 +1,6 @@
 package net.scapeemulator.game.model.player.skills.prayer;
 
-import net.scapeemulator.game.GameServer;
+import net.scapeemulator.game.dispatcher.item.ItemDispatcher;
 
 /**
  * @author David Insley
@@ -8,8 +8,6 @@ import net.scapeemulator.game.GameServer;
 public class PrayerSkill {
 
     public static void initialize() {
-
-        // TODO bone on altar
-        GameServer.getInstance().getMessageDispatcher().getItemDispatcher().bind(new BuryBoneHandler());
+        ItemDispatcher.getInstance().bind(new BuryBoneHandler());
     }
 }

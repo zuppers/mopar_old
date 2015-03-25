@@ -1,6 +1,6 @@
 package net.scapeemulator.game.model.player.skills.woodcutting;
 
-import net.scapeemulator.game.GameServer;
+import net.scapeemulator.game.dispatcher.object.ObjectDispatcher;
 
 /**
  * @author David Insley
@@ -15,6 +15,6 @@ public class Woodcutting {
                                   3883, 5902, 5903, 5904, 10041 };
 
     public static void initialize() {
-        GameServer.getInstance().getMessageDispatcher().getObjectDispatcher().bind(new TreeObjectHandler());
+        ObjectDispatcher.getInstance().bind(new TreeObjectHandler());
     }
 }

@@ -1,6 +1,6 @@
 package net.scapeemulator.game.model.player.skills.mining;
 
-import net.scapeemulator.game.GameServer;
+import net.scapeemulator.game.dispatcher.object.ObjectDispatcher;
 
 /**
  * @author David Insley
@@ -20,7 +20,7 @@ public class Mining {
     static final int[] RUNITE_ROCKS = {};
 
     public static void initialize() {
-        GameServer.getInstance().getMessageDispatcher().getObjectDispatcher().bind(new RockObjectHandler());
+        ObjectDispatcher.getInstance().bind(new RockObjectHandler());
     }
 
     static int getDepletedId(int rockId) {

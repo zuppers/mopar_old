@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import net.scapeemulator.game.GameServer;
 import net.scapeemulator.game.model.Option;
 import net.scapeemulator.game.model.definition.ItemDefinitions;
 import net.scapeemulator.game.model.player.Player;
@@ -95,5 +96,9 @@ public final class ItemDispatcher {
                 }
             }
         }
+    }
+
+    public static ItemDispatcher getInstance() {
+        return GameServer.getInstance().getMessageDispatcher().getItemDispatcher();
     }
 }

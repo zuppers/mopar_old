@@ -3,6 +3,7 @@ package net.scapeemulator.game.dispatcher.item;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.scapeemulator.game.GameServer;
 import net.scapeemulator.game.model.player.Player;
 import net.scapeemulator.game.model.player.SlottedItem;
 import net.scapeemulator.game.model.player.inventory.Inventory;
@@ -83,5 +84,9 @@ public final class ItemOnItemDispatcher {
         ids[0] = hash & 0xffff;
         ids[1] = hash >> 16;
         return ids;
+    }
+
+    public static ItemOnItemDispatcher getInstance() {
+        return GameServer.getInstance().getMessageDispatcher().getItemOnItemDispatcher();
     }
 }

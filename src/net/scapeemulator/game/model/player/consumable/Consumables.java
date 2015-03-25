@@ -1,6 +1,6 @@
 package net.scapeemulator.game.model.player.consumable;
 
-import net.scapeemulator.game.GameServer;
+import net.scapeemulator.game.dispatcher.item.ItemDispatcher;
 
 /**
  * @author David Insley
@@ -8,7 +8,7 @@ import net.scapeemulator.game.GameServer;
 public class Consumables {
 
     public static void initialize() {
-        GameServer.getInstance().getMessageDispatcher().getItemDispatcher().bind(new FoodHandler());
+        ItemDispatcher.getInstance().bind(new FoodHandler());
     }
 
 }

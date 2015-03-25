@@ -1,6 +1,7 @@
 package net.scapeemulator.game.model.player.skills.herblore;
 
-import net.scapeemulator.game.GameServer;
+import net.scapeemulator.game.dispatcher.item.ItemDispatcher;
+import net.scapeemulator.game.dispatcher.item.ItemOnItemDispatcher;
 
 /**
  * @author David Insley
@@ -8,20 +9,21 @@ import net.scapeemulator.game.GameServer;
 public class Herblore {
 
     public static void initialize() {
+
+        ItemDispatcher.getInstance().bind(new GrimyHerbHandler());
+
         for (Secondary secondary : Secondary.values()) {
             if (secondary.getUngroundId() != -1) {
-                GameServer.getInstance().getMessageDispatcher().getItemOnItemDispatcher().bind(new GrindingHandler(secondary));
+                ItemOnItemDispatcher.getInstance().bind(new GrindingHandler(secondary));
             }
         }
-        
-        GameServer.getInstance().getMessageDispatcher().getItemDispatcher().bind(new GrimyHerbHandler());
-        
+
         for (Herb herb : Herb.values()) {
-            GameServer.getInstance().getMessageDispatcher().getItemOnItemDispatcher().bind(new HerbOnVialHandler(herb));
+            ItemOnItemDispatcher.getInstance().bind(new HerbOnVialHandler(herb));
         }
-        
+
         for (Potion potion : Potion.values()) {
-            GameServer.getInstance().getMessageDispatcher().getItemOnItemDispatcher().bind(new CombineSecondaryHandler(potion));
+            ItemOnItemDispatcher.getInstance().bind(new CombineSecondaryHandler(potion));
         }
     }
 
