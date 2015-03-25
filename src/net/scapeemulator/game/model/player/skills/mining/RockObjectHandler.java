@@ -22,7 +22,7 @@ public class RockObjectHandler extends ObjectHandler {
         }
         RockType type = RockType.forId(object.getId());
         if (type == null) {
-            System.out.println("Mine option found with norock type: " + object.getId());
+            System.out.println("Mine option found with no rock type: " + object.getId());
             return;
         }
         player.startAction(new MiningAction(player, type, object));
