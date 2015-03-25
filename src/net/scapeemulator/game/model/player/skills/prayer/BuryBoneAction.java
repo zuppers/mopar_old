@@ -19,7 +19,7 @@ public class BuryBoneAction extends Action<Player> {
     private boolean started;
 
     public BuryBoneAction(Player player, Bone bone, SlottedItem item) {
-        super(player, 3, true);
+        super(player, 2, true);
         this.bone = bone;
         this.item = item;
     }
