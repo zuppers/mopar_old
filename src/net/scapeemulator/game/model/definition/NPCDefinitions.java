@@ -12,7 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Written by Hadyn Richard
+ * @author Hadyn Richard
  */
 public final class NPCDefinitions {
 
@@ -53,13 +53,24 @@ public final class NPCDefinitions {
     }
 
     public static int count() {
-        return definitions.length;
+        if (definitions != null) {
+            return definitions.length;
+        }
+        throw new IllegalStateException("NPCDefinitions not initialized!");
+    }
+
+    public static NPCDefinition[] getDefinitions() {
+        if (definitions != null) {
+            return definitions;
+        }
+        throw new IllegalStateException("NPCDefinitions not initialized!");
     }
 
     public static NPCDefinition forId(int id) {
         try {
             return definitions[id];
         } catch (IndexOutOfBoundsException e) {
+            e.printStackTrace();
             return null;
         }
     }
