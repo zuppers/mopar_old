@@ -8,6 +8,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.HashMap;
+import java.util.Map;
 
 import net.scapeemulator.cache.def.NPCDefinition;
 import net.scapeemulator.game.cache.MapLoader;
@@ -31,7 +33,7 @@ import net.scapeemulator.game.model.definition.NPCDefinitions;
 import net.scapeemulator.game.model.mob.Direction;
 import net.scapeemulator.game.model.mob.combat.AttackType;
 import net.scapeemulator.game.model.npc.NPC;
-import net.scapeemulator.game.model.npc.drops.NPCDropTable;
+import net.scapeemulator.game.model.npc.drops.DropTable;
 import net.scapeemulator.game.model.npc.drops.TableType;
 import net.scapeemulator.game.model.npc.stateful.impl.NormalNPC;
 import net.scapeemulator.game.model.player.Player;
@@ -317,16 +319,16 @@ public final class JdbcSerializer extends Serializer implements Closeable {
 
     @Override
     public void loadNPCDrops() {
-        System.out.print("Loading NPC drops... ");
-        int count = 0;
-        try (ResultSet set = connection.prepareStatement("SELECT * FROM npcdrops").executeQuery()) {
+        System.out.println("Loading NPC drops... ");
+        Map<String, DropTable> tables = new HashMap<>();
+        try {
+            ResultSet set = connection.prepareStatement("SELECT * FROM npc_drops").executeQuery();
             while (set.next()) {
-                int npcType = set.getInt("type");
-                NPCDropTable table = NPCDropTable.DROP_TABLES[npcType];
+                String tableName = set.getString("def");
+                DropTable table = tables.get(tableName);
                 if (table == null) {
-                    table = new NPCDropTable();
-                    NPCDropTable.DROP_TABLES[npcType] = table;
-                    count++;
+                    table = new DropTable();
+                    tables.put(tableName, table);
                 }
                 TableType type = TableType.valueOf(set.getString("table_type"));
                 double chance = set.getDouble("chance");
@@ -346,10 +348,31 @@ public final class JdbcSerializer extends Serializer implements Closeable {
                     }
                 }
             }
-            System.out.println("complete! Loaded " + count);
+            int count = 0;
+            set = connection.prepareStatement("SELECT * FROM npc_drop_defs").executeQuery();
+            while (set.next()) {
+                String tableName = set.getString("name");
+                DropTable table = tables.get(tableName);
+                if (table == null) {
+                    System.out.println("No drops found for table " + tableName + "!");
+                    continue;
+                }
+                String[] npcTypes = set.getString("types").trim().split(",");
+                int[] npcIds = new int[npcTypes.length];
+                for (int i = 0; i < npcTypes.length; i++) {
+                    try {
+                        npcIds[i] = Integer.parseInt(npcTypes[i]);
+                        count++;
+                    } catch (NumberFormatException e) {
+                        System.out.println("Number format exception for NPC type " + npcTypes[i] + " in drop def " + tableName);
+                    }
+                }
+            }
+            System.out.println("Complete! Loaded drops for " + count + " NPC types.");
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
     }
 
     @Override
