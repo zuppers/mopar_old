@@ -32,12 +32,12 @@ public final class DropTableItem {
         return id;
     }
 
+    public String getAmountRaw() {
+        return specialAmount != null ? specialAmount : Integer.toString(staticAmount);
+    }
+
     public int getAmount() {
-        if (staticAmount > 0) {
-            return staticAmount;
-        } else {
-            return parseSpecialAmount();
-        }
+        return specialAmount != null ? parseSpecialAmount() : staticAmount;
     }
 
     private int parseSpecialAmount() {
