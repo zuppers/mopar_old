@@ -1,6 +1,7 @@
 package net.scapeemulator.game.model.npc.action;
 
 import net.scapeemulator.game.model.mob.Animation;
+import net.scapeemulator.game.model.mob.combat.MobKillListeners;
 import net.scapeemulator.game.model.npc.NPC;
 import net.scapeemulator.game.task.Action;
 
@@ -28,6 +29,7 @@ public final class NPCDeathAction extends Action<NPC> {
 		case END:
 			mob.setHidden(true);
 			mob.drop(mob.getHits().getMostDamageDealt());
+			MobKillListeners.mobKilled(mob, mob.getHits().getMostDamageDealt());
 			setDelay(mob.getDefinition().getRespawnTime());
 			state = State.RESPAWN;
 			return;

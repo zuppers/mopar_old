@@ -11,6 +11,7 @@ import net.scapeemulator.game.model.mob.Mob;
 import net.scapeemulator.game.model.npc.action.NPCDeathAction;
 import net.scapeemulator.game.model.npc.drops.DropTable;
 import net.scapeemulator.game.model.npc.drops.DropTables;
+import net.scapeemulator.game.model.npc.drops.DropTables.TableDefinition;
 import net.scapeemulator.game.model.player.Item;
 import net.scapeemulator.game.model.player.Player;
 import net.scapeemulator.game.model.player.skills.prayer.Bone;
@@ -107,13 +108,13 @@ public abstract class NPC extends Mob {
     }
 
     public void drop(Mob receiver) {
-        DropTable drops = DropTables.getTable(definition).getTable();
-        if (drops == null) {
+        TableDefinition def = DropTables.getTable(definition);
+        if (def == null) {
             // TODO remove this
             World.getWorld().getGroundItems().add(Bone.BONES.getItemId(), 1, position, receiver instanceof Player ? (Player) receiver : null);
             return;
         }
-        List<Item> items = drops.getRandomDrops();
+        List<Item> items = def.getTable().getRandomDrops();
         for (Item item : items) {
             World.getWorld().getGroundItems().add(item.getId(), item.getAmount(), position, receiver instanceof Player ? (Player) receiver : null);
         }
