@@ -611,11 +611,11 @@ public final class ItemDefinition {
         return modifiedTextureColors;
     }
 
-    public int getColourEquip1() {
+    public int getMaleModel3() {
         return maleModel3;
     }
 
-    public int getColourEquip2() {
+    public int getFemaleModel3() {
         return femaleModel3;
     }
 
