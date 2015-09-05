@@ -1,23 +1,26 @@
 package net.scapeemulator.cache.def;
 
 import java.nio.ByteBuffer;
+
 import net.scapeemulator.cache.util.ByteBufferUtils;
 import net.scapeemulator.game.model.mob.combat.AttackType;
 import net.scapeemulator.game.model.player.skills.magic.CombatSpell;
 
-public final class NPCDefinition {
+public final class NPCDefinition implements Comparable<NPCDefinition> {
 
-    // Basic information
+    private int id;
     private String name;
-    private String examine;
+    private int combatLevel;
     private String[] options;
     private int size;
     private int stance;
 
     private int[] modelIds;
 
+    // Values after this comment are not in the cache
+    private String examine;
+
     // Combat information
-    private int combatLevel;
     private boolean attackable;
     private int aggressiveRange;
     private int baseHitpoints = 1;
@@ -47,6 +50,7 @@ public final class NPCDefinition {
     @SuppressWarnings("unused")
     public static NPCDefinition decode(int id, ByteBuffer buffer) {
         NPCDefinition def = new NPCDefinition();
+        def.id = id;
         def.options = new String[5];
         def.size = 1;
         while (true) {
@@ -242,6 +246,10 @@ public final class NPCDefinition {
         return def;
     }
 
+    public int getId() {
+        return id;
+    }
+
     public String getName() {
         return name;
     }
@@ -412,6 +420,19 @@ public final class NPCDefinition {
 
     public void setProjectileSplashGFX(int projectileSplashGFX) {
         this.projectileSplashGFX = projectileSplashGFX;
+    }
+
+    @Override
+    public int compareTo(NPCDefinition other) {
+        if (other.id == id) {
+            return 0;
+        }
+        return id > other.id ? 1 : -1;
+    }
+
+    @Override
+    public String toString() {
+        return name + " (id: " + id + ", lvl: " + combatLevel + ")";
     }
 
 }

@@ -75,6 +75,7 @@ public final class ObjectDefinition {
                 int i = buffer.get();
             } else if (opcode == 40) {
                 int length = buffer.get() & 0xFF;
+                // Original / modified colors
                 for (int index = 0; index < length; index++) {
                     buffer.getShort();
                     buffer.getShort();
@@ -99,6 +100,7 @@ public final class ObjectDefinition {
             } else if (opcode == 67) {
                 int i = buffer.getShort() & 0xffff;
             } else if (opcode == 69) {
+                // valid interact sides ?
                 int i = buffer.get() & 0xff;
             } else if (opcode == 70) {
                 int i = buffer.getShort();
@@ -117,7 +119,7 @@ public final class ObjectDefinition {
                 }
 
                 int i4 = buffer.get() & 0xff;
-
+                // Child ids ?
                 for (int var6 = 0; var6 <= i4; var6++) {
                     int i5 = buffer.getShort();
                 }
