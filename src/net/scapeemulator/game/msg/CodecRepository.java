@@ -100,7 +100,9 @@ import net.scapeemulator.game.msg.encoder.ScriptMessageEncoder;
 import net.scapeemulator.game.msg.encoder.ScriptStringMessageEncoder;
 import net.scapeemulator.game.msg.encoder.SendIgnoresMessageEncoder;
 import net.scapeemulator.game.msg.encoder.ServerMessageEncoder;
+import net.scapeemulator.game.msg.encoder.SetPositionMessageEncoder;
 import net.scapeemulator.game.msg.encoder.SkillMessageEncoder;
+import net.scapeemulator.game.msg.encoder.MinimapUpdateMessageEncoder;
 import net.scapeemulator.game.util.LandscapeKeyTable;
 
 public final class CodecRepository {
@@ -182,6 +184,8 @@ public final class CodecRepository {
         bind(new MagicOnNPCMessageDecoder());
 
         /* encoders */
+        bind(new SetPositionMessageEncoder());
+        
         bind(new RegionChangeMessageEncoder(table));
         bind(new RegionConstructMessageEncoder(table));
 
@@ -198,6 +202,7 @@ public final class CodecRepository {
         bind(new InterfacePlayerHeadMessageEncoder());
         bind(new InterfaceNPCHeadMessageEncoder());
         bind(new InterfaceAnimationMessageEncoder());
+        bind(new MinimapUpdateMessageEncoder());
 
         bind(new ServerMessageEncoder());
         bind(new RenameTileActionMessageEncoder());
