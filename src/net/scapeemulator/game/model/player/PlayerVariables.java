@@ -7,8 +7,17 @@ public class PlayerVariables {
 
     public enum Variable {
 
+        /* @formatter:off */
+        
         FIRST_LOGIN(1),
-        HOME_LOCATION;
+        SLAYER_TASK,
+        SLAYER_INFO,
+        HOME_LOCATION,
+        
+        // Construction
+        CON_FURN_REMOVE(false);
+        
+        /* @formatter:on */
 
         private final boolean persists;
         private final int defaultValue;
@@ -19,6 +28,10 @@ public class PlayerVariables {
 
         private Variable(int defaultValue) {
             this(defaultValue, true);
+        }
+
+        private Variable(boolean persists) {
+            this(0, persists);
         }
 
         private Variable(int defaultValue, boolean persists) {
