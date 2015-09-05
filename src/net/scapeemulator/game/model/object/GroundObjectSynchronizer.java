@@ -29,7 +29,8 @@ public final class GroundObjectSynchronizer extends GroundObjectListenerAdapter 
     private final Set<Integer> uids = new HashSet<>();
 
     /**
-     * The list of ground objects to remove once the player reaches a certain height.
+     * The list of ground objects to remove once the player reaches a certain
+     * height.
      */
     private final List<GroundObject> toRemove = new LinkedList<>();
 
@@ -89,16 +90,14 @@ public final class GroundObjectSynchronizer extends GroundObjectListenerAdapter 
     @Override
     public void groundObjectRemoved(GroundObject object) {
         Position position = object.getPosition();
-        boolean sameHeight = player.getPosition().getHeight() == position.getHeight();
         uids.remove(object.getUid());
-        if (sameHeight && player.getPosition().isWithinScene(position)) {
-            sendPlacementCoords(position);
-            player.send(new GroundObjectRemoveMessage(position, object.getType().getId(), object.getRotation()));
-            return;
-        }
-
-        if (!sameHeight && player.getPosition().isWithinScene(position)) {
-            toRemove.add(object);
+        if (player.getPosition().isWithinScene(position)) {
+            if (player.getPosition().getHeight() == position.getHeight()) {
+                sendPlacementCoords(position);
+                player.send(new GroundObjectRemoveMessage(position, object.getType().getId(), object.getRotation()));
+            } else {
+                toRemove.add(object);
+            }
         }
     }
 

@@ -48,7 +48,8 @@ public final class GroundObjectList {
     private boolean recordUpdates = true;
 
     /**
-     * The representation of a tile in the game world that contains ground objects.
+     * The representation of a tile in the game world that contains ground
+     * objects.
      */
     private class Tile {
 
@@ -183,6 +184,9 @@ public final class GroundObjectList {
             int oldId = this.id;
             this.id = id;
 
+            /* When changing ID the anim id automatically resets */
+            animationId = getDefinition().getAnimationId();
+            
             if (!isHidden) {
 
                 /* Update the listeners */
@@ -429,7 +433,9 @@ public final class GroundObjectList {
      * @param listener The listener to add.
      */
     public void addListener(GroundObjectListener listener) {
-        listeners.add(listener);
+        if (!listeners.contains(listener)) {
+            listeners.add(listener);
+        }
     }
 
     /**
