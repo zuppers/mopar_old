@@ -20,15 +20,12 @@ public final class QuadArea extends Area {
     @Override
     public boolean withinArea(int x, int y, int padding, boolean corners) {
         if (!corners && padding != 0) {
-            int deltaX = Math.abs(minX - x);
-            int deltaY = Math.abs(minY - y);
-            if (deltaX == padding && deltaY == padding) {
-                return false;
-            }
-            deltaX = Math.abs(x - minX);
-            deltaY = Math.abs(y - minY);
-            if (deltaX == padding && deltaY == padding) {
-                return false;
+            int deltaX = x - minX;
+            int deltaY = y - minY;
+            if (deltaX < -(padding - 1) || deltaX >= maxX - minX + padding) {
+                if (deltaY >= maxY - minY + padding || deltaY < -(padding - 1)) {
+                    return false;
+                }
             }
         }
         return x >= (minX - padding) && x <= (maxX + padding) && y >= (minY - padding) && y <= (maxY + padding);
