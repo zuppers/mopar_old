@@ -4,7 +4,6 @@ import net.scapeemulator.game.dialogue.Dialogue;
 import net.scapeemulator.game.dialogue.DialogueContext;
 import net.scapeemulator.game.dialogue.DialogueOption;
 import net.scapeemulator.game.dialogue.HeadAnimation;
-import net.scapeemulator.game.dialogue.Stage;
 import net.scapeemulator.game.dispatcher.npc.NPCDispatcher;
 import net.scapeemulator.game.dispatcher.npc.NPCHandler;
 import net.scapeemulator.game.dispatcher.object.ObjectDispatcher;
@@ -29,9 +28,9 @@ import net.scapeemulator.game.util.HandlerContext;
  */
 public class TollGate {
 
+    private static final Dialogue GATE_DIALOGUE = new GateDialogue();
     private static final int GUARD_TYPE = 925;
     private static final Item TOLL = new Item(995, 10);
-    private static Dialogue gateDialogue;
 
     public static void init() {
         ObjectDispatcher.getInstance().bind(new ObjectHandler(Option.ONE) {
@@ -62,7 +61,6 @@ public class TollGate {
             }
 
         });
-        createGateDialgoue();
         World.getWorld().getGroundObjects().addListener(new GateObjects());
         NPC npc = new NormalNPC(GUARD_TYPE);
         npc.setPosition(new Position(3267, 3226, 0));
@@ -98,7 +96,7 @@ public class TollGate {
                     mob.startAction(new WalkThroughGate(mob));
                 }
             } else {
-                gateDialogue.displayTo(mob);
+                GATE_DIALOGUE.displayTo(mob);
                 stop();
             }
         }
@@ -133,7 +131,7 @@ public class TollGate {
                     wasRunning = true;
                     mob.getSettings().setRunning(false);
                 }
-                // TODO change to force walking update block when added
+                // TODO change to force walking update block when added maybe?
                 mob.getWalkingQueue().addFirstStep(dest);
                 started = true;
             }
@@ -181,7 +179,10 @@ public class TollGate {
         }
 
         private static void open() {
-            /* We use setId(0) instead of hide() because it keeps the path clipped */
+            /*
+             * We use setId(0) instead of hide() because it keeps the path
+             * clipped
+             */
             closedRight.setId(0);
             openRight.reveal();
             closedLeft.setId(0);
@@ -196,122 +197,67 @@ public class TollGate {
         }
     }
 
-    private static void createGateDialgoue() {
-        gateDialogue = new Dialogue();
-        gateDialogue.setStartingStage(new Stage() {
+    private static class GateDialogue extends Dialogue {
 
-            @Override
-            public void initializeContext(DialogueContext context) {
-                context.openNpcConversationDialogue("Halt! Anyone wishing to enter Al Kharid must pay the toll.", GUARD_TYPE, HeadAnimation.STERN, true);
-            }
+        @Override
+        public void initialize(DialogueContext ctx) {
+            ctx.openNpcConversationDialogue("Halt! Anyone wishing to enter Al Kharid must pay the toll.", GUARD_TYPE, HeadAnimation.STERN, true);
+            ctx.setStage(1);
+        }
 
-            @Override
-            public void handleOption(DialogueContext context, DialogueOption option) {
-                context.setStage("2");
-            }
-
-        });
-        gateDialogue.addStage("2", new Stage() {
-
-            @Override
-            public void initializeContext(DialogueContext context) {
-                context.openPlayerConversationDialogue("And how much is that?", HeadAnimation.CALMLY_TALKING, true);
-            }
-
-            @Override
-            public void handleOption(DialogueContext context, DialogueOption option) {
-                context.setStage("3");
-            }
-
-        });
-        gateDialogue.addStage("3", new Stage() {
-
-            @Override
-            public void initializeContext(DialogueContext context) {
-                context.openNpcConversationDialogue("10 gold pieces.", GUARD_TYPE, HeadAnimation.PLEASED, true);
-            }
-
-            @Override
-            public void handleOption(DialogueContext context, DialogueOption option) {
-                context.setStage("4");
-            }
-
-        });
-        gateDialogue.addStage("4", new Stage() {
-
-            @Override
-            public void initializeContext(DialogueContext context) {
-                context.openOptionDialogue("10 whole pieces?! That's ridiculous! I'm not paying that.", "Fine. I'll pay that.");
-            }
-
-            @Override
-            public void handleOption(DialogueContext context, DialogueOption option) {
-                if (option == DialogueOption.OPTION_2) {
-                    context.setStage("5-2");
+        @Override
+        public void handleOption(DialogueContext ctx, DialogueOption opt) {
+            switch (ctx.getStage()) {
+            case -1:
+                ctx.stop();
+                break;
+            case 1:
+                ctx.openPlayerConversationDialogue("And how much is that?", HeadAnimation.CALMLY_TALKING, true);
+                ctx.setStage(2);
+                break;
+            case 2:
+                ctx.openNpcConversationDialogue("10 gold pieces.", GUARD_TYPE, HeadAnimation.PLEASED, true);
+                ctx.setStage(ctx.getPlayer().getInventory().contains(TOLL) ? 31 : 32);
+                break;
+            case 31:
+                ctx.openOptionDialogue("10 whole pieces?! That's ridiculous! I'm not paying that.", "Fine. I'll pay that.");
+                ctx.setStage(41);
+                break;
+            case 41:
+                if (opt == DialogueOption.OPTION_1) {
+                    ctx.openPlayerConversationDialogue("10 whole pieces?! That's ridiculous! I'm not paying that.", HeadAnimation.ANGRY, true);
+                    ctx.setStage(511);
                 } else {
-                    context.setStage("5-1");
+                    ctx.openPlayerConversationDialogue("Fine. I'll pay that.", HeadAnimation.SAD, true);
+                    ctx.setStage(512);
                 }
-            }
-
-        });
-        gateDialogue.addStage("5-1", new Stage() {
-
-            @Override
-            public void initializeContext(DialogueContext context) {
-                context.openPlayerConversationDialogue("10 whole pieces?! That's ridiculous! I'm not paying that.", HeadAnimation.ANGRY, true);
-            }
-
-            @Override
-            public void handleOption(DialogueContext context, DialogueOption option) {
-                context.setStage("6-1");
-            }
-
-        });
-        gateDialogue.addStage("6-1", new Stage() {
-
-            @Override
-            public void initializeContext(DialogueContext context) {
-                context.openNpcConversationDialogue("Then go away!", GUARD_TYPE, HeadAnimation.ANGRY, true);
-            }
-
-            @Override
-            public void handleOption(DialogueContext context, DialogueOption option) {
-                context.stop();
-            }
-
-        });
-        gateDialogue.addStage("5-2", new Stage() {
-
-            @Override
-            public void initializeContext(DialogueContext context) {
-                context.openPlayerConversationDialogue("Fine. I'll pay that.", HeadAnimation.SAD, true);
-            }
-
-            @Override
-            public void handleOption(DialogueContext context, DialogueOption option) {
-                Player player = context.getPlayer();
+                break;
+            case 512:
+                Player player = ctx.getPlayer();
                 if (!player.getInventory().contains(TOLL)) {
-                    context.setStage("6-2");
+                    // Really shouldn't happen because we checked already... but
+                    // just in case.
+                    ctx.openNpcConversationDialogue("Bah, you don't even have enough coins! Go away!", GUARD_TYPE, HeadAnimation.ANGRY, true);
+                    ctx.setStage(-1);
                 } else {
-                    context.stop();
+                    ctx.stop();
                     player.getInventory().remove(TOLL);
                     player.sendMessage("You pay the guard and he opens the gate.");
                     player.startAction(new WalkThroughGate(player));
                 }
+                break;
+            case 32:
+                ctx.openPlayerConversationDialogue("But I don't have 10 gold pieces...", HeadAnimation.SAD, true);
+                ctx.setStage(42);
+                break;
+            case 42:
+            case 511:
+                ctx.openNpcConversationDialogue("Then go away!", GUARD_TYPE, HeadAnimation.ANGRY, true);
+                ctx.setStage(-1);
+                break;
             }
+        }
 
-        });
-        gateDialogue.addStage("6-2", new Stage() {
-            @Override
-            public void initializeContext(DialogueContext context) {
-                context.openNpcConversationDialogue("Bah, you don't even have enough coins! Go away!", GUARD_TYPE, HeadAnimation.ANGRY, true);
-            }
-
-            @Override
-            public void handleOption(DialogueContext context, DialogueOption option) {
-                context.stop();
-            }
-
-        });
     }
+
 }

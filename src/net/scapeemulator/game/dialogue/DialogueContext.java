@@ -1,7 +1,6 @@
 package net.scapeemulator.game.dialogue;
 
 import net.scapeemulator.game.model.definition.NPCDefinitions;
-import net.scapeemulator.game.model.npc.NPC;
 import net.scapeemulator.game.model.player.interfaces.InterfaceSet.Component;
 import net.scapeemulator.game.model.player.Player;
 import net.scapeemulator.game.msg.impl.inter.InterfaceAnimationMessage;
@@ -14,8 +13,6 @@ import org.codehaus.plexus.util.StringUtils;
  * @author Hadyn Richard
  */
 public final class DialogueContext {
-
-    public static final int CURRENT_TARGET = -1;
 
     private static final int TEXT_OFFSET = 210;
     private static final int TEXT_OFFSET_NO_INPUT = 214;
@@ -30,12 +27,11 @@ public final class DialogueContext {
 
     private final Player player;
     private final Dialogue dialogue;
-    private Stage currentStage;
-    private DialogueType dialogueType;
+    private DialogueType displayedType;
     private String[] options;
     private boolean inputDisplayed;
     private boolean overflowDisplayed;
-
+    private int stage;
     private boolean isStopped;
 
     private enum DialogueType {
@@ -57,12 +53,7 @@ public final class DialogueContext {
     }
 
     private void init() {
-        setStage(Dialogue.START_STAGE);
-    }
-
-    public void setStage(String name) {
-        currentStage = dialogue.getStage(name);
-        currentStage.initializeContext(this);
+        dialogue.initialize(this);
     }
 
     public void handleInput(int id, int componentId) {
@@ -72,11 +63,11 @@ public final class DialogueContext {
             return;
         }
 
-        switch (dialogueType) {
+        switch (displayedType) {
         case PLAYER_CONVERSATION:
         case NPC_CONVERSATION:
         case TEXT:
-            currentStage.handleOption(this, DialogueOption.CONTINUE);
+            dialogue.handleOption(this, DialogueOption.CONTINUE);
             break;
 
         case TWO_OPTION:
@@ -88,7 +79,7 @@ public final class DialogueContext {
         case EIGHT_OPTION:
         case NINE_OPTION:
             int offset = componentId - 1;
-            int count = getAmountOptions(dialogueType);
+            int count = getAmountOptions(displayedType);
             if (count > 5) {
 
                 /* Swap from overflow to option chatbox */
@@ -127,7 +118,7 @@ public final class DialogueContext {
                 offset += 4;
             }
 
-            currentStage.handleOption(this, DialogueOption.forId(offset));
+            dialogue.handleOption(this, DialogueOption.forId(offset));
             break;
         }
     }
@@ -147,11 +138,11 @@ public final class DialogueContext {
         player.getInterfaceSet().getChatbox().removeListener();
         player.getInterfaceSet().openChatbox(id);
         player.getInterfaceSet().getChatbox().setListener(new DialogueContextListener(this));
-        dialogueType = DialogueType.PLAYER_CONVERSATION;
+        displayedType = DialogueType.PLAYER_CONVERSATION;
         inputDisplayed = displayInput;
     }
 
-    public void openNpcConversationDialogue(String text, int type, HeadAnimation animation, boolean displayInput) {
+    public void openNpcConversationDialogue(String text, int npcType, HeadAnimation animation, boolean displayInput) {
         String[] chunks = split(text);
         if (chunks.length >= 5) {
             throw new IllegalArgumentException();
@@ -161,22 +152,13 @@ public final class DialogueContext {
             player.setInterfaceText(id, i + 4, chunks[i]);
         }
 
-        /* TODO: Possibly clean up */
-        if (type == CURRENT_TARGET) {
-            if (!player.isTurnToTargetSet()) {
-                throw new IllegalStateException();
-            }
-            NPC npc = (NPC) player.getTurnToTarget();
-            type = npc.getType();
-        }
-
-        player.setInterfaceText(id, 3, StringUtils.capitalise(NPCDefinitions.forId(type).getName()));
+        player.setInterfaceText(id, 3, StringUtils.capitalise(NPCDefinitions.forId(npcType).getName()));
         player.send(new InterfaceAnimationMessage(id, 2, animation.getAnimationId()));
-        player.send(new InterfaceNPCHeadMessage(id, 2, type));
+        player.send(new InterfaceNPCHeadMessage(id, 2, npcType));
         player.getInterfaceSet().getChatbox().removeListener();
         player.getInterfaceSet().openChatbox(id);
         player.getInterfaceSet().getChatbox().setListener(new DialogueContextListener(this));
-        dialogueType = DialogueType.PLAYER_CONVERSATION;
+        displayedType = DialogueType.PLAYER_CONVERSATION;
         inputDisplayed = displayInput;
     }
 
@@ -192,7 +174,7 @@ public final class DialogueContext {
         player.getInterfaceSet().getChatbox().removeListener();
         player.getInterfaceSet().openChatbox(id);
         player.getInterfaceSet().getChatbox().setListener(new DialogueContextListener(this));
-        dialogueType = DialogueType.TEXT;
+        displayedType = DialogueType.TEXT;
         inputDisplayed = displayInput;
     }
 
@@ -217,7 +199,7 @@ public final class DialogueContext {
         player.getInterfaceSet().getChatbox().removeListener();
         player.getInterfaceSet().openChatbox(optionInterfaceId);
         player.getInterfaceSet().getChatbox().setListener(new DialogueContextListener(this));
-        dialogueType = getOptionDialogue(amountOptions);
+        displayedType = getOptionDialogue(amountOptions);
         inputDisplayed = true;
         overflowDisplayed = false;
         options = opts;
@@ -310,6 +292,14 @@ public final class DialogueContext {
         return builder.toString().split("\n");
     }
 
+    public int getStage() {
+        return stage;
+    }
+    
+    public void setStage(int stage) {
+        this.stage = stage;
+    }
+    
     public Player getPlayer() {
         return player;
     }
