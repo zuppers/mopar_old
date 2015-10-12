@@ -46,6 +46,7 @@ import net.scapeemulator.game.model.player.skills.herblore.Herblore;
 import net.scapeemulator.game.model.player.skills.magic.Magic;
 import net.scapeemulator.game.model.player.skills.mining.Mining;
 import net.scapeemulator.game.model.player.skills.prayer.PrayerSkill;
+import net.scapeemulator.game.model.player.skills.runecrafting.Runecrafting;
 import net.scapeemulator.game.model.player.skills.woodcutting.Woodcutting;
 import net.scapeemulator.game.msg.CodecRepository;
 import net.scapeemulator.game.msg.MessageDispatcher;
@@ -198,6 +199,7 @@ public final class GameServer {
         Firemaking.initialize();
         PrayerSkill.initialize();
         Herblore.initialize();
+        Runecrafting.initialize();
         Woodcutting.initialize();
         Construction.initialize();
 
