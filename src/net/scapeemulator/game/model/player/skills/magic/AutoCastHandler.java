@@ -40,11 +40,11 @@ public class AutoCastHandler {
 					return;
 				} else {
 					player.getPlayerCombatHandler().restoreTab();
-					CombatSpell old = player.getCombatHandler().getAutoCast();
+					DamageSpell old = player.getCombatHandler().getAutoCast();
 					if(old != null) {
 						player.send(new InterfaceVisibleMessage(90, old.getAutoCastConfig(), false));
 					}
-					CombatSpell spell = acw.spells[child];
+					DamageSpell spell = acw.spells[child];
 					if(spell == null) {
 						return;
 					}
@@ -66,14 +66,14 @@ public class AutoCastHandler {
 		ANCIENT_STAFF(388, Spellbook.ANCIENT_SPELLBOOK), // TODO copy all directly
 		DEFAULT(319, Spellbook.NORMAL_SPELLBOOK, 1, 4, 6, 8, 10, 14, 17, 20, 24, 27, 33, 38, 45, 48, 52, 55);
 
-		private final CombatSpell[] spells;
+		private final DamageSpell[] spells;
 		private final int tabId;
 		
 		private AutoCastWindow(int tabId, Spellbook book, int... spellIndices) {
 			this.tabId = tabId;
-			spells = new CombatSpell[spellIndices.length];
+			spells = new DamageSpell[spellIndices.length];
 			for (int i = 0; i < spellIndices.length; i++) {
-				spells[i] = (CombatSpell) book.getSpell(spellIndices[i]);
+				spells[i] = (DamageSpell) book.getSpell(spellIndices[i]);
 			}
 		}
 

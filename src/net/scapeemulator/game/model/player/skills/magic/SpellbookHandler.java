@@ -20,7 +20,7 @@ public class SpellbookHandler extends WindowHandler {
             return true;
         }
         switch (spell.getType()) {
-        case COMBAT:
+        case DAMAGE:
         case EFFECT_MOB:
         case ITEM:
             return true;

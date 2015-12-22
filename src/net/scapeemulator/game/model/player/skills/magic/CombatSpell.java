@@ -19,21 +19,17 @@ import net.scapeemulator.game.msg.impl.PlacementCoordsMessage;
 public class CombatSpell extends Spell {
 
 	private String name;
-	private int autoCastConfig;
 	public static SpotAnimation SPLASH_GRAPHIC = new SpotAnimation(85, 0, 100);
-	private int projectileGraphic;
-	private int projectileStartHeight;
-	private int projectileEndHeight;
-	private int projectileDelay;
-	private SpotAnimation explosionGraphic;
-	private int maxHit;
+	protected int projectileGraphic;
+	protected int projectileStartHeight;
+	protected int projectileEndHeight;
+	protected int projectileDelay;
+	protected SpotAnimation explosionGraphic;
 
-	public CombatSpell(String name, int autoCastConfig, double xp, int maxHit, int animation, int graphic) {
-		super(SpellType.COMBAT, xp, new Animation(animation), new SpotAnimation(graphic, 0, 100)); 
+	public CombatSpell(SpellType type, String name, int animation, int graphic) {
+		super(type, new Animation(animation), new SpotAnimation(graphic, 0, 100)); 
 		// TODO anim height should be 0 for teleblock and miasmic spells
 		this.name = name;
-		this.autoCastConfig = autoCastConfig;
-		this.maxHit = maxHit;
 	}
 
 	public void cast(Mob caster, Mob target) {
@@ -62,14 +58,6 @@ public class CombatSpell extends Spell {
 
 	public String getName() {
 		return name;
-	}
-
-	public int getAutoCastConfig() {
-		return autoCastConfig;
-	}
-
-	public int getMaxHit() {
-		return maxHit;
 	}
 
 	public int getProjectileGraphic() {
