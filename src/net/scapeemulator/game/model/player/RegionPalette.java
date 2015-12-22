@@ -3,15 +3,17 @@ package net.scapeemulator.game.model.player;
 import net.scapeemulator.game.model.Position;
 
 /**
- * Represents a region constructed of <tt>13 x 13 x 4</tt> individual <tt>8 x 8</tt> map tiles taken
- * from other parts of the world.
+ * Represents a region constructed of <tt>13 x 13 x 4</tt> individual
+ * <tt>8 x 8</tt> map tiles taken from other parts of the world.
  * 
  * @author Graham
  * @author David Insley
  */
 public class RegionPalette {
 
-    private final Tile[][][] tiles = new Tile[4][13][13];
+    public static final int PALETTE_SIZE = 13;
+
+    private final Tile[][][] tiles = new Tile[4][PALETTE_SIZE][PALETTE_SIZE];
 
     public void setTile(int height, int x, int y, Tile tile) {
         tiles[height][x][y] = tile;
@@ -24,7 +26,10 @@ public class RegionPalette {
     public static class Tile {
 
         public enum Rotation {
-            NONE(0), CW_90(1), CW_180(2), CW_270(3);
+            NONE(0),
+            CW_90(1),
+            CW_180(2),
+            CW_270(3);
 
             private final int id;
 
