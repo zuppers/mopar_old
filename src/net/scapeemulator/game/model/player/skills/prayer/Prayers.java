@@ -160,7 +160,7 @@ public class Prayers {
      */
     public void tick() {
         if (drainRate > 0) {
-            int prayerBonus = player.getEquipmentBonuses().getPrayerBonus();
+            int prayerBonus = player.getCombatBonuses().getPrayerBonus();
             double modifier = 1 + (prayerBonus * (0.01 / 0.3));
             int modifiedDrainRate = (int) (drainRate / modifier);
             drainCounter += modifiedDrainRate;
