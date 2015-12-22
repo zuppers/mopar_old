@@ -19,9 +19,6 @@ public abstract class ReachDistancedAction extends DistancedAction<Player> {
     }
 
     @Override
-    public abstract void executeAction();
-
-    @Override
     public void cantReach() {
         mob.sendMessage("You can't reach that!");
     }
