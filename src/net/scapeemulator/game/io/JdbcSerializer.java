@@ -32,6 +32,7 @@ import net.scapeemulator.game.model.area.QuadArea;
 import net.scapeemulator.game.model.definition.NPCDefinitions;
 import net.scapeemulator.game.model.mob.Direction;
 import net.scapeemulator.game.model.mob.combat.AttackType;
+import net.scapeemulator.game.model.mob.combat.CombatBonuses;
 import net.scapeemulator.game.model.npc.NPC;
 import net.scapeemulator.game.model.npc.drops.DropTable;
 import net.scapeemulator.game.model.npc.drops.TableType;
@@ -294,19 +295,36 @@ public final class JdbcSerializer extends Serializer implements Closeable {
                 def.setAttackable(set.getBoolean("attackable"));
                 if (def.isAttackable()) {
                     def.setAggressiveRange(set.getInt("aggressive_range"));
-                    def.setBaseHitpoints(set.getInt("base_hp"));
                     def.setRespawnTime(set.getInt("respawn_ticks"));
                     def.setAttackRange(set.getInt("attack_range"));
                     def.setAttackDelay(set.getInt("attack_delay"));
                     def.setAttackType(AttackType.valueOf(set.getString("attack_type")));
-                    String weakness = set.getString("weakness");
-                    if (weakness != null) {
-                        def.setWeakness(AttackType.valueOf(weakness));
-                    }
-                    def.setMaxHit(set.getInt("max_hit"));
+                    def.setHPLevel(set.getInt("hp_lvl"));
+                    def.setAttackLevel(set.getInt("att_lvl"));
+                    def.setDefenceLevel(set.getInt("def_lvl"));
+                    def.setStrengthLevel(set.getInt("str_lvl"));
+                    def.setMagicLevel(set.getInt("mage_lvl"));
+                    def.setRangeLevel(set.getInt("range_lvl"));
                     def.setAttackEmote(set.getInt("attack_emote"));
                     def.setDefendEmote(set.getInt("defend_emote"));
                     def.setDeathEmote(set.getInt("death_emote"));
+                    
+                    CombatBonuses bonuses = new CombatBonuses();
+                    bonuses.setAttackBonus(AttackType.STAB, set.getInt("stab_att"));
+                    bonuses.setAttackBonus(AttackType.SLASH, set.getInt("slash_att"));
+                    bonuses.setAttackBonus(AttackType.CRUSH, set.getInt("crush_att"));
+                    bonuses.setAttackBonus(AttackType.MAGIC, set.getInt("mage_att"));
+                    bonuses.setAttackBonus(AttackType.RANGE, set.getInt("range_att"));
+                    bonuses.setDefenceBonus(AttackType.STAB, set.getInt("stab_def"));
+                    bonuses.setDefenceBonus(AttackType.SLASH, set.getInt("slash_def"));
+                    bonuses.setDefenceBonus(AttackType.CRUSH, set.getInt("crush_def"));
+                    bonuses.setDefenceBonus(AttackType.MAGIC, set.getInt("mage_def"));
+                    bonuses.setDefenceBonus(AttackType.RANGE, set.getInt("range_def"));
+                    bonuses.setStrengthBonus(set.getInt("str_bonus"));
+                    bonuses.setPrayerBonus(0);
+                    bonuses.setRangeStrengthBonus(0);
+                    
+                    def.setCombatBonuses(bonuses);
                     // def.setAutoCast();
                 }
                 count++;

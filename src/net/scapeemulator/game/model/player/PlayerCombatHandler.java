@@ -1,5 +1,6 @@
 package net.scapeemulator.game.model.player;
 
+import net.scapeemulator.game.GameServer;
 import net.scapeemulator.game.dispatcher.button.ButtonDispatcher;
 import net.scapeemulator.game.model.World;
 import net.scapeemulator.game.model.mob.Animation;
@@ -9,6 +10,7 @@ import net.scapeemulator.game.model.mob.combat.AttackType;
 import net.scapeemulator.game.model.mob.combat.CombatHandler;
 import net.scapeemulator.game.model.mob.combat.DelayedMagicHit;
 import net.scapeemulator.game.model.mob.combat.DelayedRangeHit;
+import net.scapeemulator.game.model.mob.combat.Hits.Hit;
 import net.scapeemulator.game.model.player.Equipment;
 import net.scapeemulator.game.model.player.EquipmentDefinition;
 import net.scapeemulator.game.model.player.Item;
@@ -17,7 +19,7 @@ import net.scapeemulator.game.model.player.EquipmentDefinition.WeaponClass;
 import net.scapeemulator.game.model.player.interfaces.CombatTabHandler;
 import net.scapeemulator.game.model.player.skills.Skill;
 import net.scapeemulator.game.model.player.skills.magic.AutoCastHandler;
-import net.scapeemulator.game.model.player.skills.magic.CombatSpell;
+import net.scapeemulator.game.model.player.skills.magic.DamageSpell;
 import net.scapeemulator.game.model.player.skills.magic.EffectMobSpell;
 import net.scapeemulator.game.model.player.skills.prayer.HeadIcon;
 import net.scapeemulator.game.model.player.skills.ranged.Arrow;
@@ -46,6 +48,29 @@ public class PlayerCombatHandler extends CombatHandler<Player> {
         if (!target.alive() || mob.actionsBlocked()) {
             return false;
         }
+
+        // TODO - if not multicombat {
+        Hit hit = mob.getHits().getMostRecentCombatHit();
+
+        if (hit != null) {
+            if (hit.getSource() != target) {
+                if (GameServer.getInstance().getTickTimestamp() - hit.getTimestamp() <= 8) {
+                    mob.sendMessage("You are already under attack!");
+                    return false;
+                }
+            }
+        }
+
+        hit = target.getHits().getMostRecentCombatHit();
+        if (hit != null) {
+            if (hit.getSource() != mob) {
+                if (GameServer.getInstance().getTickTimestamp() - hit.getTimestamp() <= 8) {
+                    mob.sendMessage("Someone is already fighting that creature.");
+                    return false;
+                }
+            }
+        }
+        // TODO end if
         return true;
     }
 
@@ -54,33 +79,30 @@ public class PlayerCombatHandler extends CombatHandler<Player> {
             return false;
         }
 
-        boolean shouldHit = attackRoll() > target.getCombatHandler().defenceRoll(attackType);
+        boolean shouldHit = shouldHit();
 
         if (nextSpell != null) {
             if (!nextSpell.getRequirements().hasRequirementsDisplayOne(mob)) {
                 if (autoCast == nextSpell) {
 
-                    // We don't have the requirements, cancel our auto cast and switch back to melee
-                    // styles
+                    // We don't have the requirements, cancel our auto cast and switch back to melee styles
                     weaponChanged();
                 }
                 return true;
             }
             nextSpell.getRequirements().fulfillAll(mob);
             switch (nextSpell.getType()) {
-            case COMBAT:
-                CombatSpell cs = (CombatSpell) nextSpell;
+            case DAMAGE:
+                DamageSpell cs = (DamageSpell) nextSpell;
                 cs.cast(mob, target);
                 int damage = !shouldHit ? 0 : (int) (Math.random() * (cs.getMaxHit() + 1));
                 damage = target.getHeadIcon() == HeadIcon.MAGIC ? damage *= 0.6 : damage;
                 damage = damage > target.getCurrentHitpoints() ? target.getCurrentHitpoints() : damage;
                 World.getWorld().getTaskScheduler().schedule(new DelayedMagicHit(mob, target, cs.getExplosionGraphic(), damage));
-                mob.getSkillSet().addExperience(Skill.MAGIC, nextSpell.getXp());
                 addMagicExperience(damage);
                 break;
             case EFFECT_MOB:
                 ((EffectMobSpell) nextSpell).cast(mob, target);
-                mob.getSkillSet().addExperience(Skill.MAGIC, nextSpell.getXp());
                 break;
             case ITEM:
             case TELEPORT:
@@ -89,7 +111,7 @@ public class PlayerCombatHandler extends CombatHandler<Player> {
             combatDelay = 8;
             nextSpell = autoCast;
         } else {
-            if (attackType == AttackType.RANGE) {
+            if (getNextAttackType() == AttackType.RANGE) {
 
                 // Calculate damage dealt
                 int damage = !shouldHit ? 0 : 1 + (int) (Math.random() * getRangeMaxHit());
@@ -124,7 +146,7 @@ public class PlayerCombatHandler extends CombatHandler<Player> {
                         mob.playSpotAnimation(arrow.getDrawbackGraphic(twoArrows));
                         World.getWorld().getTaskScheduler().schedule(new DelayedRangeHit(mob, target, damage, ammo.getId(), ((int) (Math.random() * 2) == 0) ? 1 : 0));
                     }
-                    mob.playAnimation(weaponDefinition.getAnimation(attackStyle, attackType));
+                    mob.playAnimation(weaponDefinition.getAnimation(attackStyle, getRawAttackType()));
                     combatDelay = weaponDefinition.getSpeed() - (attackStyle == AttackStyle.RAPID ? 1 : 0);
                     addRangeExperience(damage);
                     return true;
@@ -140,7 +162,7 @@ public class PlayerCombatHandler extends CombatHandler<Player> {
                     bolt.createProjectile(mob, target);
                     mob.getEquipment().remove(new Item(ammo.getId(), 1));
                     World.getWorld().getTaskScheduler().schedule(new DelayedRangeHit(mob, target, damage, ammo.getId(), ((int) (Math.random() * 2) == 0) ? 1 : 0));
-                    mob.playAnimation(weaponDefinition.getAnimation(attackStyle, attackType));
+                    mob.playAnimation(weaponDefinition.getAnimation(attackStyle, getRawAttackType()));
                     combatDelay = weaponDefinition.getSpeed() - (attackStyle == AttackStyle.RAPID ? 1 : 0);
                     addRangeExperience(damage);
                     return true;
@@ -150,7 +172,7 @@ public class PlayerCombatHandler extends CombatHandler<Player> {
 
                 }
             } else {
-                mob.playAnimation(weaponDefinition.getAnimation(attackStyle, attackType));
+                mob.playAnimation(weaponDefinition.getAnimation(attackStyle, getRawAttackType()));
                 int damage = !shouldHit ? 0 : 1 + (int) (Math.random() * getMeleeMaxHit());
                 damage = target.getHeadIcon() == HeadIcon.MELEE ? damage *= 0.6 : damage;
                 damage = damage > target.getCurrentHitpoints() ? target.getCurrentHitpoints() : damage;
@@ -220,149 +242,124 @@ public class PlayerCombatHandler extends CombatHandler<Player> {
 
     @Override
     public Animation getDefendAnimation() {
-        return weaponDefinition.getAnimation(attackStyle, attackType);
+        return weaponDefinition.getAnimation(attackStyle, getRawAttackType());
     }
 
     @Override
     public int getAttackRange() {
-        if (nextSpell != null) {
+        switch (getNextAttackType()) {
+        case MAGIC:
             return 8;
-        }
-        return weaponDefinition.getRange() + ((attackStyle == AttackStyle.DEFENSIVE && attackType == AttackType.RANGE) ? 1 : 0);
-    }
-
-    @Override
-    public double attackRoll() {
-        double level = 0.0;
-        double equipmentBonus = 0.0;
-
-        if (nextSpell != null) {
-            level = (double) mob.getSkillSet().getCurrentLevel(Skill.MAGIC);
-            level *= mob.getPrayers().getPrayerBonus(Skill.MAGIC);
-            equipmentBonus = mob.getEquipmentBonuses().getAttackBonus(AttackType.ALL_MAGIC);
-        } else {
-            equipmentBonus = mob.getEquipmentBonuses().getAttackBonus(attackType);
-            switch (attackType) {
-            case RANGE:
-                level = (double) mob.getSkillSet().getCurrentLevel(Skill.RANGED);
-                level *= mob.getPrayers().getPrayerBonus(Skill.RANGED);
-                break;
-            case CRUSH:
-            case SLASH:
-            case STAB:
-                level = (double) mob.getSkillSet().getCurrentLevel(Skill.ATTACK);
-                level *= mob.getPrayers().getPrayerBonus(Skill.ATTACK);
-                break;
-            default:
-                break;
-            }
-        }
-        double power = 5.0;
-        power += level / 2.0;
-        power += equipmentBonus / 10.0;
-        power += (level * equipmentBonus) / 200.0;
-        power *= 1.0; // TODO other modifiers? like special attack bonus, etc
-        System.out.println("Player AR: " + power);
-        return Math.random() * power;
-    }
-
-    @Override
-    public double defenceRoll(AttackType other) {
-        double level = (double) mob.getSkillSet().getCurrentLevel(Skill.DEFENCE);
-        level *= mob.getPrayers().getPrayerBonus(Skill.DEFENCE);
-        double equipmentBonus = (double) mob.getEquipmentBonuses().getDefenceBonus(attackType);
-
-        switch (other) {
-        case AIR:
-        case ALL_MAGIC:
-        case EARTH:
-        case FIRE:
-        case WATER:
-            level *= 0.3;
-            level += (((double) mob.getSkillSet().getCurrentLevel(Skill.MAGIC)) * mob.getPrayers().getPrayerBonus(Skill.MAGIC)) * 0.7;
-            break;
+        case RANGE:
+            return weaponDefinition.getRange() + (attackStyle == AttackStyle.DEFENSIVE ? 1 : 0);
         default:
+            return weaponDefinition.getRange();
+        }
+    }
+
+    @Override
+    public int attackRoll() {
+        int level = 0;
+        int equipmentBonus = mob.getCombatBonuses().getAttackBonus(getNextAttackType());
+
+        switch (getNextAttackType()) {
+        case MAGIC:
+            level = mob.getSkillSet().getCurrentLevel(Skill.MAGIC);
+            level *= mob.getPrayers().getPrayerBonus(Skill.MAGIC);
+            break;
+        case RANGE:
+            level = mob.getSkillSet().getCurrentLevel(Skill.RANGED);
+            level *= mob.getPrayers().getPrayerBonus(Skill.RANGED);
+            if (attackStyle == AttackStyle.ACCURATE) {
+                level += 3;
+            }
+            break;
+        case SLASH:
+        case CRUSH:
+        case STAB:
+            level = mob.getSkillSet().getCurrentLevel(Skill.ATTACK);
+            level *= mob.getPrayers().getPrayerBonus(Skill.ATTACK);
+            if (attackStyle == AttackStyle.ACCURATE) {
+                level += 3;
+            } else if (attackStyle == AttackStyle.SHARED) {
+                level += 1;
+            }
             break;
 
         }
-        double power = 1.0;
-        power += level / 2.0;
-        power += equipmentBonus / 10.0;
-        power += (level * equipmentBonus) / 200.0;
-        power *= 1.0; // TODO other modifiers?
-        power += 5;
-        System.out.println("Player DR: " + power);
-        return Math.random() * power;
+        level += 8;
+        level *= 1.0; // TODO void bonus
+        return level * (64 + equipmentBonus);
+    }
+
+    @Override
+    public int defenceRoll(AttackType other) {
+        int level = mob.getSkillSet().getCurrentLevel(Skill.DEFENCE);
+        level *= mob.getPrayers().getPrayerBonus(Skill.DEFENCE);
+        if (attackStyle == AttackStyle.DEFENSIVE) {
+            level += 3;
+        } else if (attackStyle == AttackStyle.SHARED) {
+            level += 1;
+        }
+        level += 8;
+
+        if (other == AttackType.MAGIC) {
+            level *= 0.3;
+            level += mob.getSkillSet().getCurrentLevel(Skill.MAGIC) * 0.7;
+        }
+        return level * (64 + mob.getCombatBonuses().getDefenceBonus(other));
     }
 
     /**
-     * Calculates the players maximum melee hit taking into account active prayers, equipment
-     * strength bonus, strength level (including boosts from potions), special attacks, attack
-     * style, and extra bonuses such as a full void melee set.
+     * Calculates the players maximum melee hit taking into account active
+     * prayers, equipment strength bonus, strength level (including boosts from
+     * potions), special attacks, attack style, and extra bonuses such as a full
+     * void melee set.
      * 
      * @return the players flat maximum hit, not randomized
      */
     private int getMeleeMaxHit() {
-        double strLevel = (double) mob.getSkillSet().getCurrentLevel(Skill.STRENGTH);
-        double strBonus = (double) mob.getEquipmentBonuses().getStrengthBonus();
+        int strLevel = mob.getSkillSet().getCurrentLevel(Skill.STRENGTH);
         strLevel *= mob.getPrayers().getPrayerBonus(Skill.STRENGTH);
-        strLevel *= 1.0; // TODO other bonus (slayer helm 1.15, void 1.2)
-        switch (attackStyle) {
-        case AGGRESSIVE:
-            strLevel += 3.0;
-            break;
-        case SHARED:
-            strLevel += 1.0;
-            break;
-        case DEFENSIVE:
-        case ACCURATE:
-        case RAPID:
-            break;
+        if (attackStyle == AttackStyle.AGGRESSIVE) {
+            strLevel += 3;
+        } else if (attackStyle == AttackStyle.SHARED) {
+            strLevel += 1;
         }
+        strLevel += 8;
+        strLevel *= 1.0; // TODO other bonus (slayer helm 1.15, void 1.2)
 
-        double baseDamage = 1.3;
-        baseDamage += strLevel / 10.0;
-        baseDamage += strBonus / 80.0;
-        baseDamage += (strLevel * strBonus) / 640.0;
-        baseDamage *= 1.0; // TODO special attack bonus
-        return (int) baseDamage;
+        int damage = (int) (0.5 + ((strLevel * (64 + mob.getCombatBonuses().getStrengthBonus())) / 640.0));
+        damage *= 1.0; // TODO special attack bonuses
+        return damage;
     }
 
     /**
-     * Calculates the players maximum range hit taking into account active prayers, equipment range
-     * strength bonus, range level (including boosts from potions), special attacks and bolts,
-     * attack style, and extra bonuses such as the full void ranger set.
+     * Calculates the players maximum range hit taking into account active
+     * prayers, equipment range strength bonus, range level (including boosts
+     * from potions), special attacks and bolts, attack style, and extra bonuses
+     * such as the full void ranger set.
      * 
      * @return the players flat maximum hit, not randomized
      */
     private int getRangeMaxHit() {
-        double rangeLevel = (double) mob.getSkillSet().getCurrentLevel(Skill.RANGED);
-        double rangeBonus = (double) mob.getEquipmentBonuses().getRangeStrengthBonus();
-        rangeLevel *= mob.getPrayers().getPrayerBonus(Skill.RANGED);
-        rangeLevel *= 1.0; // TODO other bonus (void 1.2)
-        switch (attackStyle) {
-        case ACCURATE:
-            rangeLevel += 3.0;
-            break;
-        case AGGRESSIVE:
-        case SHARED:
-        case DEFENSIVE:
-        case RAPID:
-            break;
+        int level = mob.getSkillSet().getCurrentLevel(Skill.RANGED);
+        level *= mob.getPrayers().getPrayerBonus(Skill.RANGED);
+        if (attackStyle == AttackStyle.ACCURATE) {
+            level += 3;
         }
+        level += 8;
+        level *= 1.0; // TODO other bonus (slayer helm 1.15, void 1.2)
 
-        double baseDamage = 1.3;
-        baseDamage += rangeLevel / 10.0;
-        baseDamage += rangeBonus / 80.0;
-        baseDamage += (rangeLevel * rangeBonus) / 640.0;
-        baseDamage *= 1.0; // TODO special attack / bolt bonus
-        return (int) baseDamage;
+        int damage = (int) (0.5 + ((level * (64 + mob.getCombatBonuses().getRangeStrengthBonus())) / 640.0));
+        damage *= 1.0; // TODO special attack bonuses
+        return damage;
     }
 
     /**
-     * Handles a player click onto the attack tab for things such as style switching, auto
-     * retaliating, and auto casting. The tabId parameter is cross checked with players active tab
-     * to avoid packet editing.
+     * Handles a player click onto the attack tab for things such as style
+     * switching, auto retaliating, and auto casting. The tabId parameter is
+     * cross checked with players active tab to avoid packet editing.
      * 
      * @param tabId the attack tab the player clicked on
      * @param childId the button the player clicked on
@@ -405,7 +402,7 @@ public class PlayerCombatHandler extends CombatHandler<Player> {
             AttackStyle newStyle = weaponClass.getAttackStyle(childId);
             if (newStyle != null) {
                 attackStyle = newStyle;
-                attackType = weaponClass.getAttackType(childId);
+                setRawAttackType(weaponClass.getAttackType(childId));
                 mob.getSettings().setAttackStyle(childId);
             }
         } else {
@@ -431,7 +428,7 @@ public class PlayerCombatHandler extends CombatHandler<Player> {
         mob.getInterfaceSet().openAttackTab(tab);
         mob.send(new InterfaceTextMessage(tab, 0, name));
         attackStyle = weaponClass.getAttackStyle(mob.getSettings().getAttackStyle());
-        attackType = weaponClass.getAttackType(mob.getSettings().getAttackStyle());
+        setRawAttackType(weaponClass.getAttackType(mob.getSettings().getAttackStyle()));
         mob.getSettings().setAttackStyle(mob.getSettings().getAttackStyle());
     }
 
@@ -446,8 +443,9 @@ public class PlayerCombatHandler extends CombatHandler<Player> {
     }
 
     /**
-     * Called whenever the players weapon changes, reassigns our weapon variables and attack style
-     * variables. Searches for style match to avoid accidental XP gain switching.
+     * Called whenever the players weapon changes, reassigns our weapon
+     * variables and attack style variables. Searches for style match to avoid
+     * accidental XP gain switching.
      */
     public void weaponChanged() {
         autoCast = null;
@@ -475,9 +473,9 @@ public class PlayerCombatHandler extends CombatHandler<Player> {
 
             // Check for an exact match first
             for (int i = 0; i < 4; i++) {
-                if (weaponClass.getAttackStyle(i) == attackStyle && weaponClass.getAttackType(i) == attackType) {
+                if (weaponClass.getAttackStyle(i) == attackStyle && weaponClass.getAttackType(i) == getRawAttackType()) {
                     attackStyle = weaponClass.getAttackStyle(i);
-                    attackType = weaponClass.getAttackType(i);
+                    setRawAttackType(weaponClass.getAttackType(i));
                     mob.getSettings().setAttackStyle(i);
                     return;
                 }
@@ -487,7 +485,7 @@ public class PlayerCombatHandler extends CombatHandler<Player> {
             for (int i = 0; i < 4; i++) {
                 if (weaponClass.getAttackStyle(i) == attackStyle) {
                     attackStyle = weaponClass.getAttackStyle(i);
-                    attackType = weaponClass.getAttackType(i);
+                    setRawAttackType(weaponClass.getAttackType(i));
                     mob.getSettings().setAttackStyle(i);
                     return;
                 }
@@ -496,7 +494,7 @@ public class PlayerCombatHandler extends CombatHandler<Player> {
 
         // No match, just go for the default style
         attackStyle = weaponClass.getAttackStyle(0);
-        attackType = weaponClass.getAttackType(0);
+        setRawAttackType(weaponClass.getAttackType(0));
         mob.getSettings().setAttackStyle(0);
     }
 

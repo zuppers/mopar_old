@@ -6,7 +6,7 @@ import net.scapeemulator.game.model.mob.Animation;
 import net.scapeemulator.game.model.mob.Mob;
 import net.scapeemulator.game.model.player.Player;
 import net.scapeemulator.game.model.player.skills.magic.CombatSpell;
-import net.scapeemulator.game.model.player.skills.magic.Spell;
+import net.scapeemulator.game.model.player.skills.magic.DamageSpell;
 import net.scapeemulator.game.msg.impl.CreateProjectileMessage;
 import net.scapeemulator.game.msg.impl.PlacementCoordsMessage;
 
@@ -14,10 +14,10 @@ public abstract class CombatHandler<T extends Mob> {
 
     protected final T mob;
     protected Mob target;
-    protected CombatSpell autoCast;
-    protected Spell nextSpell;
+    protected DamageSpell autoCast;
+    protected CombatSpell nextSpell;
     protected AttackStyle attackStyle;
-    protected AttackType attackType;
+    private AttackType attackType;
     protected int noRetaliate;
 
     /**
@@ -73,6 +73,36 @@ public abstract class CombatHandler<T extends Mob> {
         nextSpell = autoCast;
     }
 
+    /**
+     * Gets the attack type (SLASH, STAB, CRUSH, RANGE, MAGIC) of the next
+     * attack.
+     */
+    public AttackType getNextAttackType() {
+        if (nextSpell != null) {
+            return AttackType.MAGIC;
+        }
+        return attackType;
+    }
+
+    /**
+     * Sets the attack type (SLASH, STAB, CRUSH, RANGE) currently selected in
+     * the attack tab, not taking into account potential spellcasting.
+     */
+    public void setRawAttackType(AttackType attackType) {
+        if (attackType == AttackType.MAGIC) {
+            throw new IllegalArgumentException("Cannot set attackType to magic, use nextSpell and autoCast instead");
+        }
+        this.attackType = attackType;
+    }
+
+    /**
+     * Gets the attack type (SLASH, STAB, CRUSH, RANGE) currently selected in
+     * the attack tab, not taking into account potential spellcasting.
+     */
+    public AttackType getRawAttackType() {
+        return attackType;
+    }
+
     public void setNoRetaliate(int delay) {
         noRetaliate = delay;
     }
@@ -81,15 +111,15 @@ public abstract class CombatHandler<T extends Mob> {
         return noRetaliate;
     }
 
-    public void setNextSpell(Spell nextSpell) {
+    public void setNextSpell(CombatSpell nextSpell) {
         this.nextSpell = nextSpell;
     }
 
-    public CombatSpell getAutoCast() {
+    public DamageSpell getAutoCast() {
         return autoCast;
     }
 
-    public void setAutoCast(CombatSpell autoCast) {
+    public void setAutoCast(DamageSpell autoCast) {
         this.autoCast = autoCast;
         nextSpell = autoCast;
     }
@@ -98,20 +128,34 @@ public abstract class CombatHandler<T extends Mob> {
 
     public abstract boolean attack();
 
-    public abstract double attackRoll();
+    public abstract int attackRoll();
 
-    public abstract double defenceRoll(AttackType other);
+    public abstract int defenceRoll(AttackType other);
+
+    protected boolean shouldHit() {
+        double attackRoll = attackRoll();
+        double defRoll = target.getCombatHandler().defenceRoll(attackType);
+        double accuracy;
+        if (attackRoll > defRoll) {
+            accuracy = 1.0 - ((defRoll + 2.0) / (2.0 * (attackRoll + 1.0)));
+        } else {
+            accuracy = attackRoll / (2 * (defRoll + 1));
+        }
+        return accuracy > Math.random();
+    }
 
     /**
-     * The attack range this mob has, taking into account active spells and range weapons.
+     * The attack range this mob has, taking into account active spells and
+     * range weapons.
      * 
      * @return this mobs attack range
      */
     public abstract int getAttackRange();
 
     /**
-     * Whether or not a mob should retaliate an attack at the given time, taking into account
-     * current combat status and things like retaliation cooldown timers for retreat.
+     * Whether or not a mob should retaliate an attack at the given time, taking
+     * into account current combat status and things like retaliation cooldown
+     * timers for retreat.
      * 
      * @return if this mob should retaliate
      */

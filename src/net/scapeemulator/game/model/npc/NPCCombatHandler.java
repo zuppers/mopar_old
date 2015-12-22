@@ -7,15 +7,15 @@ import net.scapeemulator.game.model.mob.combat.AttackStyle;
 import net.scapeemulator.game.model.mob.combat.AttackType;
 import net.scapeemulator.game.model.mob.combat.CombatHandler;
 import net.scapeemulator.game.model.mob.combat.DelayedMagicHit;
-import net.scapeemulator.game.model.player.skills.magic.CombatSpell;
+import net.scapeemulator.game.model.player.skills.magic.DamageSpell;
 import net.scapeemulator.game.model.player.skills.prayer.HeadIcon;
 
 public class NPCCombatHandler extends CombatHandler<NPC> {
 
     public NPCCombatHandler(NPC npc) {
         super(npc);
-        attackStyle = AttackStyle.ACCURATE;
-        attackType = npc.getDefinition().getAttackType();
+        attackStyle = AttackStyle.SHARED;
+        setRawAttackType(npc.getDefinition().getAttackType());
         // autoCast = npc.getDefinition().getAutoCast();
     }
 
@@ -30,13 +30,10 @@ public class NPCCombatHandler extends CombatHandler<NPC> {
             return false;
         }
 
-        boolean shouldHit = attackRoll() > target.getCombatHandler().defenceRoll(attackType);
-        switch (attackType) {
-        case AIR:
-        case WATER:
-        case EARTH:
-        case FIRE:
-        case ALL_MAGIC:
+        boolean shouldHit = shouldHit();
+
+        switch (getNextAttackType()) {
+        case MAGIC:
             if (target.getHeadIcon() == HeadIcon.MAGIC) {
                 shouldHit = false;
             }
@@ -57,17 +54,16 @@ public class NPCCombatHandler extends CombatHandler<NPC> {
             break;
         }
 
-        int damage = !shouldHit ? 0 : 1 + (int) (Math.random() * mob.getDefinition().getMaxHit());
-        damage = damage > target.getCurrentHitpoints() ? target.getCurrentHitpoints() : damage;
+        int damage = !shouldHit ? 0 : 1 + (int) (Math.random() * getMaxHit());
 
         if (nextSpell != null) {
-            CombatSpell cs = (CombatSpell) nextSpell;
-            cs.cast(mob, target);
+            nextSpell.cast(mob, target);
             mob.playAnimation(new Animation(mob.getDefinition().getAttackEmote()));
-            World.getWorld().getTaskScheduler().schedule(new DelayedMagicHit(mob, target, cs.getExplosionGraphic(), damage));
+            World.getWorld().getTaskScheduler().schedule(new DelayedMagicHit(mob, target, nextSpell.getExplosionGraphic(), damage));
             nextSpell = autoCast;
         } else {
             mob.playAnimation(new Animation(mob.getDefinition().getAttackEmote()));
+            damage = damage > target.getCurrentHitpoints() ? target.getCurrentHitpoints() : damage;
             hitTarget(damage);
         }
 
@@ -75,25 +71,79 @@ public class NPCCombatHandler extends CombatHandler<NPC> {
         return true;
     }
 
-    @Override
-    public double attackRoll() {
-        double power = 1.0;
-        power += mob.getDefinition().getCombatLevel() * 1.25;
-        power *= 1.0; // TODO other modifiers?
-        System.out.println("NPC AR: " + power);
-        return Math.random() * power;
+    private int getMaxHit() {
+        int level = 0;
+        int equipmentBonus = 0;
+
+        switch (getNextAttackType()) {
+        case MAGIC:
+            if (nextSpell instanceof DamageSpell) {
+                return ((DamageSpell) nextSpell).getMaxHit();
+            }
+            return 0;
+        case RANGE:
+            level = mob.getSkillSet().getCurrentLevel(NPCSkillSet.RANGED);
+            level += 9;
+            break;
+        case CRUSH:
+        case SLASH:
+        case STAB:
+            equipmentBonus = mob.getCombatBonuses().getStrengthBonus();
+            level = mob.getSkillSet().getCurrentLevel(NPCSkillSet.STRENGTH);
+            level += 9;
+            break;
+        }
+        return (int) (0.5 + ((level * (64.0 + equipmentBonus)) / 640));
     }
 
     @Override
-    public double defenceRoll(AttackType other) {
-        double power = 1.0;
-        power += mob.getDefinition().getCombatLevel() * 1.25;
-        if (mob.getDefinition().getWeakness() == other) {
-            power *= 0.7;
+    public int attackRoll() {
+        int level = 0;
+        int equipmentBonus = 0;
+
+        switch (getNextAttackType()) {
+        case MAGIC:
+            level = mob.getSkillSet().getCurrentLevel(NPCSkillSet.MAGIC);
+            equipmentBonus = mob.getCombatBonuses().getAttackBonus(AttackType.MAGIC);
+            level += 8;
+            break;
+        case RANGE:
+            equipmentBonus = mob.getCombatBonuses().getAttackBonus(AttackType.RANGE);
+            level = mob.getSkillSet().getCurrentLevel(NPCSkillSet.RANGED);
+            level += 9;
+            break;
+        case CRUSH:
+        case SLASH:
+        case STAB:
+            equipmentBonus = mob.getCombatBonuses().getAttackBonus(getNextAttackType());
+            level = mob.getSkillSet().getCurrentLevel(NPCSkillSet.ATTACK);
+            level += 9;
+            break;
         }
-        power *= 1.0; // TODO other modifiers?
-        System.out.println("NPC DR: " + power);
-        return Math.random() * power;
+        return level * (64 + equipmentBonus);
+    }
+
+    @Override
+    public int defenceRoll(AttackType other) {
+        int level = 0;
+        int equipmentBonus = 0;
+
+        switch (other) {
+        case MAGIC:
+            equipmentBonus = mob.getCombatBonuses().getDefenceBonus(AttackType.MAGIC);
+            level = (int) ((mob.getSkillSet().getCurrentLevel(NPCSkillSet.DEFENCE) + 9) * 0.3);
+            level += (int) (mob.getSkillSet().getCurrentLevel(NPCSkillSet.MAGIC) * 0.7);
+            break;
+        case RANGE:
+        case CRUSH:
+        case SLASH:
+        case STAB:
+            equipmentBonus = mob.getCombatBonuses().getDefenceBonus(other);
+            level = mob.getSkillSet().getCurrentLevel(NPCSkillSet.DEFENCE);
+            level += 9;
+            break;
+        }
+        return level * (64 + equipmentBonus);
     }
 
     @Override

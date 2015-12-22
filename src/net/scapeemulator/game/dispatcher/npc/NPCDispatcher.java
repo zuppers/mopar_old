@@ -10,7 +10,6 @@ import net.scapeemulator.game.GameServer;
 import net.scapeemulator.game.model.Option;
 import net.scapeemulator.game.model.World;
 import net.scapeemulator.game.model.definition.NPCDefinitions;
-import net.scapeemulator.game.model.mob.action.CombatAction;
 import net.scapeemulator.game.model.mob.action.InitiateCombatAction;
 import net.scapeemulator.game.model.npc.NPC;
 import net.scapeemulator.game.model.player.Player;
@@ -97,13 +96,10 @@ public class NPCDispatcher {
             return;
         }
         switch (spell.getType()) {
-        case COMBAT:
-            player.getCombatHandler().setNextSpell((CombatSpell) spell);
-            if (!(player.getAction() instanceof CombatAction)) {
-                player.startAction(new InitiateCombatAction(player, npc, true));
-            }
-            break;
+        case DAMAGE:
         case EFFECT_MOB:
+            player.getCombatHandler().setNextSpell((CombatSpell) spell);
+            player.startAction(new InitiateCombatAction(player, npc, true));
             break;
         case ITEM:
         case TELEPORT:

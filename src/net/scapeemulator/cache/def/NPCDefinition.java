@@ -4,6 +4,7 @@ import java.nio.ByteBuffer;
 
 import net.scapeemulator.cache.util.ByteBufferUtils;
 import net.scapeemulator.game.model.mob.combat.AttackType;
+import net.scapeemulator.game.model.mob.combat.CombatBonuses;
 import net.scapeemulator.game.model.player.skills.magic.CombatSpell;
 
 public final class NPCDefinition implements Comparable<NPCDefinition> {
@@ -23,7 +24,6 @@ public final class NPCDefinition implements Comparable<NPCDefinition> {
     // Combat information
     private boolean attackable;
     private int aggressiveRange;
-    private int baseHitpoints = 1;
     private int respawnTime;
     private int leashRange = 3;
 
@@ -31,9 +31,10 @@ public final class NPCDefinition implements Comparable<NPCDefinition> {
     private int attackDelay;
 
     private AttackType attackType;
-    private AttackType weakness;
 
-    private int maxHit = 1;
+    private int hpLevel, attLevel, defLevel, strLevel, mageLevel, rangeLevel;
+    private CombatBonuses bonuses;
+
     private int attackEmote;
     private int defendEmote;
     private int deathEmote;
@@ -274,20 +275,68 @@ public final class NPCDefinition implements Comparable<NPCDefinition> {
         return combatLevel;
     }
 
-    public int getBaseHitpoints() {
-        return baseHitpoints;
-    }
-
     public int aggressiveRange() {
         return aggressiveRange;
     }
 
-    public int getMaxHit() {
-        return maxHit;
-    }
-
     public int getStance() {
         return stance;
+    }
+
+    public int getHPLevel() {
+        return hpLevel;
+    }
+
+    public void setHPLevel(int level) {
+        this.hpLevel = level;
+    }
+
+    public int getAttackLevel() {
+        return attLevel;
+    }
+
+    public void setAttackLevel(int level) {
+        this.attLevel = level;
+    }
+
+    public int getStrengthLevel() {
+        return strLevel;
+    }
+
+    public void setStrengthLevel(int level) {
+        this.strLevel = level;
+    }
+
+    public int getDefenceLevel() {
+        return defLevel;
+    }
+
+    public void setDefenceLevel(int level) {
+        this.defLevel = level;
+    }
+
+    public int getRangeLevel() {
+        return rangeLevel;
+    }
+
+    public void setRangeLevel(int level) {
+        this.rangeLevel = level;
+    }
+
+    public int getMagicLevel() {
+        return mageLevel;
+    }
+
+    public void setMagicLevel(int level) {
+        this.mageLevel = level;
+    }
+
+    public CombatBonuses getCombatBonuses() {
+        return bonuses;
+    }
+
+    public void setCombatBonuses(CombatBonuses bonuses) {
+        this.bonuses = bonuses;
     }
 
     public int getAttackEmote() {
@@ -346,10 +395,6 @@ public final class NPCDefinition implements Comparable<NPCDefinition> {
         this.aggressiveRange = aggressiveRange;
     }
 
-    public AttackType getWeakness() {
-        return weakness;
-    }
-
     public CombatSpell getAutoCast() {
         return autoCast;
     }
@@ -373,11 +418,7 @@ public final class NPCDefinition implements Comparable<NPCDefinition> {
     public void setAttackable(boolean attackable) {
         this.attackable = attackable;
     }
-
-    public void setBaseHitpoints(int baseHitpoints) {
-        this.baseHitpoints = baseHitpoints;
-    }
-
+    
     public void setRespawnTime(int respawnTime) {
         this.respawnTime = respawnTime;
     }
@@ -394,10 +435,6 @@ public final class NPCDefinition implements Comparable<NPCDefinition> {
         this.attackType = attackType;
     }
 
-    public void setMaxHit(int maxHit) {
-        this.maxHit = maxHit;
-    }
-
     public void setAttackEmote(int attackEmote) {
         this.attackEmote = attackEmote;
     }
@@ -408,10 +445,6 @@ public final class NPCDefinition implements Comparable<NPCDefinition> {
 
     public void setDeathEmote(int deathEmote) {
         this.deathEmote = deathEmote;
-    }
-
-    public void setWeakness(AttackType weakness) {
-        this.weakness = weakness;
     }
 
     public void setProjectileGFX(int projectileGFX) {

@@ -9,7 +9,6 @@ import net.scapeemulator.game.model.area.Area;
 import net.scapeemulator.game.model.definition.NPCDefinitions;
 import net.scapeemulator.game.model.mob.Mob;
 import net.scapeemulator.game.model.npc.action.NPCDeathAction;
-import net.scapeemulator.game.model.npc.drops.DropTable;
 import net.scapeemulator.game.model.npc.drops.DropTables;
 import net.scapeemulator.game.model.npc.drops.DropTables.TableDefinition;
 import net.scapeemulator.game.model.player.Item;
@@ -20,8 +19,8 @@ public abstract class NPC extends Mob {
 
     private Position spawnPosition;
     private int type;
-    private int currentHp;
     private int changingType = -1;
+    private NPCSkillSet skillSet;
     private Area walkingBounds;
     private NPCDefinition definition;
 
@@ -32,9 +31,11 @@ public abstract class NPC extends Mob {
 
     private void init() {
         definition = NPCDefinitions.forId(type);
+        combatBonuses = definition.getCombatBonuses();
         combatHandler = new NPCCombatHandler(this);
+        skillSet = new NPCSkillSet(definition);
         size = definition.getSize();
-        healToFull();
+        skillSet.restoreStats();
     }
 
     public abstract void tick();
@@ -58,6 +59,10 @@ public abstract class NPC extends Mob {
         return type;
     }
 
+    public NPCSkillSet getSkillSet() {
+        return skillSet;
+    }
+    
     public NPCDefinition getDefinition() {
         return definition;
     }
@@ -92,19 +97,16 @@ public abstract class NPC extends Mob {
         changingType = -1;
     }
 
+    @Override
     protected void reduceHp(int amount) {
-        currentHp -= amount;
+        skillSet.setCurrentLevel(NPCSkillSet.HITPOINTS, getCurrentHitpoints() - amount);
     }
 
+    @Override
     public void heal(int amount) {
-        currentHp += amount;
-        if (currentHp > getMaximumHitpoints()) {
-            currentHp = getMaximumHitpoints();
-        }
-    }
-
-    public void healToFull() {
-        currentHp = definition.getBaseHitpoints();
+        int temp = getCurrentHitpoints() + amount;
+        temp = temp > getMaximumHitpoints() ? getMaximumHitpoints() : temp;
+        skillSet.setCurrentLevel(NPCSkillSet.HITPOINTS, temp);
     }
 
     public void drop(Mob receiver) {
@@ -127,12 +129,12 @@ public abstract class NPC extends Mob {
 
     @Override
     public int getMaximumHitpoints() {
-        return definition.getBaseHitpoints();
+        return skillSet.getLevel(NPCSkillSet.HITPOINTS);
     }
 
     @Override
     public int getCurrentHitpoints() {
-        return currentHp;
+        return skillSet.getCurrentLevel(NPCSkillSet.HITPOINTS);
     }
 
     @Override
