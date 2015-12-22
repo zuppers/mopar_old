@@ -15,7 +15,8 @@ public class PlayerVariables {
         HOME_LOCATION,
         
         // Construction
-        CON_FURN_REMOVE(false);
+        CON_FURN_REMOVE(false),
+        HERALDRY_CREST;
         
         /* @formatter:on */
 

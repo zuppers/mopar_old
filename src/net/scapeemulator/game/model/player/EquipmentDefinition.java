@@ -9,6 +9,7 @@ import java.util.Map;
 import net.scapeemulator.game.model.mob.Animation;
 import net.scapeemulator.game.model.mob.combat.AttackStyle;
 import net.scapeemulator.game.model.mob.combat.AttackType;
+import net.scapeemulator.game.model.mob.combat.CombatBonuses;
 import net.scapeemulator.game.model.player.requirement.Requirements;
 import net.scapeemulator.game.model.player.requirement.SkillRequirement;
 
@@ -112,16 +113,16 @@ public final class EquipmentDefinition {
 				equipment.fullMask = (flags & FLAG_FULL_MASK) != 0;
 				equipment.fullBody = (flags & FLAG_FULL_BODY) != 0;
 				
-				EquipmentBonuses bonuses = new EquipmentBonuses();
+				CombatBonuses bonuses = new CombatBonuses();
 				bonuses.setAttackBonus(AttackType.STAB, bonusValues[0]);
 				bonuses.setAttackBonus(AttackType.SLASH, bonusValues[1]);
 				bonuses.setAttackBonus(AttackType.CRUSH, bonusValues[2]);
-				bonuses.setAttackBonus(AttackType.ALL_MAGIC, bonusValues[3]);
+				bonuses.setAttackBonus(AttackType.MAGIC, bonusValues[3]);
 				bonuses.setAttackBonus(AttackType.RANGE, bonusValues[4]);
 				bonuses.setDefenceBonus(AttackType.STAB, bonusValues[5]);
 				bonuses.setDefenceBonus(AttackType.SLASH, bonusValues[6]);
 				bonuses.setDefenceBonus(AttackType.CRUSH, bonusValues[7]);
-				bonuses.setDefenceBonus(AttackType.ALL_MAGIC, bonusValues[8]);
+				bonuses.setDefenceBonus(AttackType.MAGIC, bonusValues[8]);
 				bonuses.setDefenceBonus(AttackType.RANGE, bonusValues[9]);
 				bonuses.setStrengthBonus(bonusValues[10]);
 				bonuses.setPrayerBonus(bonusValues[11]);
@@ -164,7 +165,7 @@ public final class EquipmentDefinition {
 	private int id, equipmentId, slot, stance, speed, range;
 	private int[] animations;
 	private boolean fullBody, fullMask, fullHelm, twoHanded;
-	private EquipmentBonuses bonuses;
+	private CombatBonuses bonuses;
 	private WeaponClass weaponClass;
 	private Requirements requirements = new Requirements();
 
@@ -233,7 +234,7 @@ public final class EquipmentDefinition {
 		return range;
 	}
 	
-	public EquipmentBonuses getBonuses() {
+	public CombatBonuses getBonuses() {
 		return bonuses;
 	}
 	

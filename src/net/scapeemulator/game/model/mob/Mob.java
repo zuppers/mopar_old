@@ -8,6 +8,7 @@ import net.scapeemulator.game.model.area.Area;
 import net.scapeemulator.game.model.area.PositionArea;
 import net.scapeemulator.game.model.area.QuadArea;
 import net.scapeemulator.game.model.mob.action.CombatAction;
+import net.scapeemulator.game.model.mob.combat.CombatBonuses;
 import net.scapeemulator.game.model.mob.combat.CombatHandler;
 import net.scapeemulator.game.model.mob.combat.HitType;
 import net.scapeemulator.game.model.mob.combat.Hits;
@@ -18,8 +19,8 @@ import net.scapeemulator.game.model.player.skills.prayer.HeadIcon;
 import net.scapeemulator.game.task.Action;
 
 /**
- * This represents an in-game Mob. An Entity with (mainly) {@link Animation}, {@link CombatHandler}
- * and {@link WalkingQueue}.
+ * This represents an in-game Mob. An Entity with (mainly) {@link Animation},
+ * {@link CombatHandler} and {@link WalkingQueue}.
  */
 public abstract class Mob extends Entity {
 
@@ -45,6 +46,7 @@ public abstract class Mob extends Entity {
     protected Action<? extends Mob> action;
     protected boolean hidden;
     protected CombatHandler<? extends Mob> combatHandler;
+    protected CombatBonuses combatBonuses;
 
     /**
      * Gets the id of this {@link Mob}.
@@ -101,8 +103,8 @@ public abstract class Mob extends Entity {
     }
 
     /**
-     * Start action. When different from the current Action, the currentAction is stopped and action
-     * is scheduled.
+     * Start action. When different from the current Action, the currentAction
+     * is stopped and action is scheduled.
      * 
      * @param action The {@link Action} to start.
      * @see stopAction()
@@ -146,8 +148,8 @@ public abstract class Mob extends Entity {
     }
 
     /**
-     * Gets whether or not this Mob has forced overhead chat to send to all players during the
-     * update process.
+     * Gets whether or not this Mob has forced overhead chat to send to all
+     * players during the update process.
      * 
      * @return if there is forced chat to be sent in the update blocks
      */
@@ -169,9 +171,9 @@ public abstract class Mob extends Entity {
     }
 
     /**
-     * Teleport this {@link Mob} to the specified Position. This implies {@link getPosition()} is
-     * equal to position, {@link isTeleporting()} == true and the {@link WalkingQueue} will be
-     * reset.
+     * Teleport this {@link Mob} to the specified Position. This implies {@link
+     * getPosition()} is equal to position, {@link isTeleporting()} == true and
+     * the {@link WalkingQueue} will be reset.
      * 
      * @param position The {@link Position} to teleport to.
      * @see WalkingQueue#reset()
@@ -210,8 +212,9 @@ public abstract class Mob extends Entity {
     }
 
     /**
-     * Gets whether this {@link Mob} isn't walking. Determined by {@link getFirstDirection()} and
-     * {@link getSecondDirection()} both being {@link Direction#NONE}.
+     * Gets whether this {@link Mob} isn't walking. Determined by {@link
+     * getFirstDirection()} and {@link getSecondDirection()} both being
+     * {@link Direction#NONE}.
      * 
      * @return Whether this isn't walking.
      */
@@ -222,20 +225,23 @@ public abstract class Mob extends Entity {
     /**
      * Get the most recent {@link Direction} of this {@link Mob}.
      * 
-     * @return The previous non {@link Direction#NONE}, {@link getSecondDirection} or
-     *         {@link getFirstDirection}
+     * @return The previous non {@link Direction#NONE},
+     *         {@link getSecondDirection} or {@link getFirstDirection}
      */
     public Direction getMostRecentDirection() {
         return mostRecentDirection;
     }
 
     /**
-     * Set the {@link getFirstDirection} and {@link getSecondDirection} to firstDirection and
-     * secondDirection. {@link getMostRecentDirection()} will be set to the current non
-     * {@link Direction#NONE}, {@link getSecondDirection} or {@link getFirstDirection}.
+     * Set the {@link getFirstDirection} and {@link getSecondDirection} to
+     * firstDirection and secondDirection. {@link getMostRecentDirection()} will
+     * be set to the current non {@link Direction#NONE},
+     * {@link getSecondDirection} or {@link getFirstDirection}.
      * 
-     * @param firstDirection The {@link Direction} to set the {@link getFirstDirection} to.
-     * @param secondDirection The {@link Direction} to set the {@link getSecondDirection} to.
+     * @param firstDirection The {@link Direction} to set the
+     *            {@link getFirstDirection} to.
+     * @param secondDirection The {@link Direction} to set the
+     *            {@link getSecondDirection} to.
      */
     public void setDirections(Direction firstDirection, Direction secondDirection) {
         this.firstDirection = firstDirection;
@@ -251,7 +257,8 @@ public abstract class Mob extends Entity {
     /**
      * Gets the current {@link Action} of this {@link Mob}.
      * 
-     * @return The current {@link Action}. Returns null if there is currently no {@link Action}.
+     * @return The current {@link Action}. Returns null if there is currently no
+     *         {@link Action}.
      * @see startAction(Action)
      * @see stopAction()
      */
@@ -270,8 +277,8 @@ public abstract class Mob extends Entity {
     /**
      * Gets the current {@link Animation} of this {@link Mob}.
      * 
-     * @return The current {@link Animation}. Returns null if there is currently no
-     *         {@link Animation}.
+     * @return The current {@link Animation}. Returns null if there is currently
+     *         no {@link Animation}.
      * @see playAnimation(Animation)
      * @see isAnimationUpdated()
      */
@@ -282,8 +289,8 @@ public abstract class Mob extends Entity {
     /**
      * Gets the current {@link SpotAnimation} of this {@link Mob}.
      * 
-     * @return The current {@link SpotAnimation}. Returns null if there is currently no
-     *         {@link SpotAnimation}.
+     * @return The current {@link SpotAnimation}. Returns null if there is
+     *         currently no {@link SpotAnimation}.
      * @see playSpotAnimation(SpotAnimation}
      * @see isSpotAnimationUpdated()
      */
@@ -310,7 +317,8 @@ public abstract class Mob extends Entity {
     }
 
     /**
-     * Play the provided {@link Animation}. {@link getAnimation()} will be equal to animation.
+     * Play the provided {@link Animation}. {@link getAnimation()} will be equal
+     * to animation.
      * 
      * @param animation The {@link Animation} to play.
      */
@@ -319,15 +327,16 @@ public abstract class Mob extends Entity {
     }
 
     /**
-     * Cancels the {@link getAnimation()}. {@link getAnimation()} will be equal to
-     * {@link CANCEL_ANIMATION}.
+     * Cancels the {@link getAnimation()}. {@link getAnimation()} will be equal
+     * to {@link CANCEL_ANIMATION}.
      */
     public void cancelAnimation() {
         animation = CANCEL_ANIMATION;
     }
 
     /**
-     * Play the provided {@link SpotAnimation}. {@link getAnimation()} will be equal to animation.
+     * Play the provided {@link SpotAnimation}. {@link getAnimation()} will be
+     * equal to animation.
      * 
      * @param spotAnimation The {@link SpotAnimation} to play.
      */
@@ -336,8 +345,8 @@ public abstract class Mob extends Entity {
     }
 
     /**
-     * Turn to the provided turnToPosition. {@link getTurnToPosition()} will be equal to
-     * turnToPosition.
+     * Turn to the provided turnToPosition. {@link getTurnToPosition()} will be
+     * equal to turnToPosition.
      * 
      * @param turnToPosition The {@link Position} to turn to.
      */
@@ -365,8 +374,8 @@ public abstract class Mob extends Entity {
     }
 
     /**
-     * Turn to the specified target. {@link getTurnToTarget()} = target <b>and</b> {@link
-     * getTurnToTargetId()} = {@link getTargetId(Mob)}
+     * Turn to the specified target. {@link getTurnToTarget()} = target
+     * <b>and</b> {@link getTurnToTargetId()} = {@link getTargetId(Mob)}
      * 
      * @param target The {@link Mob} to turn to.
      */
@@ -389,8 +398,8 @@ public abstract class Mob extends Entity {
     }
 
     /**
-     * Reset the target to turn to. {@link getTurnToTargetId()} = 65535 <b>and</b> {@link
-     * getTurnToTarget()} = null
+     * Reset the target to turn to. {@link getTurnToTargetId()} = 65535
+     * <b>and</b> {@link getTurnToTarget()} = null
      */
     public void resetTurnToTarget() {
         turnToTargetId = 65535;
@@ -526,7 +535,8 @@ public abstract class Mob extends Entity {
     }
 
     /**
-     * Gets whether this {@link Mob} can traverse in the specified {@link Direction}.
+     * Gets whether this {@link Mob} can traverse in the specified
+     * {@link Direction}.
      * 
      * @param direction The {@link Direction} to check if traversable.
      * @return {@code Direction.isTraversable(getPosition(), direction, getSize())}
@@ -578,8 +588,9 @@ public abstract class Mob extends Entity {
     }
 
     /**
-     * Process the hit of a certain {@link Mob} source. This includes starting possible retaliation,
-     * {@link Hits#addHit(Mob, HitType, int)}, {@link reduceHp(int)} and possible {@link onDeath()}.
+     * Process the hit of a certain {@link Mob} source. This includes starting
+     * possible retaliation, {@link Hits#addHit(Mob, HitType, int)}, {@link
+     * reduceHp(int)} and possible {@link onDeath()}.
      * 
      * @param source The source of the damage.
      * @param damage The damage to process.
@@ -601,11 +612,15 @@ public abstract class Mob extends Entity {
         }
     }
 
+    public CombatBonuses getCombatBonuses() {
+        return combatBonuses;
+    }
+
     /**
-     * Reset this {@link Mob}. {@link getAnimation()} = {@link getSpotAnimation()} = {@link
-     * getTurnToPosition()} = null. <b>and</b> {@link isTeleporting()} =
-     * {@link WalkingQueue#isMinimapFlagReset()} = false. <b>and</b> {@link getTurnToTargetId()} =
-     * -1.
+     * Reset this {@link Mob}. {@link getAnimation()} = {@link
+     * getSpotAnimation()} = {@link getTurnToPosition()} = null. <b>and</b>
+     * {@link isTeleporting()} = {@link WalkingQueue#isMinimapFlagReset()} =
+     * false. <b>and</b> {@link getTurnToTargetId()} = -1.
      * 
      * @see Hits#reset()
      */
@@ -667,7 +682,8 @@ public abstract class Mob extends Entity {
     public abstract boolean isRunning();
 
     /**
-     * Gets the health regen per tick of this {@link Mob}. 100 = One hitpoint per tick
+     * Gets the health regen per tick of this {@link Mob}. 100 = One hitpoint
+     * per tick
      * 
      * @return the health regen value of this {@link Mob}
      */

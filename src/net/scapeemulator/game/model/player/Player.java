@@ -15,6 +15,7 @@ import net.scapeemulator.game.model.grounditem.GroundItemSynchronizer;
 import net.scapeemulator.game.model.mob.Animation;
 import net.scapeemulator.game.model.mob.Mob;
 import net.scapeemulator.game.model.mob.combat.AttackType;
+import net.scapeemulator.game.model.mob.combat.CombatBonuses;
 import net.scapeemulator.game.model.npc.NPC;
 import net.scapeemulator.game.model.object.GroundObjectSynchronizer;
 import net.scapeemulator.game.model.player.PlayerVariables.Variable;
@@ -48,6 +49,7 @@ import net.scapeemulator.game.msg.impl.PlayerMenuOptionMessage;
 import net.scapeemulator.game.msg.impl.ServerMessage;
 import net.scapeemulator.game.msg.impl.inter.InterfaceTextMessage;
 import net.scapeemulator.game.net.game.GameSession;
+import net.scapeemulator.game.task.Task;
 import net.scapeemulator.game.util.StringUtils;
 import net.scapeemulator.util.Base37Utils;
 
@@ -80,6 +82,7 @@ public final class Player extends Mob {
     private final List<Player> localPlayers = new ArrayList<>();
     private final List<NPC> localNpcs = new ArrayList<>();
     private Appearance appearance = new Appearance(this);
+    private ForcedMovement forcedMove;
     private int energy = 100;
     private Player wantToTrade;
     private TradeSession tradeSession;
@@ -104,7 +107,6 @@ public final class Player extends Mob {
     private final StateSet stateSet = new StateSet(this);
     private Spellbook spellbook = Spellbook.NORMAL_SPELLBOOK;
     private final AccessSet accessSet = new AccessSet(this);
-    private final EquipmentBonuses equipmentBonuses = new EquipmentBonuses();
     private final GroundItemSynchronizer groundItemSync = new GroundItemSynchronizer(this);
     private final GroundObjectSynchronizer groundObjSync = new GroundObjectSynchronizer(this);
     private int[] appearanceTickets = new int[World.MAX_PLAYERS];
@@ -134,9 +136,6 @@ public final class Player extends Mob {
 
     public void calculateEquipmentBonuses() {
         for (AttackType type : AttackType.values()) {
-            if (type == AttackType.AIR || type == AttackType.WATER || type == AttackType.EARTH || type == AttackType.FIRE || type == AttackType.DRAGONFIRE) {
-                continue;
-            }
             int typeAttackBonus = 0;
             int typeDefenceBonus = 0;
             for (Item equipped : getEquipment().toArray()) {
@@ -146,9 +145,10 @@ public final class Player extends Mob {
                 typeAttackBonus += equipped.getEquipmentDefinition().getBonuses().getAttackBonus(type);
                 typeDefenceBonus += equipped.getEquipmentDefinition().getBonuses().getDefenceBonus(type);
             }
-            equipmentBonuses.setAttackBonus(type, typeAttackBonus);
-            equipmentBonuses.setDefenceBonus(type, typeDefenceBonus);
+            combatBonuses.setAttackBonus(type, typeAttackBonus);
+            combatBonuses.setDefenceBonus(type, typeDefenceBonus);
         }
+        
         int prayerBonus = 0;
         int strengthBonus = 0;
         for (Item equipped : getEquipment().toArray()) {
@@ -158,8 +158,8 @@ public final class Player extends Mob {
             prayerBonus += equipped.getEquipmentDefinition().getBonuses().getPrayerBonus();
             strengthBonus += equipped.getEquipmentDefinition().getBonuses().getStrengthBonus();
         }
-        equipmentBonuses.setPrayerBonus(prayerBonus);
-        equipmentBonuses.setStrengthBonus(strengthBonus);
+        combatBonuses.setPrayerBonus(prayerBonus);
+        combatBonuses.setStrengthBonus(strengthBonus);
 
         Item weapon = getEquipment().get(Equipment.WEAPON);
         Item ammo = getEquipment().get(Equipment.AMMO);
@@ -170,7 +170,7 @@ public final class Player extends Mob {
             rangeBonus = ammo.getEquipmentDefinition().getBonuses().getRangeStrengthBonus();
         }
 
-        equipmentBonuses.setRangeStrengthBonus(rangeBonus);
+        combatBonuses.setRangeStrengthBonus(rangeBonus);
 
         if (getInterfaceSet().getWindow().getCurrentId() == 667) {
             sendEquipmentBonuses();
@@ -236,10 +236,6 @@ public final class Player extends Mob {
 
     public Inventory getEquipment() {
         return inventorySet.getEquipment();
-    }
-
-    public EquipmentBonuses getEquipmentBonuses() {
-        return equipmentBonuses;
     }
 
     public Friends getFriends() {
@@ -409,6 +405,7 @@ public final class Player extends Mob {
     }
 
     private void init() {
+        combatBonuses = new CombatBonuses();
         combatHandler = new PlayerCombatHandler(this);
         skillSet.addListener(new SkillMessageListener(this));
         skillSet.addListener(new SkillAppearanceListener(this));
@@ -419,6 +416,33 @@ public final class Player extends Mob {
         for (int i = 0; i < options.length; i++) {
             options[i] = new PlayerOption();
         }
+    }
+
+    public void forceMovement(ForcedMovement forcedMove, int duration) {
+        this.forcedMove = forcedMove;
+        blockActions = true;
+        World.getWorld().getTaskScheduler().schedule(new Task(duration, false) {
+
+            @Override
+            public void execute() {
+                stop();
+            }
+
+            public void stop() {
+                teleport(forcedMove.getDestination());
+                blockActions = false;
+                super.stop();
+            }
+        });
+
+    }
+
+    public ForcedMovement getForcedMove() {
+        return forcedMove;
+    }
+
+    public boolean isForceMovementUpdated() {
+        return forcedMove != null;
     }
 
     public boolean isChatUpdated() {
@@ -486,6 +510,7 @@ public final class Player extends Mob {
         regionChanging = false;
         chatMessage = null;
         constructedRegion = null;
+        forcedMove = null;
     }
 
     public SceneRebuiltListener getSceneRebuiltListener() {
@@ -506,19 +531,19 @@ public final class Player extends Mob {
 
     public void sendEquipmentBonuses() {
         setInterfaceText(667, 32, "0 kg");
-        setInterfaceText(667, 36, "Stab: " + addPlus(equipmentBonuses.getAttackBonus(AttackType.STAB)));
-        setInterfaceText(667, 37, "Slash: " + addPlus(equipmentBonuses.getAttackBonus(AttackType.SLASH)));
-        setInterfaceText(667, 38, "Crush: " + addPlus(equipmentBonuses.getAttackBonus(AttackType.CRUSH)));
-        setInterfaceText(667, 39, "Magic: " + addPlus(equipmentBonuses.getAttackBonus(AttackType.ALL_MAGIC)));
-        setInterfaceText(667, 40, "Ranged: " + addPlus(equipmentBonuses.getAttackBonus(AttackType.RANGE)));
-        setInterfaceText(667, 41, "Stab: " + addPlus(equipmentBonuses.getDefenceBonus(AttackType.STAB)));
-        setInterfaceText(667, 42, "Slash: " + addPlus(equipmentBonuses.getDefenceBonus(AttackType.SLASH)));
-        setInterfaceText(667, 43, "Crush: " + addPlus(equipmentBonuses.getDefenceBonus(AttackType.CRUSH)));
-        setInterfaceText(667, 44, "Magic: " + addPlus(equipmentBonuses.getDefenceBonus(AttackType.ALL_MAGIC)));
-        setInterfaceText(667, 45, "Range: " + addPlus(equipmentBonuses.getDefenceBonus(AttackType.RANGE)));
+        setInterfaceText(667, 36, "Stab: " + addPlus(combatBonuses.getAttackBonus(AttackType.STAB)));
+        setInterfaceText(667, 37, "Slash: " + addPlus(combatBonuses.getAttackBonus(AttackType.SLASH)));
+        setInterfaceText(667, 38, "Crush: " + addPlus(combatBonuses.getAttackBonus(AttackType.CRUSH)));
+        setInterfaceText(667, 39, "Magic: " + addPlus(combatBonuses.getAttackBonus(AttackType.MAGIC)));
+        setInterfaceText(667, 40, "Ranged: " + addPlus(combatBonuses.getAttackBonus(AttackType.RANGE)));
+        setInterfaceText(667, 41, "Stab: " + addPlus(combatBonuses.getDefenceBonus(AttackType.STAB)));
+        setInterfaceText(667, 42, "Slash: " + addPlus(combatBonuses.getDefenceBonus(AttackType.SLASH)));
+        setInterfaceText(667, 43, "Crush: " + addPlus(combatBonuses.getDefenceBonus(AttackType.CRUSH)));
+        setInterfaceText(667, 44, "Magic: " + addPlus(combatBonuses.getDefenceBonus(AttackType.MAGIC)));
+        setInterfaceText(667, 45, "Range: " + addPlus(combatBonuses.getDefenceBonus(AttackType.RANGE)));
         setInterfaceText(667, 46, "Summoning: 0");
-        setInterfaceText(667, 48, "Strength: " + addPlus(equipmentBonuses.getStrengthBonus()));
-        setInterfaceText(667, 49, "Prayer: " + addPlus(equipmentBonuses.getPrayerBonus()));
+        setInterfaceText(667, 48, "Strength: " + addPlus(combatBonuses.getStrengthBonus()));
+        setInterfaceText(667, 49, "Prayer: " + addPlus(combatBonuses.getPrayerBonus()));
     }
 
     public void sendMessage(String text) {
