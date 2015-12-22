@@ -6,7 +6,7 @@ import net.scapeemulator.game.model.object.ObjectGroup;
 import net.scapeemulator.game.model.player.RegionPalette.Tile.Rotation;
 import net.scapeemulator.game.model.player.skills.construction.DoorType;
 import net.scapeemulator.game.model.player.skills.construction.House;
-import net.scapeemulator.game.model.player.skills.construction.hotspot.HotspotType;
+import net.scapeemulator.game.model.player.skills.construction.hotspot.FurnitureHotspotType;
 
 /**
  * @author David Insley
@@ -61,8 +61,8 @@ public class RoomPreview extends Room {
                     int height = house.getHeightOffset() + roomPos.getHouseHeight();
                     int baseX = roomPos.getBaseX();
                     int baseY = roomPos.getBaseY();
-                    HotspotType type = HotspotType.forObjectId(obj.getId());
-                    if (type == HotspotType.DOOR) {
+                    FurnitureHotspotType type = FurnitureHotspotType.forObjectId(obj.getId());
+                    if (type == FurnitureHotspotType.DOOR) {
                         DoorType doorType = obj.getId() == DoorType.BASIC_WOOD_1.getHotspotId() ? house.getStyle().getDoorType1() : house.getStyle().getDoorType2();
                         house.getObjectList().put(new Position(baseX + newX, baseY + newY, height), doorType.getHotspotId(), newRot, obj.getType());
                     } else {
@@ -77,7 +77,7 @@ public class RoomPreview extends Room {
 
     public void rotate(Rotation rotation) {
         house.clearRoomSpace(roomPos, false);
-        roomRotation = roomRotation.rotate(rotation);
+        roomRotation = roomRotation.rotate(rotation);            
         previewRoom();
     }
 

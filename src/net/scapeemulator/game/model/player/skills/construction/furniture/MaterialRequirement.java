@@ -1,12 +1,14 @@
 package net.scapeemulator.game.model.player.skills.construction.furniture;
 
 import net.scapeemulator.game.model.definition.ItemDefinitions;
-import net.scapeemulator.game.model.player.requirement.ItemRequirement;
+import net.scapeemulator.game.model.player.Item;
+import net.scapeemulator.game.model.player.Player;
+import net.scapeemulator.game.model.player.requirement.Requirement;
 
 /**
  * @author David Insley
  */
-public class MaterialRequirement extends ItemRequirement {
+public class MaterialRequirement extends Requirement {
 
     private final Material material;
     private final int amount;
@@ -16,17 +18,27 @@ public class MaterialRequirement extends ItemRequirement {
     }
 
     public MaterialRequirement(Material material, int amount) {
-        super(material.getItemId(), amount, true, "You do not have the materials to make that.");
         this.material = material;
         this.amount = amount;
     }
 
-    public int getAmount() {
-        return amount;
+    public double getXp() {
+        return material.getXp() * amount;
     }
 
-    public Material getMaterial() {
-        return material;
+    @Override
+    public boolean hasRequirement(Player player) {
+        return player.getInventory().getAmount(material.getItemId()) >= amount;
+    }
+
+    @Override
+    public void displayErrorMessage(Player player) {
+        player.sendMessage("You do not have the materials to make that.");
+    }
+
+    @Override
+    public void fulfill(Player player) {
+        player.getInventory().remove(new Item(material.getItemId(), amount));
     }
 
     @Override
