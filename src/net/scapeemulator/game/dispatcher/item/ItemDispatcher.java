@@ -12,6 +12,9 @@ import net.scapeemulator.game.model.player.Player;
 import net.scapeemulator.game.model.player.SlottedItem;
 import net.scapeemulator.game.model.player.interfaces.Interface;
 import net.scapeemulator.game.model.player.inventory.Inventory;
+import net.scapeemulator.game.model.player.skills.magic.EffectItemSpell;
+import net.scapeemulator.game.model.player.skills.magic.Spell;
+import net.scapeemulator.game.model.player.skills.magic.Spellbook;
 import net.scapeemulator.game.util.HandlerContext;
 
 /**
@@ -95,6 +98,35 @@ public final class ItemDispatcher {
                     break;
                 }
             }
+        }
+    }
+
+    public void handleMagic(Player player, int tabId, int spellId, int slot, int itemId) {
+        System.out.println("[MagicOnItem] tab/spell: (" + tabId + "/" + spellId + ") slot/itemid: (" + slot + "/" + itemId + ")");
+        if (player.actionsBlocked()) {
+            return;
+        }
+
+        Spellbook spellbook = player.getSpellbook();
+        if (tabId != spellbook.getInterfaceId()) {
+            return;
+        }
+
+        if (!validateInventory(player.getInventory(), itemId, slot)) {
+            return;
+        }
+
+        Spell spell = spellbook.getSpell(spellId);
+        if (spell == null) {
+            return;
+        }
+
+        switch (spell.getType()) {
+        case ITEM:
+            ((EffectItemSpell) spell).cast(player, itemId, slot);
+            break;
+        default:
+            return;
         }
     }
 

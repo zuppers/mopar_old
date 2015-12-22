@@ -1,5 +1,6 @@
 package net.scapeemulator.game.msg.handler.item;
 
+import net.scapeemulator.game.dispatcher.item.ItemDispatcher;
 import net.scapeemulator.game.model.player.Player;
 import net.scapeemulator.game.msg.MessageHandler;
 import net.scapeemulator.game.msg.impl.item.MagicOnItemMessage;
@@ -9,11 +10,15 @@ import net.scapeemulator.game.msg.impl.item.MagicOnItemMessage;
  */
 public final class MagicOnItemMessageHandler extends MessageHandler<MagicOnItemMessage> {
 
-    public MagicOnItemMessageHandler() {
+    private final ItemDispatcher dispatcher;
+
+    public MagicOnItemMessageHandler(ItemDispatcher dispatcher) {
+        this.dispatcher = dispatcher;
     }
 
     @Override
     public void handle(Player player, MagicOnItemMessage msg) {
-        System.out.println("[MagicOnItem] tab/spell: (" + msg.getTabId() + "/" + msg.getSpellId() + ") slot/itemid: (" + msg.getSlot() + "/" + msg.getItemId() + ")");
+        dispatcher.handleMagic(player, msg.getTabId(), msg.getSpellId(), msg.getSlot(), msg.getItemId());
     }
+
 }
