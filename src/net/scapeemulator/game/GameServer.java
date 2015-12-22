@@ -108,7 +108,7 @@ public final class GameServer {
     private final PluginLoader pluginLoader = new PluginLoader();
     private final ScriptContext scriptContext = new ScriptContext();
     private MapLoader mapLoader;
-
+    private int ticks = 0;
     private final MessageDispatcher messageDispatcher = new MessageDispatcher();
     private LoginService loginService;
     private Serializer serializer;
@@ -255,6 +255,7 @@ public final class GameServer {
          * As the MobList class is not thread-safe, players must be registered within the game logic
          * processing code.
          */
+        ticks++;
         loginService.registerNewPlayers(world);
 
         world.tick();
@@ -264,6 +265,10 @@ public final class GameServer {
         return world;
     }
 
+    public int getTickTimestamp() {
+        return ticks;
+    }
+    
     public LoginService getLoginService() {
         return loginService;
     }
