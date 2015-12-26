@@ -83,7 +83,7 @@ public enum Arrow {
 		return new SpotAnimation(dub ? doubleDrawbackGraphic : drawbackGraphic, 0, 90);
 	}
 	
-	private final static int[] SPEEDS = {60, 60, 60, 63, 65, 67, 69, 69, 71, 73, 73};
+	private final static int[] SPEEDS = {10, 10, 10, 13, 15, 17, 19, 29, 21, 23, 23};
 	
 	public void createProjectile(Mob source, Mob target, boolean dub) {
 		Position start = source.getPosition();

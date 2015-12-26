@@ -57,9 +57,8 @@ public class NPCCombatHandler extends CombatHandler<NPC> {
         int damage = !shouldHit ? 0 : 1 + (int) (Math.random() * getMaxHit());
 
         if (nextSpell != null) {
-            nextSpell.cast(mob, target);
+            ((DamageSpell)nextSpell).cast(mob, target, damage);
             mob.playAnimation(new Animation(mob.getDefinition().getAttackEmote()));
-            World.getWorld().getTaskScheduler().schedule(new DelayedMagicHit(mob, target, nextSpell.getExplosionGraphic(), damage));
             nextSpell = autoCast;
         } else {
             mob.playAnimation(new Animation(mob.getDefinition().getAttackEmote()));
