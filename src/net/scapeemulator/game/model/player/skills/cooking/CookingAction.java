@@ -9,31 +9,32 @@ import net.scapeemulator.game.model.object.GroundObjectListenerAdapter;
 import net.scapeemulator.game.model.player.Equipment;
 import net.scapeemulator.game.model.player.Item;
 import net.scapeemulator.game.model.player.Player;
-import net.scapeemulator.game.model.player.ScriptInputListener;
 import net.scapeemulator.game.model.player.SlottedItem;
 import net.scapeemulator.game.model.player.action.ReachDistancedAction;
-import net.scapeemulator.game.model.player.interfaces.ComponentListener;
-import net.scapeemulator.game.model.player.interfaces.InterfaceSet.Component;
+import net.scapeemulator.game.model.player.skills.MakeItemInterface;
 import net.scapeemulator.game.model.player.skills.Skill;
-import net.scapeemulator.game.msg.impl.inter.InterfaceItemMessage;
+import net.scapeemulator.game.model.player.skills.MakeItemInterface.MakeItemInterfaceListener;
 
 /**
  * @author David Insley
  */
 public class CookingAction extends ReachDistancedAction {
 
-    private static final int COOKING_INTERFACE = 307;
     private static final Random random = new Random();
 
     private enum State {
-        WALKING, INIT, WAITING, COOKING
+        INIT,
+        WALKING,
+        START,
+        WAITING,
+        COOKING
     }
 
     private final SlottedItem item;
-    private final GroundObject object;
     private final HeatSource heatSource;
     private final RawFood food;
     private final FireObjectListener listener;
+    private final GroundObject object;
     private State state;
     private int amount;
 
@@ -43,74 +44,71 @@ public class CookingAction extends ReachDistancedAction {
         this.food = food;
         this.item = item;
         this.object = object;
-        player.turnToPosition(object.getCenterPosition());
         listener = new FireObjectListener();
-        World.getWorld().getGroundObjects().addListener(listener);
-        state = State.WALKING;
+        state = State.INIT;
     }
 
     @Override
     public void executeAction() {
         switch (state) {
-        case WALKING:
-            if (!mob.getWalkingQueue().isEmpty()) {
+            case INIT:
+                World.getWorld().getGroundObjects().addListener(listener);
+                state = State.WALKING;
+                executeAction();
                 return;
-            }
-            state = State.INIT;
-            break;
-        case INIT:
-            mob.getInterfaceSet().openChatbox(COOKING_INTERFACE, new CookingInterfaceListener());
-            mob.send(new InterfaceItemMessage(COOKING_INTERFACE, 2, 150, food.getRawId()));
-            mob.setInterfaceText(COOKING_INTERFACE, 6, "<br><br><br><br>" + ItemDefinitions.forId(food.getRawId()).getName());
-            state = State.WAITING;
-            break;
-        case WAITING:
-            break;
-        case COOKING:
-            if (amount-- < 1) {
-                stop();
+            case WALKING:
+                if (mob.getWalkingQueue().isEmpty()) {
+                    state = State.START;
+                    mob.turnToPosition(object.getCenterPosition());
+                }
                 return;
-            }
-            if (!food.getRequirements().hasRequirementsDisplayOne(mob)) {
-                stop();
+            case START:
+                MakeItemInterface.showMakeItemInterface(mob, new CookItemInterfaceListener(), new Item(food.getRawId()), true);
+                state = State.WAITING;
                 return;
-            }
+            case WAITING:
+                return;
+            case COOKING:
+                if (amount-- < 1) {
+                    stop();
+                    return;
+                }
+                if (!food.getRequirements().hasRequirementsDisplayOne(mob)) {
+                    stop();
+                    return;
+                }
 
-            mob.playAnimation(heatSource.getAnimation());
-            mob.getInventory().remove(item);
+                mob.playAnimation(heatSource.getAnimation());
+                mob.getInventory().remove(item);
 
-            // Credits to Abyssal Noob
-            int lvlReq = food.getLevelReq();
-            double burnChance = (55.0 - heatSource.getCookingBonus());
-            int stopBurn = food.getStopBurn();
-            if (mob.getEquipment().get(Equipment.HANDS) != null) {
-                stopBurn -= mob.getEquipment().get(Equipment.HANDS).getId() == Cooking.COOKING_GAUNTLETS ? food.getGauntletMod() : 0;
-            }
-            int burnLvlDelta = (stopBurn - lvlReq);
-            double burnDecrease = (burnChance / burnLvlDelta);
-            int lvlReqDelta = (mob.getSkillSet().getCurrentLevel(Skill.COOKING) - lvlReq);
-            burnChance -= (lvlReqDelta * burnDecrease);
-            double randNum = random.nextDouble() * 100.0;
+                /* - Credits to Abyssal Noob - */
+                int lvlReq = food.getLevelReq();
+                double burnChance = (55.0 - heatSource.getCookingBonus());
+                int stopBurn = food.getStopBurn();
+                if (mob.getEquipment().get(Equipment.HANDS) != null) {
+                    stopBurn -= mob.getEquipment().get(Equipment.HANDS).getId() == Cooking.COOKING_GAUNTLETS ? food.getGauntletMod() : 0;
+                }
+                int burnLvlDelta = (stopBurn - lvlReq);
+                double burnDecrease = (burnChance / burnLvlDelta);
+                int lvlReqDelta = (mob.getSkillSet().getCurrentLevel(Skill.COOKING) - lvlReq);
+                burnChance -= (lvlReqDelta * burnDecrease);
+                double randNum = random.nextDouble() * 100.0;
+                /* --------------------------- */
 
-            String name = ItemDefinitions.forId(food.getCookedId()).getName().toLowerCase();
-            if (burnChance <= randNum) {
-                mob.getInventory().add(new Item(food.getCookedId()), item.getSlot());
-                mob.sendMessage("You successfully cook some " + name + ".");
-                mob.getSkillSet().addExperience(Skill.COOKING, food.getXp());
-            } else {
-                mob.getInventory().add(new Item(food.getBurnedId()), item.getSlot());
-                mob.sendMessage("You accidentally burn the " + name + ".");
-            }
+                String name = ItemDefinitions.forId(food.getCookedId()).getName().toLowerCase();
+                if (burnChance <= randNum) {
+                    mob.getInventory().add(new Item(food.getCookedId()), item.getSlot());
+                    mob.sendMessage("You successfully cook some " + name + ".");
+                    mob.getSkillSet().addExperience(Skill.COOKING, food.getXp());
+                } else {
+                    mob.getInventory().add(new Item(food.getBurnedId()), item.getSlot());
+                    mob.sendMessage("You accidentally burn the " + name + ".");
+                }
 
-            food.getRequirements().fulfillAll(mob);
-            break;
+                food.getRequirements().fulfillAll(mob);
+                return;
         }
 
-    }
-
-    private void fireOut() {
-        mob.sendMessage("Your fire has gone out.");
-        stop();
     }
 
     @Override
@@ -120,56 +118,29 @@ public class CookingAction extends ReachDistancedAction {
         super.stop();
     }
 
-    private class CookingInterfaceListener extends ComponentListener {
+    private class CookItemInterfaceListener extends MakeItemInterfaceListener {
 
         @Override
-        public void inputPressed(Component component, int componentId, int dynamicId) {
-            if (component.getCurrentId() != COOKING_INTERFACE) {
-                stop();
-                return;
-            }
-            componentId -= 3;
-            switch (componentId) {
-            case 0:
-                amount = 28;
-                state = State.COOKING;
-                break;
-            case 1:
-                mob.getScriptInput().showIntegerScriptInput("How many would you like to cook?", new ScriptInputListener() {
-                    @Override
-                    public void intInputReceived(int value) {
-                        amount = value;
-                        state = State.COOKING;
-                    }
-
-                    @Override
-                    public void usernameInputReceived(long value) {
-                    }
-                });
-                break;
-            case 2:
-                amount = 5;
-                state = State.COOKING;
-                break;
-            case 3:
-                amount = 1;
-                state = State.COOKING;
-                break;
-            }
-            setDelay(4);
-            component.removeListener();
-            component.reset();
+        public void makeAllSelected() {
+            start(mob.getInventory().getAmount(food.getRawId()));
         }
 
         @Override
-        public void componentClosed(Component component) {
+        public void makeAmountSelected(int amt) {
+            start(amt);
+        }
+
+        @Override
+        public void cancelled() {
             stop();
         }
 
-        @Override
-        public void componentChanged(Component component, int oldId) {
-            componentClosed(component);
+        private void start(int amt) {
+            amount = amt;
+            setDelay(4);
+            state = State.COOKING;
         }
+
     }
 
     private class FireObjectListener extends GroundObjectListenerAdapter {
@@ -186,6 +157,11 @@ public class CookingAction extends ReachDistancedAction {
             if (object == removed) {
                 fireOut();
             }
+        }
+
+        private void fireOut() {
+            mob.sendMessage("Your fire has gone out.");
+            stop();
         }
     }
 }

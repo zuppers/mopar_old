@@ -359,9 +359,11 @@ public class TradeSession extends ComponentListener {
     }
     
     @Override
-    public void componentChanged(Component component, int oldId) {
+    public boolean componentChanged(Component component, int oldId) {
         if(component.getCurrentId() != VERIFY_WINDOW) {
-            componentClosed(component);
+            decline();
+            return false;
         }
+        return true;
     }
 }

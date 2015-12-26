@@ -5,6 +5,7 @@ import net.scapeemulator.game.model.player.interfaces.InterfaceSet.Component;
 
 /**
  * @author Hadyn Richard
+ * @author David Insley
  */
 public final class DialogueContextListener extends ComponentListener {
 
@@ -25,7 +26,7 @@ public final class DialogueContextListener extends ComponentListener {
     }
 
     @Override
-    public void componentChanged(Component component, int oldId) {
-        componentClosed(component);
+    public boolean componentChanged(Component component, int oldId) {
+        return context.getInterfaceId() == component.getCurrentId();
     }
 }

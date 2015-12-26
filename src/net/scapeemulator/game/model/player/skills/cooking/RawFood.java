@@ -1,5 +1,6 @@
 package net.scapeemulator.game.model.player.skills.cooking;
 
+import net.scapeemulator.game.model.definition.ItemDefinitions;
 import net.scapeemulator.game.model.player.requirement.InventorySpaceRequirement;
 import net.scapeemulator.game.model.player.requirement.ItemRequirement;
 import net.scapeemulator.game.model.player.requirement.Requirement;
@@ -12,19 +13,19 @@ import net.scapeemulator.game.model.player.skills.fishing.Fish;
  * @author David Insley
  */
 public enum RawFood {
-    
+
     // Baking
     BREAD(1, 40, 2307, 2309, 2311, 34, true),
     PITTA(1, 40, 1863, 1865, 1867, 1, true), // Can't be burned
     PIZZA(35, 143, 2287, 2289, 2305, 68, true),
     CAKE(40, 180, 1889, 1891, 1903, 73, true, InventorySpaceRequirement.ONE_SLOT), // TODO give tin back
-    
+
     // Meat
     BEEF(1, 30, 2132, 2142, 2146, 34),
     CHICKEN(1, 30, 2138, 2140, 2144, 34),
     RABBIT(1, 30, 3226, 3228, 7222, 34),
     UGTHANKI(1, 40, 1859, 1861, 2146, 34),
-    
+
     // Fish
     SHRIMP(Fish.SHRIMP, 1, 30, 323, 34),
     CRAYFISH(Fish.CRAYFISH, 1, 30, 13437, 34),
@@ -43,7 +44,6 @@ public enum RawFood {
     MONKFISH(Fish.MONKFISH, 62, 150, 7948, 92, -2),
     SHARK(Fish.SHARK, 80, 210, 387, 104, -10);
 
-    
     private final int levelReq;
     private final double xp;
     private final int rawId;
@@ -53,28 +53,29 @@ public enum RawFood {
     private final int gauntletMod;
     private final boolean reqStove;
     private final Requirements requirements;
-    
+
     private RawFood(Fish fish, int levelReq, double xp, int burnedId, int stopBurn) {
         this(levelReq, xp, fish.getRawId(), fish.getCookedId(), burnedId, stopBurn, 0);
     }
-    
+
     private RawFood(Fish fish, int levelReq, double xp, int burnedId, int stopBurn, int gauntletMod) {
         this(levelReq, xp, fish.getRawId(), fish.getCookedId(), burnedId, stopBurn, gauntletMod);
     }
-    
+
     private RawFood(int levelReq, double xp, int rawId, int cookedId, int burnedId, int stopBurn) {
         this(levelReq, xp, rawId, cookedId, burnedId, stopBurn, 0, false);
     }
-    
-    private RawFood(int levelReq, double xp, int rawId, int cookedId, int burnedId, int stopBurn, boolean reqStove, Requirement... reqs) {
+
+    private RawFood(int levelReq, double xp, int rawId, int cookedId, int burnedId, int stopBurn, boolean reqStove, Requirement ... reqs) {
         this(levelReq, xp, rawId, cookedId, burnedId, stopBurn, 0, reqStove, reqs);
-    } 
-    
+    }
+
     private RawFood(int levelReq, double xp, int rawId, int cookedId, int burnedId, int stopBurn, int gauntletMod) {
         this(levelReq, xp, rawId, cookedId, burnedId, stopBurn, gauntletMod, false);
     }
-    
-    private RawFood(int levelReq, double xp, int rawId, int cookedId, int burnedId, int stopBurn, int gauntletMod, boolean reqStove, Requirement... reqs) {
+
+    private RawFood(int levelReq, double xp, int rawId, int cookedId, int burnedId, int stopBurn, int gauntletMod, boolean reqStove,
+            Requirement ... reqs) {
         this.levelReq = levelReq;
         this.xp = xp;
         this.rawId = rawId;
@@ -84,8 +85,14 @@ public enum RawFood {
         this.gauntletMod = gauntletMod;
         this.reqStove = reqStove;
         requirements = new Requirements();
+
+        // We don't have the xp reward set here because they don't get xp if it burns
         requirements.addRequirement(new SkillRequirement(Skill.COOKING, levelReq, true, "cook that"));
-        requirements.addRequirement(new ItemRequirement(rawId, false));
+
+        // We don't set 'remove item' to true here because we use the slottedItem in the cooking action
+        requirements.addRequirement(new ItemRequirement(rawId, false, "You don't have any more " + ItemDefinitions.name(rawId).toLowerCase()
+                + " to cook."));
+
         requirements.addRequirements(reqs);
     }
 
@@ -116,11 +123,11 @@ public enum RawFood {
     public int getGauntletMod() {
         return gauntletMod;
     }
-    
+
     public boolean requiresStove() {
         return reqStove;
     }
-    
+
     public Requirements getRequirements() {
         return requirements;
     }

@@ -23,18 +23,19 @@ public final class InterfaceSet {
      * The enumeration for each of the display modes.
      */
     public enum DisplayMode {
-        FIXED, RESIZABLE;
+        FIXED,
+        RESIZABLE;
     }
 
     /**
      * The enumeration for each of the component types.
      */
     public enum ComponentType {
-        
+
         /**
          * Each of the fixed interface components.
          */
-        WINDOW_FIXED(Interface.FIXED, 11), 
+        WINDOW_FIXED(Interface.FIXED, 11),
         OVERLAY_FIXED(Interface.FIXED, 5),
         CHAT_OPTIONS_FIXED(Interface.FIXED, 14, 751),
         CHATBOX_FIXED(Interface.FIXED, 75, 752),
@@ -42,13 +43,13 @@ public final class InterfaceSet {
         HITPOINTS_ORB_FIXED(Interface.FIXED, 70, Interface.HITPOINTS_ORB),
         PRAYER_ORB_FIXED(Interface.FIXED, 71, Interface.PRAYER_ORB),
         ENERGY_ORB_FIXED(Interface.FIXED, 72, Interface.ENERGY_ORB),
-        //SUMMONING_ORB_FIXED(Interface.FIXED, 67, Interface.SUMMONING_ORB),
+        // SUMMONING_ORB_FIXED(Interface.FIXED, 67, Interface.SUMMONING_ORB),
         ATTACK_TAB_FIXED(Interface.FIXED, Tab.ATTACK + FIXED_TAB_OFFSET, UNSET),
-        SKILL_TAB_FIXED(Interface.FIXED, Tab.SKILLS + FIXED_TAB_OFFSET, Interface.SKILLS), 
+        SKILL_TAB_FIXED(Interface.FIXED, Tab.SKILLS + FIXED_TAB_OFFSET, Interface.SKILLS),
         QUEST_TAB_FIXED(Interface.FIXED, Tab.QUEST + FIXED_TAB_OFFSET, Interface.QUESTS),
         INVENTORY_TAB_FIXED(Interface.FIXED, Tab.INVENTORY + FIXED_TAB_OFFSET, Interface.INVENTORY),
         EQUIPMENT_TAB_FIXED(Interface.FIXED, Tab.EQUIPMENT + FIXED_TAB_OFFSET, Interface.EQUIPMENT),
-        PRAYER_TAB_FIXED(Interface.FIXED, Tab.PRAYER + FIXED_TAB_OFFSET, Interface.PRAYER), 
+        PRAYER_TAB_FIXED(Interface.FIXED, Tab.PRAYER + FIXED_TAB_OFFSET, Interface.PRAYER),
         MAGIC_TAB_FIXED(Interface.FIXED, Tab.MAGIC + FIXED_TAB_OFFSET, Interface.MAGIC),
         FRIENDS_TAB_FIXED(Interface.FIXED, Tab.FRIENDS + FIXED_TAB_OFFSET, Interface.FRIENDS),
         IGNORES_TAB_FIXED(Interface.FIXED, Tab.IGNORES + FIXED_TAB_OFFSET, Interface.IGNORES),
@@ -57,11 +58,9 @@ public final class InterfaceSet {
         EMOTES_TAB_FIXED(Interface.FIXED, Tab.EMOTES + FIXED_TAB_OFFSET, Interface.EMOTES),
         MUSIC_TAB_FIXED(Interface.FIXED, Tab.MUSIC + FIXED_TAB_OFFSET, Interface.MUSIC),
         LOGOUT_TAB_FIXED(Interface.FIXED, Tab.LOGOUT + FIXED_TAB_OFFSET, Interface.LOGOUT),
-        
-        /* 
-         * Each of the resizable interface components.
-         */
-        WINDOW_RESIZABLE(Interface.RESIZABLE, 6), 
+
+        /* Each of the resizable interface components. */
+        WINDOW_RESIZABLE(Interface.RESIZABLE, 6),
         OVERLAY_RESIZABLE(Interface.RESIZABLE, 5),
         CHAT_OPTIONS_RESIZABLE(Interface.RESIZABLE, 23, 751),
         CHATBOX_RESIZABLE(Interface.RESIZABLE, 70, 752),
@@ -69,13 +68,13 @@ public final class InterfaceSet {
         HITPOINTS_ORB_RESIZABLE(Interface.RESIZABLE, 13, Interface.HITPOINTS_ORB),
         PRAYER_ORB_RESIZABLE(Interface.RESIZABLE, 14, Interface.PRAYER_ORB),
         ENERGY_ORB_RESIZABLE(Interface.RESIZABLE, 15, Interface.ENERGY_ORB),
-        //SUMMONING_ORB_RESIZABLE(Interface.RESIZABLE, 16, Interface.SUMMONING_ORB),
+        // SUMMONING_ORB_RESIZABLE(Interface.RESIZABLE, 16, Interface.SUMMONING_ORB),
         ATTACK_TAB_RESIZABLE(Interface.RESIZABLE, Tab.ATTACK + RESIZABLE_TAB_OFFSET, UNSET),
-        SKILL_TAB_RESIZABLE(Interface.RESIZABLE, Tab.SKILLS + RESIZABLE_TAB_OFFSET, Interface.SKILLS), 
+        SKILL_TAB_RESIZABLE(Interface.RESIZABLE, Tab.SKILLS + RESIZABLE_TAB_OFFSET, Interface.SKILLS),
         QUEST_TAB_RESIZABLE(Interface.RESIZABLE, Tab.QUEST + RESIZABLE_TAB_OFFSET, Interface.QUESTS),
         INVENTORY_TAB_RESIZABLE(Interface.RESIZABLE, Tab.INVENTORY + RESIZABLE_TAB_OFFSET, Interface.INVENTORY),
         EQUIPMENT_TAB_RESIZABLE(Interface.RESIZABLE, Tab.EQUIPMENT + RESIZABLE_TAB_OFFSET, Interface.EQUIPMENT),
-        PRAYER_TAB_RESIZABLE(Interface.RESIZABLE, Tab.PRAYER + RESIZABLE_TAB_OFFSET, Interface.PRAYER), 
+        PRAYER_TAB_RESIZABLE(Interface.RESIZABLE, Tab.PRAYER + RESIZABLE_TAB_OFFSET, Interface.PRAYER),
         MAGIC_TAB_RESIZABLE(Interface.RESIZABLE, Tab.MAGIC + RESIZABLE_TAB_OFFSET, Interface.MAGIC),
         FRIENDS_TAB_RESIZABLE(Interface.RESIZABLE, Tab.FRIENDS + RESIZABLE_TAB_OFFSET, Interface.FRIENDS),
         IGNORES_TAB_RESIZABLE(Interface.RESIZABLE, Tab.IGNORES + RESIZABLE_TAB_OFFSET, Interface.IGNORES),
@@ -84,13 +83,11 @@ public final class InterfaceSet {
         EMOTES_TAB_RESIZABLE(Interface.RESIZABLE, Tab.EMOTES + RESIZABLE_TAB_OFFSET, Interface.EMOTES),
         MUSIC_TAB_RESIZABLE(Interface.RESIZABLE, Tab.MUSIC + RESIZABLE_TAB_OFFSET, Interface.MUSIC),
         LOGOUT_TAB_RESIZABLE(Interface.RESIZABLE, Tab.LOGOUT + RESIZABLE_TAB_OFFSET, Interface.LOGOUT),
-        
-        /*
-         * Other components. 
-         */
-        CHATBOX_INPUT(752, 8, 137), 
+
+        /* Other components. */
+        CHATBOX_INPUT(752, 8, 137),
         CHATBOX_OVERLAY(752, 12, UNSET);
-        
+
         /**
          * Each of the lists for components of each display mode.
          */
@@ -131,70 +128,70 @@ public final class InterfaceSet {
 
         public static ComponentType getWindow(DisplayMode mode) {
             switch (mode) {
-            case FIXED:
-                return WINDOW_FIXED;
-            case RESIZABLE:
-                return WINDOW_RESIZABLE;
+                case FIXED:
+                    return WINDOW_FIXED;
+                case RESIZABLE:
+                    return WINDOW_RESIZABLE;
             }
             throw new RuntimeException();
         }
 
         public static ComponentType getOverlay(DisplayMode mode) {
             switch (mode) {
-            case FIXED:
-                return OVERLAY_FIXED;
-            case RESIZABLE:
-                return OVERLAY_RESIZABLE;
+                case FIXED:
+                    return OVERLAY_FIXED;
+                case RESIZABLE:
+                    return OVERLAY_RESIZABLE;
             }
             throw new RuntimeException();
         }
 
         public static ComponentType getAttackTab(DisplayMode mode) {
             switch (mode) {
-            case FIXED:
-                return ATTACK_TAB_FIXED;
-            case RESIZABLE:
-                return ATTACK_TAB_RESIZABLE;
+                case FIXED:
+                    return ATTACK_TAB_FIXED;
+                case RESIZABLE:
+                    return ATTACK_TAB_RESIZABLE;
             }
             throw new RuntimeException();
         }
 
         public static ComponentType getInventoryTab(DisplayMode mode) {
             switch (mode) {
-            case FIXED:
-                return INVENTORY_TAB_FIXED;
-            case RESIZABLE:
-                return INVENTORY_TAB_RESIZABLE;
+                case FIXED:
+                    return INVENTORY_TAB_FIXED;
+                case RESIZABLE:
+                    return INVENTORY_TAB_RESIZABLE;
             }
             throw new RuntimeException();
         }
 
         public static List<ComponentType> getComponentTypes(DisplayMode mode) {
             switch (mode) {
-            case FIXED:
-                if (fixedComponents == null) {
-                    fixedComponents = new LinkedList<>();
-                    for (ComponentType type : values()) {
-                        if (type.name().endsWith("FIXED")) {
-                            fixedComponents.add(type);
+                case FIXED:
+                    if (fixedComponents == null) {
+                        fixedComponents = new LinkedList<>();
+                        for (ComponentType type : values()) {
+                            if (type.name().endsWith("FIXED")) {
+                                fixedComponents.add(type);
+                            }
                         }
+                        fixedComponents.add(CHATBOX_INPUT);
+                        fixedComponents.add(CHATBOX_OVERLAY);
                     }
-                    fixedComponents.add(CHATBOX_INPUT);
-                    fixedComponents.add(CHATBOX_OVERLAY);
-                }
-                return fixedComponents;
-            case RESIZABLE:
-                if (resizableComponents == null) {
-                    resizableComponents = new LinkedList<>();
-                    for (ComponentType type : values()) {
-                        if (type.name().endsWith("RESIZABLE")) {
-                            resizableComponents.add(type);
+                    return fixedComponents;
+                case RESIZABLE:
+                    if (resizableComponents == null) {
+                        resizableComponents = new LinkedList<>();
+                        for (ComponentType type : values()) {
+                            if (type.name().endsWith("RESIZABLE")) {
+                                resizableComponents.add(type);
+                            }
                         }
+                        resizableComponents.add(CHATBOX_INPUT);
+                        resizableComponents.add(CHATBOX_OVERLAY);
                     }
-                    resizableComponents.add(CHATBOX_INPUT);
-                    resizableComponents.add(CHATBOX_OVERLAY);
-                }
-                return resizableComponents;
+                    return resizableComponents;
             }
             throw new RuntimeException();
         }
@@ -230,12 +227,16 @@ public final class InterfaceSet {
          * Attaches a listener to the component.
          */
         public Component setListener(ComponentListener listener) {
+            if (this.listener != null) {
+                throw new IllegalStateException("Attempted to overwrite listener " + this.listener.getClass() + " with " + listener.getClass()
+                        + ". Ensure previous listener properly handles close/change events.");
+            }
             this.listener = listener;
             return this;
         }
 
         /**
-         * Removes a listener from the component.
+         * Removes the listener from the component.
          */
         public void removeListener() {
             listener = null;
@@ -244,39 +245,25 @@ public final class InterfaceSet {
         /**
          * Sets the current widget id.
          */
-        public Component set(int id) {
+        private Component set(int id) {
             if (currentId != id) {
-                forceComponentChanged(currentId);
+                if (listener != null) {
+                    boolean shouldKeepListener = listener.componentChanged(this, currentId);
+                    if (!shouldKeepListener) {
+                        listener = null;
+                    }
+                }
             }
-            listener = null;
             currentId = id;
             return this;
         }
 
         /**
-         * Alerts the listeners that an input for the interface was pressed.
+         * Alerts the listener that an input for the interface was pressed.
          */
         public void alertInputPressed(int componentId, int dynamicId) {
             if (listener != null) {
                 listener.inputPressed(this, componentId, dynamicId);
-            }
-        }
-
-        /**
-         * Forces the component closed call to all the registered listeners.
-         */
-        public void forceComponentClosed() {
-            if (listener != null) {
-                listener.componentClosed(this);
-            }
-        }
-
-        /**
-         * Forces the component closed call to all the registered listeners.
-         */
-        public void forceComponentChanged(int oldId) {
-            if (listener != null) {
-                listener.componentChanged(this, oldId);
             }
         }
 
@@ -290,34 +277,37 @@ public final class InterfaceSet {
         }
 
         /**
-         * Resets the component; if the component is static refreshes the component and if it is
-         * closable will request that the client close that interface.
+         * Resets the component; if the component is static refreshes the component and if it is closable will request that the client close that
+         * interface.
          */
         public void reset() {
             switch (type.getMode()) {
-            case STATIC:
-                if (currentId != type.getDefaultId()) {
-                    currentId = type.getDefaultId();
+                case STATIC:
+                    if (currentId != type.getDefaultId()) {
+                        currentId = type.getDefaultId();
+                        if (currentId != UNSET) {
+                            refresh();
+                            return;
+                        }
+                        /* Close the interface if it is just going to go back to being unset */
+                        player.send(new InterfaceCloseMessage(type.getWidgetId(), type.getComponentId()));
+                        if (listener != null) {
+                            listener.componentClosed(this);
+                            listener = null;
+                        }
+                    }
+                    break;
+                case CLOSABLE:
                     if (currentId != UNSET) {
-                        refresh();
-                        return;
+                        player.send(new InterfaceCloseMessage(type.getWidgetId(), type.getComponentId()));
+                        currentId = UNSET;
+                        if (listener != null) {
+                            listener.componentClosed(this);
+                            listener = null;
+                        }
                     }
-
-                    /* Close the interface if it is just going to go back to being unset */
-                    player.send(new InterfaceCloseMessage(type.getWidgetId(), type.getComponentId()));
-                }
-                break;
-            case CLOSABLE:
-                if (currentId != UNSET) {
-                    player.send(new InterfaceCloseMessage(type.getWidgetId(), type.getComponentId()));
-                    if (listener != null) {
-                        listener.componentClosed(this);
-                    }
-                    currentId = UNSET;
-                }
-                break;
+                    break;
             }
-            listener = null;
         }
     }
 
@@ -348,12 +338,12 @@ public final class InterfaceSet {
 
         /* Send the proper root widget */
         switch (mode) {
-        case FIXED:
-            player.send(new InterfaceRootMessage(Interface.FIXED));
-            break;
-        case RESIZABLE:
-            player.send(new InterfaceRootMessage(Interface.RESIZABLE));
-            break;
+            case FIXED:
+                player.send(new InterfaceRootMessage(Interface.FIXED));
+                break;
+            case RESIZABLE:
+                player.send(new InterfaceRootMessage(Interface.RESIZABLE));
+                break;
         }
 
         /* Clear out all the current components if any exist */

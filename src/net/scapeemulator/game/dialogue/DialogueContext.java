@@ -28,10 +28,12 @@ public final class DialogueContext {
     private final Player player;
     private final Dialogue dialogue;
     private DialogueType displayedType;
+    private final DialogueContextListener listener;
     private String[] options;
     private boolean inputDisplayed;
     private boolean overflowDisplayed;
     private int stage;
+    private int interfaceId = -2;
     private boolean isStopped;
 
     private enum DialogueType {
@@ -49,6 +51,7 @@ public final class DialogueContext {
     public DialogueContext(Player player, Dialogue dialogue) {
         this.player = player;
         this.dialogue = dialogue;
+        listener = new DialogueContextListener(this);
         init();
     }
 
@@ -84,30 +87,25 @@ public final class DialogueContext {
 
                 /* Swap from overflow to option chatbox */
                 if (offset == LESS_OPTIONS && overflowDisplayed) {
-                    int optionInterfaceId = getOptionInterfaceId(count);
-                    player.setInterfaceText(optionInterfaceId, 6, "More Options...");
-
+                    interfaceId = getOptionInterfaceId(count);
+                    player.setInterfaceText(interfaceId, 6, "More Options...");
                     for (int i = 0; i < 4; i++) {
-                        player.setInterfaceText(optionInterfaceId, i + 2, options[i]);
+                        player.setInterfaceText(interfaceId, i + 2, options[i]);
                     }
-                    player.getInterfaceSet().getChatbox().removeListener();
-                    player.getInterfaceSet().openChatbox(getOptionInterfaceId(count));
-                    player.getInterfaceSet().getChatbox().setListener(new DialogueContextListener(this));
+                    player.getInterfaceSet().openChatbox(interfaceId);
                     overflowDisplayed = false;
                     return;
                 }
 
                 /* Swap from overflow to option chatbox */
                 if (offset == MORE_OPTIONS && !overflowDisplayed) {
-                    int overflowInterfaceId = getOverflowInterfaceId(count);
-
-                    player.setInterfaceText(overflowInterfaceId, 2, "Less Options...");
-
+                    interfaceId = getOverflowInterfaceId(count);
+                    player.setInterfaceText(interfaceId, 2, "Less Options...");
                     for (int i = 4; i < count; i++) {
-                        player.setInterfaceText(overflowInterfaceId, i - 1, options[i]);
+                        player.setInterfaceText(interfaceId, i - 1, options[i]);
                     }
                     player.getInterfaceSet().getChatbox().removeListener();
-                    player.getInterfaceSet().openChatbox(getOverflowInterfaceId(count));
+                    player.getInterfaceSet().openChatbox(interfaceId);
                     player.getInterfaceSet().getChatbox().setListener(new DialogueContextListener(this));
                     overflowDisplayed = true;
                     return;
@@ -128,16 +126,15 @@ public final class DialogueContext {
         if (chunks.length >= 5) {
             throw new IllegalArgumentException();
         }
-        int id = (displayInput ? RIGHT_CONVERSATION_OFFSET : RIGHT_CONVERSATION_OFFSET_NO_INPUT) + chunks.length - 1;
+        interfaceId = (displayInput ? RIGHT_CONVERSATION_OFFSET : RIGHT_CONVERSATION_OFFSET_NO_INPUT) + chunks.length - 1;
         for (int i = 0; i < chunks.length; i++) {
-            player.setInterfaceText(id, i + 4, chunks[i]);
+            player.setInterfaceText(interfaceId, i + 4, chunks[i]);
         }
-        player.setInterfaceText(id, 3, StringUtils.capitalise(player.getDisplayName()));
-        player.send(new InterfaceAnimationMessage(id, 2, animation.getAnimationId()));
-        player.send(new InterfacePlayerHeadMessage(id, 2));
-        player.getInterfaceSet().getChatbox().removeListener();
-        player.getInterfaceSet().openChatbox(id);
-        player.getInterfaceSet().getChatbox().setListener(new DialogueContextListener(this));
+        player.setInterfaceText(interfaceId, 3, StringUtils.capitalise(player.getDisplayName()));
+        player.send(new InterfaceAnimationMessage(interfaceId, 2, animation.getAnimationId()));
+        player.send(new InterfacePlayerHeadMessage(interfaceId, 2));
+        player.getInterfaceSet().openChatbox(interfaceId);
+        player.getInterfaceSet().getChatbox().setListener(listener);
         displayedType = DialogueType.PLAYER_CONVERSATION;
         inputDisplayed = displayInput;
     }
@@ -147,17 +144,16 @@ public final class DialogueContext {
         if (chunks.length >= 5) {
             throw new IllegalArgumentException();
         }
-        int id = (displayInput ? LEFT_CONVERSATION_OFFSET : LEFT_CONVERSATION_OFFSET_NO_INPUT) + chunks.length - 1;
+        interfaceId = (displayInput ? LEFT_CONVERSATION_OFFSET : LEFT_CONVERSATION_OFFSET_NO_INPUT) + chunks.length - 1;
         for (int i = 0; i < chunks.length; i++) {
-            player.setInterfaceText(id, i + 4, chunks[i]);
+            player.setInterfaceText(interfaceId, i + 4, chunks[i]);
         }
 
-        player.setInterfaceText(id, 3, StringUtils.capitalise(NPCDefinitions.forId(npcType).getName()));
-        player.send(new InterfaceAnimationMessage(id, 2, animation.getAnimationId()));
-        player.send(new InterfaceNPCHeadMessage(id, 2, npcType));
-        player.getInterfaceSet().getChatbox().removeListener();
-        player.getInterfaceSet().openChatbox(id);
-        player.getInterfaceSet().getChatbox().setListener(new DialogueContextListener(this));
+        player.setInterfaceText(interfaceId, 3, StringUtils.capitalise(NPCDefinitions.forId(npcType).getName()));
+        player.send(new InterfaceAnimationMessage(interfaceId, 2, animation.getAnimationId()));
+        player.send(new InterfaceNPCHeadMessage(interfaceId, 2, npcType));
+        player.getInterfaceSet().openChatbox(interfaceId);
+        player.getInterfaceSet().getChatbox().setListener(listener);
         displayedType = DialogueType.PLAYER_CONVERSATION;
         inputDisplayed = displayInput;
     }
@@ -167,13 +163,12 @@ public final class DialogueContext {
         if (chunks.length >= 5) {
             throw new IllegalArgumentException();
         }
-        int id = (displayInput ? TEXT_OFFSET : TEXT_OFFSET_NO_INPUT) + chunks.length - 1;
+        interfaceId = (displayInput ? TEXT_OFFSET : TEXT_OFFSET_NO_INPUT) + chunks.length - 1;
         for (int i = 1; i <= chunks.length; i++) {
-            player.setInterfaceText(id, i, chunks[i - 1]);
+            player.setInterfaceText(interfaceId, i, chunks[i - 1]);
         }
-        player.getInterfaceSet().getChatbox().removeListener();
-        player.getInterfaceSet().openChatbox(id);
-        player.getInterfaceSet().getChatbox().setListener(new DialogueContextListener(this));
+        player.getInterfaceSet().openChatbox(interfaceId);
+        player.getInterfaceSet().getChatbox().setListener(listener);
         displayedType = DialogueType.TEXT;
         inputDisplayed = displayInput;
     }
@@ -184,21 +179,20 @@ public final class DialogueContext {
         }
 
         int amountOptions = opts.length;
-        int optionInterfaceId = getOptionInterfaceId(amountOptions);
+        interfaceId = getOptionInterfaceId(amountOptions);
 
         /* If overflow is present do not send the fifth option yet */
         for (int i = 0; i < (amountOptions > 5 ? 4 : amountOptions); i++) {
-            player.setInterfaceText(optionInterfaceId, i + 2, opts[i]);
+            player.setInterfaceText(interfaceId, i + 2, opts[i]);
         }
 
         /* Send the overflow junk */
         if (amountOptions > 5) {
-            player.setInterfaceText(optionInterfaceId, 6, "More Options...");
+            player.setInterfaceText(interfaceId, 6, "More Options...");
         }
 
-        player.getInterfaceSet().getChatbox().removeListener();
-        player.getInterfaceSet().openChatbox(optionInterfaceId);
-        player.getInterfaceSet().getChatbox().setListener(new DialogueContextListener(this));
+        player.getInterfaceSet().openChatbox(interfaceId);
+        player.getInterfaceSet().getChatbox().setListener(listener);
         displayedType = getOptionDialogue(amountOptions);
         inputDisplayed = true;
         overflowDisplayed = false;
@@ -298,6 +292,10 @@ public final class DialogueContext {
     
     public void setStage(int stage) {
         this.stage = stage;
+    }
+    
+    public int getInterfaceId() {
+        return interfaceId;
     }
     
     public Player getPlayer() {

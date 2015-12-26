@@ -15,8 +15,12 @@ public abstract class ComponentListenerAdapter extends ComponentListener {
     public void componentClosed(Component component) {
     }
 
+    /**
+     * The default operation of the componentChanged method will call the componentClosed method with the same argument.
+     */
     @Override
-    public void componentChanged(Component component, int oldId) {
+    public boolean componentChanged(Component component, int oldId) {
+        return false;
     }
 
 }

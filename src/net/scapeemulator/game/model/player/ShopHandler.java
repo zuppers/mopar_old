@@ -307,14 +307,14 @@ public class ShopHandler extends ComponentListener {
 
     @Override
     public void componentClosed(Component component) {
-        component.removeListener();
         activeShop = null;
         activeStock = null;
     }
 
     @Override
-    public void componentChanged(Component component, int oldId) {
+    public boolean componentChanged(Component component, int oldId) {
         componentClosed(component);
+        return false;
     }
 
 }

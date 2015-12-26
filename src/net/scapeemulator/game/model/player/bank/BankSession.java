@@ -432,7 +432,8 @@ public class BankSession extends ComponentListenerAdapter {
     }
 
     @Override
-    public void componentChanged(Component component, int oldId) {
+    public boolean componentChanged(Component component, int oldId) {
         componentClosed(component);
+        return false;
     }
 }
