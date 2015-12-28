@@ -71,7 +71,7 @@ public final class GameFrameDecoder extends ByteToMessageDecoder {
         SIZES[52] = -3;
         SIZES[53] = -3; // TODO double check
         SIZES[54] = -3;
-        SIZES[55] = 8; // Equip item
+        SIZES[55] = 8; // Inventory item option 2
         SIZES[56] = -3;
         SIZES[57] = 8; // Delete friend
         SIZES[58] = -3;
@@ -169,15 +169,15 @@ public final class GameFrameDecoder extends ByteToMessageDecoder {
         SIZES[150] = -3;
         SIZES[151] = -3;
         SIZES[152] = -3;
-        SIZES[153] = 8; // Inventory click item #2 (check RC pouch)
+        SIZES[153] = 8; // Inventory item option 3 (check RC pouch)
         SIZES[154] = -3;
         SIZES[155] = 6; // Actionbutton
-        SIZES[156] = 8; // Inventory click item (food etc)
+        SIZES[156] = 8; // Inventory item option 1 (food etc)
         SIZES[157] = 3; // Privacy options
         SIZES[158] = -3;
         SIZES[159] = -3;
         SIZES[160] = -3;
-        SIZES[161] = 8; // Item right click option #1 (rub/empty)
+        SIZES[161] = 8; // Inventory item option 4 (rub/empty)
         SIZES[162] = 8; // Clan chat kick
         SIZES[163] = -3;
         SIZES[164] = -3;
