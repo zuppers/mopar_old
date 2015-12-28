@@ -22,7 +22,7 @@ public final class ItemOptionTwoMessageDecoder extends MessageDecoder<ItemOption
 		GameFrameReader reader = new GameFrameReader(frame);
 		int itemId = (int) reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE);
 		int itemSlot = (int) reader.getUnsigned(DataType.SHORT, DataTransformation.ADD);
-		int inter = (int) reader.getSigned(DataType.INT, DataOrder.MIDDLE);
+		int inter = (int) reader.getUnsigned(DataType.INT, DataOrder.MIDDLE);
 		return new ItemOptionMessage(itemId, itemSlot, inter, Option.TWO);
 	}
 
