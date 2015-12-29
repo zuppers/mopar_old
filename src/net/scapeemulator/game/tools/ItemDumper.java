@@ -3,6 +3,7 @@ package net.scapeemulator.game.tools;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Arrays;
 
 import net.scapeemulator.cache.Cache;
 import net.scapeemulator.cache.FileStore;
@@ -24,6 +25,7 @@ public final class ItemDumper {
                     output.write(id + "\t" + def.getName() + "\t\t");
                     output.write("stacks:" + def.isStackable() + "\t" + "noted:" + !def.getUnnoted() + "\t");
                     output.write("value:" + def.getValue() + "\t" + "noted/unnoted:" + def.getUnnotedItemId() + "/" + def.getNotedItemId());
+                    output.write("\t" + Arrays.toString(def.getInventoryOptions()));
                     output.newLine();
                     output.flush();
                 }
