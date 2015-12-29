@@ -192,7 +192,7 @@ Packet 188: size[0]
 Packet 189: size[0]
 Packet 190: size[0]
 Packet 191: size[2]
-Packet 192: size[1]
+Packet 192: size[1] hide/show minimap/compass
 Packet 193: size[0]
 Packet 194: size[0]
 Packet 195: size[2] Ground object remove
