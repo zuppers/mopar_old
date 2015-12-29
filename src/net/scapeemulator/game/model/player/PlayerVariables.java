@@ -7,18 +7,20 @@ public class PlayerVariables {
 
     public enum Variable {
 
-        /* @formatter:off */
-        
         FIRST_LOGIN(1),
         SLAYER_TASK,
         SLAYER_INFO,
         HOME_LOCATION,
-        
+
+        // Runecrafting
+        SMALL_POUCH(),
+        MEDIUM_POUCH(),
+        LARGE_POUCH(),
+        GIANT_POUCH(),
+
         // Construction
         CON_FURN_REMOVE(false),
         HERALDRY_CREST;
-        
-        /* @formatter:on */
 
         private final boolean persists;
         private final int defaultValue;
