@@ -127,6 +127,8 @@ public final class EquipmentDumper {
         case 10340: // 3rd age robe bottom
         case 10824: // Yak legs
             return Equipment.LEGS;
+        case 5533: // "Body" tiara
+            return Equipment.HEAD;
         }
         if (definition.getName() == null)
             return Equipment.WEAPON;
@@ -430,30 +432,30 @@ public final class EquipmentDumper {
     private static int getSpeed(int id, ItemDefinition def) {
         switch (id) {
         case 11235: // Dark bow
-            return 10;
-        case 2883: // Normal ogre bow
             return 9;
+        case 2883: // Normal ogre bow
         case 4153: // Granite maul
         case 4718: // Dharoks greataxe
         case 6528: // Tzhaar-ket-om
             return 8; // also need two-h swords, halberds
-        case 8880: // Dorgeshuun c'bow
         case 10887: // Barrelchest anchor
             return 7;
         case 2415: // Saradomin staff
         case 2416: // Guthix staff
         case 2417: // Zamorak staff
-        case 4151: // Abyssal whip
         case 4170: // Slayer's staff
         case 4675: // Ancient staff
-        case 4734: // Karils crossbow (full, others are x-bow)
-        case 6522: // Toktz-xil-ul
         case 6523: // Toktz-xil-ak
         case 6525: // Toktz-xil-ek
         case 6526: // Toktz-mej-tal
         case 11716: // Zamorakian spear
+            return 6;
+        case 4151: // Abyssal whip
+        case 4734: // Karils crossbow (full, others are x-bow)
+        case 6522: // Toktz-xil-ul
         case 11730: // Saradomin sword
             return 5;
+
         }
         String name = def.getName();
         if (name == null) {
@@ -467,9 +469,12 @@ public final class EquipmentDumper {
                 || (name.contains("crossbow") && !name.contains("karils"))) {
             return 7;
         }
-        if (name.contains("dagger") || name.contains("scimitar") || name.contains("claw") || name.contains("shortbow") || name.contains(" sword") || name.contains("karils x-xbow")) {
+        
+        if (name.contains("dagger") || name.contains(" axe") || name.contains("scimitar") || name.contains("claw") || name.contains("shortbow") || name.contains(" sword") || name.contains("karils x-xbow")) {
             return 5;
         }
+        
+        // GOOD
         if (name.contains("dart") || name.contains("knife")) {
             return 4;
         }
