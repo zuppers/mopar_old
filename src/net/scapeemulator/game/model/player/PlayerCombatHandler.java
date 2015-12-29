@@ -114,7 +114,7 @@ public class PlayerCombatHandler extends CombatHandler<Player> {
                 } else if (nextSpell.getType() == SpellType.EFFECT_MOB) {
                     ((EffectMobSpell) nextSpell).cast(mob, target, shouldHit);
                 }
-                combatDelay = 6;
+                combatDelay = 5;
                 nextSpell = autoCast;
                 return true;
             case RANGE:
@@ -463,7 +463,7 @@ public class PlayerCombatHandler extends CombatHandler<Player> {
         weapon = mob.getEquipment().get(Equipment.WEAPON);
         String name = "Unarmed";
         weaponClass = WeaponClass.UNARMED;
-        combatDelay = 6;
+        combatDelay = 5;
         if (weaponClass == WeaponClass.MAGIC_STAFF) {
             mob.setInterfaceText(90, 11, "Spell");
             mob.send(new InterfaceVisibleMessage(90, 83, true));

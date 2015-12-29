@@ -1,14 +1,9 @@
 package net.scapeemulator.game.model.mob.combat;
 
-import net.scapeemulator.game.model.Position;
-import net.scapeemulator.game.model.World;
 import net.scapeemulator.game.model.mob.Animation;
 import net.scapeemulator.game.model.mob.Mob;
-import net.scapeemulator.game.model.player.Player;
 import net.scapeemulator.game.model.player.skills.magic.CombatSpell;
 import net.scapeemulator.game.model.player.skills.magic.DamageSpell;
-import net.scapeemulator.game.msg.impl.CreateProjectileMessage;
-import net.scapeemulator.game.msg.impl.PlacementCoordsMessage;
 
 public abstract class CombatHandler<T extends Mob> {
 

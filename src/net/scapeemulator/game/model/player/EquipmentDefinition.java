@@ -156,7 +156,7 @@ public final class EquipmentDefinition {
 	static {
 		UNARMED.slot = Equipment.WEAPON;
 		UNARMED.weaponClass = WeaponClass.UNARMED;
-		UNARMED.speed = 5;
+		UNARMED.speed = 4;
 		UNARMED.range = 1;
 		UNARMED.animations = new int[]{422, 423, 422, -1, 424};
 	}

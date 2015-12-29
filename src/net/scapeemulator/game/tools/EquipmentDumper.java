@@ -432,14 +432,14 @@ public final class EquipmentDumper {
     private static int getSpeed(int id, ItemDefinition def) {
         switch (id) {
         case 11235: // Dark bow
-            return 9;
+            return 8;
         case 2883: // Normal ogre bow
         case 4153: // Granite maul
         case 4718: // Dharoks greataxe
         case 6528: // Tzhaar-ket-om
-            return 8; // also need two-h swords, halberds
+            return 7; // also need two-h swords, halberds
         case 10887: // Barrelchest anchor
-            return 7;
+            return 6;
         case 2415: // Saradomin staff
         case 2416: // Guthix staff
         case 2417: // Zamorak staff
@@ -449,36 +449,36 @@ public final class EquipmentDumper {
         case 6525: // Toktz-xil-ek
         case 6526: // Toktz-mej-tal
         case 11716: // Zamorakian spear
-            return 6;
+            return 5;
         case 4151: // Abyssal whip
         case 4734: // Karils crossbow (full, others are x-bow)
         case 6522: // Toktz-xil-ul
         case 11730: // Saradomin sword
-            return 5;
+            return 4;
 
         }
         String name = def.getName();
         if (name == null) {
-            return 6;
+            return 5;
         }
         name = name.toLowerCase();
         if (name.contains("halberd") || name.contains("2h")) {
-            return 8;
+            return 7;
         }
         if (name.contains("battleaxe") || name.contains("warhammer") || name.contains("godsword") || name.contains("javelin") || name.contains("ahrims") || name.contains("longbow")
                 || (name.contains("crossbow") && !name.contains("karils"))) {
-            return 7;
+            return 6;
         }
         
         if (name.contains("dagger") || name.contains(" axe") || name.contains("scimitar") || name.contains("claw") || name.contains("shortbow") || name.contains(" sword") || name.contains("karils x-xbow")) {
-            return 5;
+            return 4;
         }
         
         // GOOD
         if (name.contains("dart") || name.contains("knife")) {
-            return 4;
+            return 3;
         }
-        return 6;
+        return 5;
     }
 
     private static int getRange(int id, ItemDefinition def) {
