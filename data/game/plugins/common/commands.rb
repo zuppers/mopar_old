@@ -39,6 +39,10 @@ bind :cmd, :name => 'con' do
   Construction::ENTER_PORTAL_DIALOGUE.display_to player
 end
 
+bind :cmd, :name => 'mats' do
+  Construction::give_mats(player)
+end
+
 bind :cmd, :name => 'build' do
   player.get_house.building_mode(args[0].to_i == 1)
 end
@@ -68,8 +72,12 @@ bind :cmd, :name => 'max' do
   player.set_max
 end
 
+bind :cmd, :name => 'select' do
+  player.select_npc
+end
+
 bind :cmd, :name => 'spawn' do
-  player.set_spawn_pos args[0].to_i
+  player.spawn_npc
 end
 # TODO end remove
 
@@ -197,7 +205,7 @@ bind :cmd, :name => 'teletome' do
 end
 
 bind :cmd, :name => 'npc' do
-create_npc :normal, :id => args[0].to_i, :position => player.get_position do |npc| npc.turn_to_target player end
+  create_npc :normal, :id => args[0].to_i, :position => player.get_position
 end
 
 bind :cmd, :name => 'pos' do
