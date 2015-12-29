@@ -70,8 +70,12 @@ public final class ObjectDispatcher {
             if (player.getInHouse() != null) {
                 objectList = player.getInHouse().getObjectList();
             }
+            if (World.getWorld().getTraversalMap().shouldModifyPlane(position.getX(), position.getY())) {
+                position = position.copy(0, 0, 1);
+            }
             GroundObject object = objectList.get(id, position);
             if (object == null || object.isHidden()) {
+                System.out.println("Object not found " + id);
                 return;
             }
             System.out.println("id: " + id + ", rotation: " + object.getRotation() + " , option: " + option + ", type: " + object.getType());
