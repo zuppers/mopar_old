@@ -30,7 +30,7 @@ public final class GroundObjectPopulator extends MapListenerAdapter {
         ObjectDefinition def = ObjectDefinitions.forId(id);
 
         /* Only insert an object if it has a name */
-        if (!"null".equals(def.getName()) || shouldForce(position)) {
+        if (!"null".equals(def.getName()) || shouldForce(position) || def.getChildIds() != null) {
             list.put(position, id, def.getAnimationId(), rotation, type);
         }
 

@@ -19,7 +19,9 @@ public final class ObjectDefinition {
 
     private boolean impenetrable;
     private boolean solid;
-
+    
+    private int[] childIds;
+    
     @SuppressWarnings("unused")
     public static ObjectDefinition decode(ByteBuffer buffer) {
         ObjectDefinition def = new ObjectDefinition();
@@ -65,6 +67,8 @@ public final class ObjectDefinition {
                 if (def.animationId == 65535) {
                     def.animationId = -1;
                 }
+            } else if (opcode == 27) {
+                def.impenetrable = false; // TODO cliptype = 1
             } else if (opcode == 28) {
                 int i = buffer.get();
             } else if (opcode == 29) {
@@ -108,21 +112,41 @@ public final class ObjectDefinition {
                 int i = buffer.getShort();
             } else if (opcode == 72) {
                 int i = buffer.getShort();
+            } else if (opcode == 74) {
+                def.impenetrable = false;
+                def.solid = false;
             } else if (opcode == 75) {
                 int i = buffer.get();
             } else if (opcode == 77 || opcode == 92) {
+                int i4 = -1;
+                
                 int i = buffer.getShort() & 0xffff;
+                if(i == '\uFFFF') {
+                    i = -1;
+                }
+                
                 int i2 = buffer.getShort() & 0xffff;
-
+                if(i2 == '\uFFFF') {
+                    i2 = -1;
+                }
+                
                 if (opcode == 92) {
-                    int i3 = buffer.getShort();
+                    i4 = buffer.getShort();
+                    if(i4 == '\uFFFF') {
+                        i4 = -1;
+                    }
                 }
 
-                int i4 = buffer.get() & 0xff;
+                int i5 = buffer.get() & 0xff;
+                def.childIds = new int[i5 + 2];
                 // Child ids ?
-                for (int var6 = 0; var6 <= i4; var6++) {
-                    int i5 = buffer.getShort();
+                for (int var6 = 0; var6 <= i5; var6++) {
+                    def.childIds[var6] = buffer.getShort() & 0xFFFF;
+                    if(def.childIds[var6] == '\uFFFF') {
+                        def.childIds[var6] = -1;
+                    }
                 }
+                def.childIds[1 + i5] = i4;
             } else if (opcode == 78) {
                 buffer.getShort();
                 buffer.get();
@@ -185,6 +209,10 @@ public final class ObjectDefinition {
         return solid;
     }
 
+    public int[] getChildIds() {
+        return childIds;
+    }
+    
     public int getAnimationId() {
         return animationId;
     }
