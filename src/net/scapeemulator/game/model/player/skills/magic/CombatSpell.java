@@ -1,15 +1,11 @@
 package net.scapeemulator.game.model.player.skills.magic;
 
-import net.scapeemulator.game.model.Position;
 import net.scapeemulator.game.model.SpotAnimation;
 import net.scapeemulator.game.model.World;
 import net.scapeemulator.game.model.mob.Animation;
 import net.scapeemulator.game.model.mob.Mob;
 import net.scapeemulator.game.model.mob.combat.DelayedMagicHit;
-import net.scapeemulator.game.model.player.Player;
 import net.scapeemulator.game.msg.impl.CreateProjectileMessage;
-import net.scapeemulator.game.msg.impl.PlacementCoordsMessage;
-import net.scapeemulator.game.util.math.ClientFrameTickConversion;
 
 /**
  * @author David Insley
@@ -30,21 +26,12 @@ public abstract class CombatSpell extends Spell {
     }
 
     public void cast(Mob caster, Mob target, int damage) {
-        Position source = caster.getPosition();
-        Position destination = target.getPosition();
         caster.playAnimation(animation);
         caster.playSpotAnimation(graphic);
-        CreateProjectileMessage cpm = new CreateProjectileMessage(source, destination, target, projGraphic, projStartHeight, projEndHeight, projStartDelay, 20);
-        for (Player p : World.getWorld().getPlayers()) {
-            if (!p.getPosition().isWithinScene(caster.getPosition())) {
-                continue;
-            }
-            int localX = source.getX() - p.getPosition().getBaseLocalX(p.getLastKnownRegion().getX() >> 3) - 3;
-            int localY = source.getY() - p.getPosition().getBaseLocalY(p.getLastKnownRegion().getY() >> 3) - 2;
-            p.send(new PlacementCoordsMessage(localX, localY));
-            p.send(cpm);
-        }
-        World.getWorld().getTaskScheduler().schedule(new DelayedMagicHit(ClientFrameTickConversion.framesToTicks(cpm.getDuration()), caster, target, explosionGraphic, damage));
+        CreateProjectileMessage cpm = new CreateProjectileMessage(caster.getPosition(), target.getPosition(), target, projGraphic, projStartHeight,
+                projEndHeight, projStartDelay, 20, 16, true);
+        World.getWorld().createGlobalProjectile(caster.getPosition(), cpm);
+        World.getWorld().getTaskScheduler().schedule(new DelayedMagicHit(cpm.getDurationTicks(), caster, target, explosionGraphic, damage));
     }
 
     public void setProjectileInformation(int projGraphic, int explosionGraphic, int projStartHeight, int projEndHeight, int projStartDelay) {
