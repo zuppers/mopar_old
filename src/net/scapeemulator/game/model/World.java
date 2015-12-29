@@ -7,6 +7,8 @@ import net.scapeemulator.game.model.object.GroundObjectList;
 import net.scapeemulator.game.model.pathfinding.ObjectDataListener;
 import net.scapeemulator.game.model.pathfinding.TraversalMap;
 import net.scapeemulator.game.model.player.Player;
+import net.scapeemulator.game.msg.impl.CreateProjectileMessage;
+import net.scapeemulator.game.msg.impl.PlacementCoordsMessage;
 import net.scapeemulator.game.net.game.GameSession;
 import net.scapeemulator.game.task.TaskScheduler;
 import net.scapeemulator.game.update.PlayerUpdater;
@@ -138,6 +140,18 @@ public final class World {
         taskScheduler.tick();
         groundItems.tick();
         updater.tick();
+    }
+
+    public void createGlobalProjectile(Position start, CreateProjectileMessage cpm) {
+        for (Player p : World.getWorld().getPlayers()) {
+            if (!p.getPosition().isWithinScene(start)) {
+                continue;
+            }
+            int localX = start.getX() - p.getPosition().getBaseLocalX(p.getLastKnownRegion().getX() >> 3) - 3;
+            int localY = start.getY() - p.getPosition().getBaseLocalY(p.getLastKnownRegion().getY() >> 3) - 2;
+            p.send(new PlacementCoordsMessage(localX, localY));
+            p.send(cpm);
+        }
     }
 
     /**
