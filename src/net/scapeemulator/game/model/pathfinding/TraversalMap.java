@@ -112,122 +112,122 @@ public final class TraversalMap {
 
     public void markWall(int rotation, int plane, int x, int y, ObjectType type, boolean impenetrable) {
         switch (type) {
-        case STRAIGHT_WALL:
-            if (rotation == WEST) {
-                set(plane, x, y, WALL_WEST);
-                set(plane, x - 1, y, WALL_EAST);
-                if (impenetrable) {
-                    set(plane, x, y, IMPENETRABLE_WALL_WEST);
-                    set(plane, x - 1, y, IMPENETRABLE_WALL_EAST);
+            case STRAIGHT_WALL:
+                if (rotation == WEST) {
+                    set(plane, x, y, WALL_WEST);
+                    set(plane, x - 1, y, WALL_EAST);
+                    if (impenetrable) {
+                        set(plane, x, y, IMPENETRABLE_WALL_WEST);
+                        set(plane, x - 1, y, IMPENETRABLE_WALL_EAST);
+                    }
                 }
-            }
-            if (rotation == NORTH) {
-                set(plane, x, y, WALL_NORTH);
-                set(plane, x, y + 1, WALL_SOUTH);
-                if (impenetrable) {
-                    set(plane, x, y, IMPENETRABLE_WALL_NORTH);
-                    set(plane, x, y + 1, IMPENETRABLE_WALL_SOUTH);
+                if (rotation == NORTH) {
+                    set(plane, x, y, WALL_NORTH);
+                    set(plane, x, y + 1, WALL_SOUTH);
+                    if (impenetrable) {
+                        set(plane, x, y, IMPENETRABLE_WALL_NORTH);
+                        set(plane, x, y + 1, IMPENETRABLE_WALL_SOUTH);
+                    }
                 }
-            }
-            if (rotation == EAST) {
-                set(plane, x, y, WALL_EAST);
-                set(plane, x + 1, y, WALL_WEST);
-                if (impenetrable) {
-                    set(plane, x, y, IMPENETRABLE_WALL_EAST);
-                    set(plane, x + 1, y, IMPENETRABLE_WALL_WEST);
+                if (rotation == EAST) {
+                    set(plane, x, y, WALL_EAST);
+                    set(plane, x + 1, y, WALL_WEST);
+                    if (impenetrable) {
+                        set(plane, x, y, IMPENETRABLE_WALL_EAST);
+                        set(plane, x + 1, y, IMPENETRABLE_WALL_WEST);
+                    }
                 }
-            }
-            if (rotation == SOUTH) {
-                set(plane, x, y, WALL_SOUTH);
-                set(plane, x, y - 1, WALL_NORTH);
-                if (impenetrable) {
-                    set(plane, x, y, IMPENETRABLE_WALL_SOUTH);
-                    set(plane, x, y - 1, IMPENETRABLE_WALL_NORTH);
+                if (rotation == SOUTH) {
+                    set(plane, x, y, WALL_SOUTH);
+                    set(plane, x, y - 1, WALL_NORTH);
+                    if (impenetrable) {
+                        set(plane, x, y, IMPENETRABLE_WALL_SOUTH);
+                        set(plane, x, y - 1, IMPENETRABLE_WALL_NORTH);
+                    }
                 }
-            }
-            break;
+                break;
 
-        // Corners
-        case TYPE_2:
-            if (rotation == WEST) {
-                set(plane, x, y, WALL_WEST | WALL_NORTH);
-                set(plane, x - 1, y, WALL_EAST);
-                set(plane, x, y + 1, WALL_SOUTH);
-                if (impenetrable) {
-                    set(plane, x, y, IMPENETRABLE_WALL_WEST | IMPENETRABLE_WALL_NORTH);
-                    set(plane, x - 1, y, IMPENETRABLE_WALL_EAST);
-                    set(plane, x, y + 1, IMPENETRABLE_WALL_SOUTH);
+            // Corners
+            case TYPE_2:
+                if (rotation == WEST) {
+                    set(plane, x, y, WALL_WEST | WALL_NORTH);
+                    set(plane, x - 1, y, WALL_EAST);
+                    set(plane, x, y + 1, WALL_SOUTH);
+                    if (impenetrable) {
+                        set(plane, x, y, IMPENETRABLE_WALL_WEST | IMPENETRABLE_WALL_NORTH);
+                        set(plane, x - 1, y, IMPENETRABLE_WALL_EAST);
+                        set(plane, x, y + 1, IMPENETRABLE_WALL_SOUTH);
+                    }
                 }
-            }
-            if (rotation == NORTH) {
-                set(plane, x, y, WALL_EAST | WALL_NORTH);
-                set(plane, x, y + 1, WALL_SOUTH);
-                set(plane, x + 1, y, WALL_WEST);
-                if (impenetrable) {
-                    set(plane, x, y, IMPENETRABLE_WALL_EAST | IMPENETRABLE_WALL_NORTH);
-                    set(plane, x, y + 1, IMPENETRABLE_WALL_SOUTH);
-                    set(plane, x + 1, y, IMPENETRABLE_WALL_WEST);
+                if (rotation == NORTH) {
+                    set(plane, x, y, WALL_EAST | WALL_NORTH);
+                    set(plane, x, y + 1, WALL_SOUTH);
+                    set(plane, x + 1, y, WALL_WEST);
+                    if (impenetrable) {
+                        set(plane, x, y, IMPENETRABLE_WALL_EAST | IMPENETRABLE_WALL_NORTH);
+                        set(plane, x, y + 1, IMPENETRABLE_WALL_SOUTH);
+                        set(plane, x + 1, y, IMPENETRABLE_WALL_WEST);
+                    }
                 }
-            }
-            if (rotation == EAST) {
-                set(plane, x, y, WALL_EAST | WALL_SOUTH);
-                set(plane, x + 1, y, WALL_WEST);
-                set(plane, x, y - 1, WALL_NORTH);
-                if (impenetrable) {
-                    set(plane, x, y, IMPENETRABLE_WALL_EAST | IMPENETRABLE_WALL_SOUTH);
-                    set(plane, x + 1, y, IMPENETRABLE_WALL_WEST);
-                    set(plane, x, y - 1, IMPENETRABLE_WALL_NORTH);
+                if (rotation == EAST) {
+                    set(plane, x, y, WALL_EAST | WALL_SOUTH);
+                    set(plane, x + 1, y, WALL_WEST);
+                    set(plane, x, y - 1, WALL_NORTH);
+                    if (impenetrable) {
+                        set(plane, x, y, IMPENETRABLE_WALL_EAST | IMPENETRABLE_WALL_SOUTH);
+                        set(plane, x + 1, y, IMPENETRABLE_WALL_WEST);
+                        set(plane, x, y - 1, IMPENETRABLE_WALL_NORTH);
+                    }
                 }
-            }
-            if (rotation == SOUTH) {
-                set(plane, x, y, WALL_WEST | WALL_SOUTH);
-                set(plane, x - 1, y, WALL_EAST);
-                set(plane, x, y - 1, WALL_NORTH);
-                if (impenetrable) {
-                    set(plane, x, y, IMPENETRABLE_WALL_WEST | IMPENETRABLE_WALL_SOUTH);
-                    set(plane, x - 1, y, IMPENETRABLE_WALL_EAST);
-                    set(plane, x, y - 1, IMPENETRABLE_WALL_NORTH);
+                if (rotation == SOUTH) {
+                    set(plane, x, y, WALL_WEST | WALL_SOUTH);
+                    set(plane, x - 1, y, WALL_EAST);
+                    set(plane, x, y - 1, WALL_NORTH);
+                    if (impenetrable) {
+                        set(plane, x, y, IMPENETRABLE_WALL_WEST | IMPENETRABLE_WALL_SOUTH);
+                        set(plane, x - 1, y, IMPENETRABLE_WALL_EAST);
+                        set(plane, x, y - 1, IMPENETRABLE_WALL_NORTH);
+                    }
                 }
-            }
-            break;
+                break;
 
-        case TYPE_1:
-        case TYPE_3:
-            if (rotation == WEST) {
-                set(plane, x, y, WALL_NORTH_WEST);
-                set(plane, x - 1, y + 1, WALL_SOUTH_EAST);
-                if (impenetrable) {
-                    set(plane, x, y, IMPENETRABLE_WALL_NORTH_WEST);
-                    set(plane, x - 1, y + 1, IMPENETRABLE_WALL_SOUTH_EAST);
+            case TYPE_1:
+            case TYPE_3:
+                if (rotation == WEST) {
+                    set(plane, x, y, WALL_NORTH_WEST);
+                    set(plane, x - 1, y + 1, WALL_SOUTH_EAST);
+                    if (impenetrable) {
+                        set(plane, x, y, IMPENETRABLE_WALL_NORTH_WEST);
+                        set(plane, x - 1, y + 1, IMPENETRABLE_WALL_SOUTH_EAST);
+                    }
                 }
-            }
-            if (rotation == NORTH) {
-                set(plane, x, y, WALL_NORTH_EAST);
-                set(plane, x + 1, y + 1, WALL_SOUTH_WEST);
-                if (impenetrable) {
-                    set(plane, x, y, IMPENETRABLE_WALL_NORTH_EAST);
-                    set(plane, x + 1, y + 1, IMPENETRABLE_WALL_SOUTH_WEST);
+                if (rotation == NORTH) {
+                    set(plane, x, y, WALL_NORTH_EAST);
+                    set(plane, x + 1, y + 1, WALL_SOUTH_WEST);
+                    if (impenetrable) {
+                        set(plane, x, y, IMPENETRABLE_WALL_NORTH_EAST);
+                        set(plane, x + 1, y + 1, IMPENETRABLE_WALL_SOUTH_WEST);
+                    }
                 }
-            }
-            if (rotation == EAST) {
-                set(plane, x, y, WALL_SOUTH_EAST);
-                set(plane, x + 1, y - 1, WALL_NORTH_WEST);
-                if (impenetrable) {
-                    set(plane, x, y, IMPENETRABLE_WALL_SOUTH_EAST);
-                    set(plane, x + 1, y - 1, IMPENETRABLE_WALL_NORTH_WEST);
+                if (rotation == EAST) {
+                    set(plane, x, y, WALL_SOUTH_EAST);
+                    set(plane, x + 1, y - 1, WALL_NORTH_WEST);
+                    if (impenetrable) {
+                        set(plane, x, y, IMPENETRABLE_WALL_SOUTH_EAST);
+                        set(plane, x + 1, y - 1, IMPENETRABLE_WALL_NORTH_WEST);
+                    }
                 }
-            }
-            if (rotation == SOUTH) {
-                set(plane, x, y, WALL_SOUTH_WEST);
-                set(plane, x - 1, y - 1, WALL_NORTH_EAST);
-                if (impenetrable) {
-                    set(plane, x, y, IMPENETRABLE_WALL_SOUTH_WEST);
-                    set(plane, x - 1, y - 1, IMPENETRABLE_WALL_NORTH_EAST);
+                if (rotation == SOUTH) {
+                    set(plane, x, y, WALL_SOUTH_WEST);
+                    set(plane, x - 1, y - 1, WALL_NORTH_EAST);
+                    if (impenetrable) {
+                        set(plane, x, y, IMPENETRABLE_WALL_SOUTH_WEST);
+                        set(plane, x - 1, y - 1, IMPENETRABLE_WALL_NORTH_EAST);
+                    }
                 }
-            }
-            break;
-        default:
-            break;
+                break;
+            default:
+                break;
         }
     }
 
@@ -382,7 +382,7 @@ public final class TraversalMap {
             }
         }
     }
-    
+
     public void unmarkOccupant(int plane, int x, int y, int width, int length, boolean impenetrable) {
         for (int offsetX = 0; offsetX < width; offsetX++) {
             for (int offsetY = 0; offsetY < length; offsetY++) {
@@ -393,7 +393,7 @@ public final class TraversalMap {
             }
         }
     }
-    
+
     public void markBridge(int plane, int x, int y) {
         set(plane, x, y, BRIDGE);
     }
@@ -519,10 +519,11 @@ public final class TraversalMap {
     public boolean isTraversableNorthEast(int plane, int x, int y, boolean impenetrable) {
         if (impenetrable) {
             return isInactive(plane, x + 1, y + 1, IMPENETRABLE_WALL_WEST | IMPENETRABLE_WALL_SOUTH | IMPENETRABLE_WALL_SOUTH_WEST | OCCUPANT)
-                    && isInactive(plane, x + 1, y, IMPENETRABLE_WALL_WEST | IMPENETRABLE_OCCUPANT) && isInactive(plane, x, y + 1, IMPENETRABLE_WALL_SOUTH | IMPENETRABLE_OCCUPANT);
+                    && isInactive(plane, x + 1, y, IMPENETRABLE_WALL_WEST | IMPENETRABLE_OCCUPANT)
+                    && isInactive(plane, x, y + 1, IMPENETRABLE_WALL_SOUTH | IMPENETRABLE_OCCUPANT);
         }
-        return isInactive(plane, x + 1, y + 1, WALL_WEST | WALL_SOUTH | WALL_SOUTH_WEST | OCCUPANT | BLOCKED) && isInactive(plane, x + 1, y, WALL_WEST | OCCUPANT | BLOCKED)
-                && isInactive(plane, x, y + 1, WALL_SOUTH | OCCUPANT | BLOCKED);
+        return isInactive(plane, x + 1, y + 1, WALL_WEST | WALL_SOUTH | WALL_SOUTH_WEST | OCCUPANT | BLOCKED)
+                && isInactive(plane, x + 1, y, WALL_WEST | OCCUPANT | BLOCKED) && isInactive(plane, x, y + 1, WALL_SOUTH | OCCUPANT | BLOCKED);
     }
 
     public boolean isTraversableNorthWest(int plane, int x, int y, int size) {
@@ -546,10 +547,11 @@ public final class TraversalMap {
     public boolean isTraversableNorthWest(int plane, int x, int y, boolean impenetrable) {
         if (impenetrable) {
             return isInactive(plane, x - 1, y + 1, IMPENETRABLE_WALL_EAST | IMPENETRABLE_WALL_SOUTH | IMPENETRABLE_WALL_SOUTH_EAST | OCCUPANT)
-                    && isInactive(plane, x - 1, y, IMPENETRABLE_WALL_EAST | IMPENETRABLE_OCCUPANT) && isInactive(plane, x, y + 1, IMPENETRABLE_WALL_SOUTH | IMPENETRABLE_OCCUPANT);
+                    && isInactive(plane, x - 1, y, IMPENETRABLE_WALL_EAST | IMPENETRABLE_OCCUPANT)
+                    && isInactive(plane, x, y + 1, IMPENETRABLE_WALL_SOUTH | IMPENETRABLE_OCCUPANT);
         }
-        return isInactive(plane, x - 1, y + 1, WALL_EAST | WALL_SOUTH | WALL_SOUTH_EAST | OCCUPANT | BLOCKED) && isInactive(plane, x - 1, y, WALL_EAST | OCCUPANT | BLOCKED)
-                && isInactive(plane, x, y + 1, WALL_SOUTH | OCCUPANT | BLOCKED);
+        return isInactive(plane, x - 1, y + 1, WALL_EAST | WALL_SOUTH | WALL_SOUTH_EAST | OCCUPANT | BLOCKED)
+                && isInactive(plane, x - 1, y, WALL_EAST | OCCUPANT | BLOCKED) && isInactive(plane, x, y + 1, WALL_SOUTH | OCCUPANT | BLOCKED);
     }
 
     public boolean isTraversableSouthEast(int plane, int x, int y, int size) {
@@ -573,10 +575,11 @@ public final class TraversalMap {
     public boolean isTraversableSouthEast(int plane, int x, int y, boolean impenetrable) {
         if (impenetrable) {
             return isInactive(plane, x + 1, y - 1, IMPENETRABLE_WALL_WEST | IMPENETRABLE_WALL_NORTH | IMPENETRABLE_WALL_NORTH_WEST | OCCUPANT)
-                    && isInactive(plane, x + 1, y, IMPENETRABLE_WALL_WEST | IMPENETRABLE_OCCUPANT) && isInactive(plane, x, y - 1, IMPENETRABLE_WALL_NORTH | IMPENETRABLE_OCCUPANT);
+                    && isInactive(plane, x + 1, y, IMPENETRABLE_WALL_WEST | IMPENETRABLE_OCCUPANT)
+                    && isInactive(plane, x, y - 1, IMPENETRABLE_WALL_NORTH | IMPENETRABLE_OCCUPANT);
         }
-        return isInactive(plane, x + 1, y - 1, WALL_WEST | WALL_NORTH | WALL_NORTH_WEST | OCCUPANT | BLOCKED) && isInactive(plane, x + 1, y, WALL_WEST | OCCUPANT | BLOCKED)
-                && isInactive(plane, x, y - 1, WALL_NORTH | OCCUPANT | BLOCKED);
+        return isInactive(plane, x + 1, y - 1, WALL_WEST | WALL_NORTH | WALL_NORTH_WEST | OCCUPANT | BLOCKED)
+                && isInactive(plane, x + 1, y, WALL_WEST | OCCUPANT | BLOCKED) && isInactive(plane, x, y - 1, WALL_NORTH | OCCUPANT | BLOCKED);
     }
 
     public boolean isTraversableSouthWest(int plane, int x, int y, int size) {
@@ -600,10 +603,11 @@ public final class TraversalMap {
     public boolean isTraversableSouthWest(int plane, int x, int y, boolean impenetrable) {
         if (impenetrable) {
             return isInactive(plane, x - 1, y - 1, IMPENETRABLE_WALL_EAST | IMPENETRABLE_WALL_NORTH | IMPENETRABLE_WALL_NORTH_EAST | OCCUPANT)
-                    && isInactive(plane, x - 1, y, IMPENETRABLE_WALL_EAST | IMPENETRABLE_OCCUPANT) && isInactive(plane, x, y - 1, IMPENETRABLE_WALL_NORTH | IMPENETRABLE_OCCUPANT);
+                    && isInactive(plane, x - 1, y, IMPENETRABLE_WALL_EAST | IMPENETRABLE_OCCUPANT)
+                    && isInactive(plane, x, y - 1, IMPENETRABLE_WALL_NORTH | IMPENETRABLE_OCCUPANT);
         }
-        return isInactive(plane, x - 1, y - 1, WALL_EAST | WALL_NORTH | WALL_NORTH_EAST | OCCUPANT | BLOCKED) && isInactive(plane, x - 1, y, WALL_EAST | OCCUPANT | BLOCKED)
-                && isInactive(plane, x, y - 1, WALL_NORTH | OCCUPANT | BLOCKED);
+        return isInactive(plane, x - 1, y - 1, WALL_EAST | WALL_NORTH | WALL_NORTH_EAST | OCCUPANT | BLOCKED)
+                && isInactive(plane, x - 1, y, WALL_EAST | OCCUPANT | BLOCKED) && isInactive(plane, x, y - 1, WALL_NORTH | OCCUPANT | BLOCKED);
     }
 
     public void set(int plane, int x, int y, int flag) {
@@ -657,6 +661,22 @@ public final class TraversalMap {
         }
 
         return region.getTile(modifiedPlane, localX, localY).isInactive(flag);
+    }
+
+    public boolean shouldModifyPlane(int x, int y) {
+        /* Calculate the region coordinates */
+        int regionX = x >> 6, regionY = y >> 6;
+
+        /* Calculate the local region coordinates */
+        int localX = x & 0x3f, localY = y & 0x3f;
+
+        Region region = regions[regionX + regionY * SIZE];
+        if (region != null) {
+            if (region.getTile(1, localX, localY).isActive(BRIDGE)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void unset(int plane, int x, int y, int flag) {
