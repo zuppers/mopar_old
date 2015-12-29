@@ -9,18 +9,25 @@ import net.scapeemulator.game.util.HandlerContext;
 /**
  * @author David Insley
  */
-public class AltarObjectHandler extends ObjectHandler {
+public class RuinsObjectHandler extends ObjectHandler {
 
-    public AltarObjectHandler() {
+    public RuinsObjectHandler() {
         super(Option.ONE);
     }
 
     @Override
     public void handle(Player player, GroundObject object, String optionName, HandlerContext context) {
-        RCAltar altar = RCAltar.forAltarId(object.getId());
+        RCAltar altar = RCAltar.forRuinsId(object.getId());
         if (altar != null) {
             context.stop();
-            player.startAction(new RunecraftingAction(player, altar.getRune(), object));
+            player.startAction(new RuinsTeleportAction(player, altar, object, RuinsTeleportAction.Type.TIARA));
+            return;
+        }
+        altar = RCAltar.forPortalId(object.getId());
+        if (altar != null) {
+            context.stop();
+            player.startAction(new RuinsTeleportAction(player, altar, object, RuinsTeleportAction.Type.PORTAL));
+            return;
         }
     }
 }

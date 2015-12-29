@@ -40,8 +40,7 @@ public class RunecraftingAction extends ReachDistancedAction {
             removed = mob.getInventory().remove(new Item(Runecrafting.RUNE_ESS, 28));
         }
 
-        // If we couldn't use rune ess (either because it isn't allowed or we
-        // didnt have it), check for pure ess
+        // If we couldn't use regular essence (either because it isn't allowed or we didn't have it), check for pure essence
         if (removed == null) {
             removed = mob.getInventory().remove(new Item(Runecrafting.PURE_ESS, 28));
         }
@@ -54,7 +53,7 @@ public class RunecraftingAction extends ReachDistancedAction {
 
         int amount = removed.getAmount();
         Item runes = new Item(runeType.getRune().getItemId(), amount * runeType.getMultiplier(mob.getSkillSet().getCurrentLevel(Skill.RUNECRAFTING)));
-        mob.sendMessage("You bind the altars power into some " + runes.getDefinition().getName().toLowerCase() + "s.");
+        mob.sendMessage("You bind the altar's power into some " + runes.getDefinition().getName().toLowerCase() + "s.");
         mob.getSkillSet().addExperience(Skill.RUNECRAFTING, runeType.getXP() * amount);
         mob.getInventory().add(runes);
         mob.playAnimation(Runecrafting.CRAFT_ANIMATION);
