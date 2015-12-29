@@ -27,7 +27,6 @@ import net.scapeemulator.game.content.Content;
 import net.scapeemulator.game.io.DummyPlayerSerializer;
 import net.scapeemulator.game.io.JdbcSerializer;
 import net.scapeemulator.game.io.Serializer;
-import net.scapeemulator.game.model.Ladders;
 import net.scapeemulator.game.model.World;
 import net.scapeemulator.game.model.definition.ItemDefinitions;
 import net.scapeemulator.game.model.definition.NPCDefinitions;
@@ -192,8 +191,6 @@ public final class GameServer {
         /* decorate each of the dispatchers */
         messageDispatcher.decorateDispatchers(scriptContext);
 
-        Ladders.init();
-        
         /* bind the non-script skill handlers to the dispatchers */
         Fishing.initialize();
         Magic.initialize();

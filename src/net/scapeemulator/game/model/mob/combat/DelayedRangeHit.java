@@ -13,8 +13,8 @@ public class DelayedRangeHit extends Task {
     private final int dropId;
     private final int dropAmt;
 
-    public DelayedRangeHit(Mob source, Mob target, int delay, int damage, int dropId, int dropAmt) {
-        super(delay, false);
+    public DelayedRangeHit(Mob source, Mob target, int damage, int dropId, int dropAmt) {
+        super(3, false);
         this.source = source;
         this.target = target;
         this.damage = damage;

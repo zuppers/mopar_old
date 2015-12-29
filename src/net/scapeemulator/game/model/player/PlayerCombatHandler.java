@@ -27,7 +27,6 @@ import net.scapeemulator.game.model.player.skills.ranged.Bolt;
 import net.scapeemulator.game.model.player.skills.ranged.Bow;
 import net.scapeemulator.game.model.player.skills.ranged.Crossbow;
 import net.scapeemulator.game.model.player.skills.ranged.Thrown;
-import net.scapeemulator.game.msg.impl.CreateProjectileMessage;
 import net.scapeemulator.game.msg.impl.inter.InterfaceTextMessage;
 import net.scapeemulator.game.msg.impl.inter.InterfaceVisibleMessage;
 
@@ -95,14 +94,14 @@ public class PlayerCombatHandler extends CombatHandler<Player> {
 
                 // Removes runes, gives base XP
                 nextSpell.getRequirements().fulfillAll(mob);
-
+                
                 if (nextSpell.getType() == SpellType.DAMAGE) {
                     if (shouldHit) {
-                        damage = 1 + (int) (Math.random() * ((DamageSpell) nextSpell).getMaxHit());
-                        if (target.getHeadIcon() == HeadIcon.MAGIC) {
+                        damage = 1 + (int) (Math.random() * ((DamageSpell)nextSpell).getMaxHit());
+                        if(target.getHeadIcon() == HeadIcon.MAGIC) {
                             damage *= 0.6;
                         }
-                        if (damage > target.getCurrentHitpoints()) {
+                        if(damage > target.getCurrentHitpoints()) {
                             damage = target.getCurrentHitpoints();
                         }
                         nextSpell.cast(mob, target, damage);
@@ -119,10 +118,10 @@ public class PlayerCombatHandler extends CombatHandler<Player> {
                 return true;
             case RANGE:
                 // Calculate damage dealt
-                if (shouldHit) {
-                    damage = !shouldHit ? 0 : 1 + (int) (Math.random() * getRangeMaxHit());
-                    damage = target.getHeadIcon() == HeadIcon.RANGED ? damage *= 0.6 : damage;
-                    damage = damage > target.getCurrentHitpoints() ? target.getCurrentHitpoints() : damage;
+                if(shouldHit) {
+                damage = !shouldHit ? 0 : 1 + (int) (Math.random() * getRangeMaxHit());
+                damage = target.getHeadIcon() == HeadIcon.RANGED ? damage *= 0.6 : damage;
+                damage = damage > target.getCurrentHitpoints() ? target.getCurrentHitpoints() : damage;
                 }
 
                 // Find ammo; if null set id to -1 for crystal arrow data
@@ -138,10 +137,9 @@ public class PlayerCombatHandler extends CombatHandler<Player> {
                         return true;
                     }
                     if (bow == Bow.CRYSTAL_BOW) {
+                        Arrow.CRYSTAL.createProjectile(mob, target, false);
                         mob.playSpotAnimation(Arrow.CRYSTAL.getDrawbackGraphic(false));
-                        CreateProjectileMessage cpm = Arrow.CRYSTAL.createProjectile(mob, target);
-                        World.getWorld().createGlobalProjectile(mob.getPosition(), cpm);
-                        World.getWorld().getTaskScheduler().schedule(new DelayedRangeHit(mob, target, cpm.getDurationTicks(), damage, 0, 0));
+                        World.getWorld().getTaskScheduler().schedule(new DelayedRangeHit(mob, target, damage, 0, 0));
                     } else {
                         boolean twoArrows = (bow == Bow.DARK_BOW);
                         if (twoArrows && ammo.getAmount() < 2) {
@@ -150,12 +148,10 @@ public class PlayerCombatHandler extends CombatHandler<Player> {
                             return true;
                         }
                         mob.getEquipment().remove(new Item(ammo.getId(), twoArrows ? 2 : 1));
+                        arrow.createProjectile(mob, target, twoArrows);
                         mob.playSpotAnimation(arrow.getDrawbackGraphic(twoArrows));
-                        CreateProjectileMessage cpm = arrow.createProjectile(mob, target);
-                        World.getWorld().createGlobalProjectile(mob.getPosition(), cpm);
-                        boolean shouldDrop = (int) (Math.random() * 2) == 0;
                         World.getWorld().getTaskScheduler()
-                                .schedule(new DelayedRangeHit(mob, target, cpm.getDurationTicks(), damage, ammo.getId(), shouldDrop ? 1 : 0));
+                                .schedule(new DelayedRangeHit(mob, target, damage, ammo.getId(), ((int) (Math.random() * 2) == 0) ? 1 : 0));
                     }
                     mob.playAnimation(weaponDefinition.getAnimation(attackStyle, getRawAttackType()));
                     combatDelay = weaponDefinition.getSpeed() - (attackStyle == AttackStyle.RAPID ? 1 : 0);
@@ -170,12 +166,10 @@ public class PlayerCombatHandler extends CombatHandler<Player> {
                         mob.stopAction();
                         return true;
                     }
-                    CreateProjectileMessage cpm = bolt.createProjectile(mob, target);
-                    World.getWorld().createGlobalProjectile(mob.getPosition(), cpm);
-                    boolean shouldDrop = (int) (Math.random() * 2) == 0;
-                    World.getWorld().getTaskScheduler()
-                            .schedule(new DelayedRangeHit(mob, target, cpm.getDurationTicks(), damage, ammo.getId(), shouldDrop ? 1 : 0));
+                    bolt.createProjectile(mob, target);
                     mob.getEquipment().remove(new Item(ammo.getId(), 1));
+                    World.getWorld().getTaskScheduler()
+                            .schedule(new DelayedRangeHit(mob, target, damage, ammo.getId(), ((int) (Math.random() * 2) == 0) ? 1 : 0));
                     mob.playAnimation(weaponDefinition.getAnimation(attackStyle, getRawAttackType()));
                     combatDelay = weaponDefinition.getSpeed() - (attackStyle == AttackStyle.RAPID ? 1 : 0);
                     addRangeExperience(damage);
