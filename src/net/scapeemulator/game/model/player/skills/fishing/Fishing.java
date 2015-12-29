@@ -81,7 +81,7 @@ public class Fishing {
 
         // Rimmington spots
         spawnSpot(FishingSpot.SMALLNET_ROD, 2986, 3176);
-        spawnSpot(FishingSpot.SMALLNET_ROD, 2997, 3159);
+        spawnSpot(FishingSpot.SMALLNET_ROD, 2996, 3159);
 
         // Al-Kharid spots
         spawnSpot(FishingSpot.SMALLNET_ROD, 3267, 3148);
