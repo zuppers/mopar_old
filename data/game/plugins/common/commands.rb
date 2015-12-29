@@ -209,7 +209,19 @@ bind :cmd, :name => 'ge' do
 end
 
 bind :cmd, :name => 'yell' do
-  World::getWorld().send_global_message("[<img=1>#{player.get_display_name}] #{args.to_a.join(' ')}")
+  msg = args.to_a.join(' ')
+
+  # convert to string has implied null-check
+  # nil.to_s = '' and ''.to_s = ''  ;-)
+  if msg.to_s.empty?
+    player.send_message 'You cannot yell an empty message'
+  end
+
+  msg.gsub!(/\P{ASCII}/, '') # strip non-ascii characters
+
+  ['@', 'req:', '<', '>', '#', '`', '~'].any? { |invalid| msg.tr?(invalid, '') }
+
+  World::getWorld().send_global_message('[#{player.get_display_name}] #{msg}')
 end
 
 bind :cmd, :name => 'bank' do
