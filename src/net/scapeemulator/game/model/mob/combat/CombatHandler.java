@@ -54,20 +54,6 @@ public abstract class CombatHandler<T extends Mob> {
         other.processHit(mob, damage);
     }
 
-    public void sendProjectile(int graphic, int startHeight, int endHeight, int startDelay, int speed) {
-        Position source = mob.getPosition();
-        Position destination = target.getPosition();
-        for (Player p : World.getWorld().getPlayers()) {
-            if (!p.getPosition().isWithinScene(mob.getPosition())) {
-                continue;
-            }
-            int localX = source.getX() - p.getPosition().getBaseLocalX(p.getLastKnownRegion().getX() >> 3) - 3;
-            int localY = source.getY() - p.getPosition().getBaseLocalY(p.getLastKnownRegion().getY() >> 3) - 2;
-            p.send(new PlacementCoordsMessage(localX, localY));
-            p.send(new CreateProjectileMessage(source, destination, target, graphic, startHeight, endHeight, startDelay, speed));
-        }
-    }
-
     public void reset() {
         target = null;
         nextSpell = autoCast;

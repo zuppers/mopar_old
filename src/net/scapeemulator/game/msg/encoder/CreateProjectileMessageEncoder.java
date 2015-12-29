@@ -49,7 +49,7 @@ public final class CreateProjectileMessageEncoder extends MessageEncoder<CreateP
         builder.put(DataType.BYTE, message.getStartHeight());
         builder.put(DataType.BYTE, message.getEndHeight());
         builder.put(DataType.SHORT, message.getStartDelay());
-        builder.put(DataType.SHORT, message.getDuration());
+        builder.put(DataType.SHORT, message.getDurationFrames());
         builder.put(DataType.BYTE, message.getArc());
         builder.put(DataType.BYTE, 64);
         return builder.toGameFrame();
