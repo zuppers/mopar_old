@@ -8,8 +8,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.HashMap;
-import java.util.Map;
 
 import net.scapeemulator.cache.def.NPCDefinition;
 import net.scapeemulator.game.cache.MapLoader;
@@ -34,8 +32,9 @@ import net.scapeemulator.game.model.mob.Direction;
 import net.scapeemulator.game.model.mob.combat.AttackType;
 import net.scapeemulator.game.model.mob.combat.CombatBonuses;
 import net.scapeemulator.game.model.npc.NPC;
-import net.scapeemulator.game.model.npc.drops.DropTable;
+import net.scapeemulator.game.model.npc.drops.DropTables;
 import net.scapeemulator.game.model.npc.drops.TableType;
+import net.scapeemulator.game.model.npc.drops.DropTables.TableDefinition;
 import net.scapeemulator.game.model.npc.stateful.impl.NormalNPC;
 import net.scapeemulator.game.model.player.Player;
 import net.scapeemulator.game.model.player.ShopHandler;
@@ -65,11 +64,15 @@ public final class JdbcSerializer extends Serializer implements Closeable {
         connection = DriverManager.getConnection(url, username, password);
         connection.setAutoCommit(false);
         loginStatement = connection.prepareStatement("SELECT id, password FROM players WHERE username = ?;");
-        saveSpawnStatement = connection.prepareStatement("INSERT INTO npcspawns (type, x, y, height, roam, min_x, min_y, max_x, max_y) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);");
-        registerStatement = connection.prepareStatement("INSERT INTO players (ip, username, password, rights, x, y, height) VALUES (?, ?, ?, 0, 3222, 3222, 0);", Statement.RETURN_GENERATED_KEYS);
+        saveSpawnStatement = connection
+                .prepareStatement("INSERT INTO npcspawns (type, x, y, height, roam, min_x, min_y, max_x, max_y) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);");
+        registerStatement = connection.prepareStatement(
+                "INSERT INTO players (ip, username, password, rights, x, y, height) VALUES (?, ?, ?, 0, 3222, 3222, 0);",
+                Statement.RETURN_GENERATED_KEYS);
 
-        playerTables = new Table[] { new PlayersTable(connection), new FriendsTable(connection), new SettingsTable(connection), new VariablesTable(connection), new AppearanceTable(connection),
-                new SkillsTable(connection), new ItemsTable(connection, "inventory") {
+        playerTables = new Table[] {new PlayersTable(connection), new FriendsTable(connection), new SettingsTable(connection),
+                new VariablesTable(connection), new AppearanceTable(connection), new SkillsTable(connection),
+                new ItemsTable(connection, "inventory") {
                     @Override
                     public Inventory getInventory(Player player) {
                         return player.getInventory();
@@ -84,7 +87,7 @@ public final class JdbcSerializer extends Serializer implements Closeable {
                     public Inventory getInventory(Player player) {
                         return player.getBank();
                     }
-                } };
+                }};
         geTable = new GrandExchangeTable(connection);
         geOfferTable = new GrandExchangeOfferTable(connection);
         try {
@@ -308,7 +311,7 @@ public final class JdbcSerializer extends Serializer implements Closeable {
                     def.setAttackEmote(set.getInt("attack_emote"));
                     def.setDefendEmote(set.getInt("defend_emote"));
                     def.setDeathEmote(set.getInt("death_emote"));
-                    
+
                     CombatBonuses bonuses = new CombatBonuses();
                     bonuses.setAttackBonus(AttackType.STAB, set.getInt("stab_att"));
                     bonuses.setAttackBonus(AttackType.SLASH, set.getInt("slash_att"));
@@ -323,7 +326,7 @@ public final class JdbcSerializer extends Serializer implements Closeable {
                     bonuses.setStrengthBonus(set.getInt("str_bonus"));
                     bonuses.setPrayerBonus(0);
                     bonuses.setRangeStrengthBonus(0);
-                    
+
                     def.setCombatBonuses(bonuses);
                     // def.setAutoCast();
                 }
@@ -337,56 +340,53 @@ public final class JdbcSerializer extends Serializer implements Closeable {
 
     @Override
     public void loadNPCDrops() {
-        System.out.println("Loading NPC drops... ");
-        Map<String, DropTable> tables = new HashMap<>();
         try {
-            ResultSet set = connection.prepareStatement("SELECT * FROM npc_drops").executeQuery();
+            System.out.print("Loading NPC drops... ");
+            int tableCount = 0;
+            int npcCount = 0;
+            ResultSet set = connection.prepareStatement("SELECT * FROM npcdropdefs").executeQuery();
+            DropTables.clear();
+            while (set.next()) {
+                String tableName = set.getString("name");
+                TableDefinition tableDef = DropTables.newTable(tableName);
+                String[] npcTypes = set.getString("types").trim().split(",");
+                tableCount++;
+                for (int i = 0; i < npcTypes.length; i++) {
+                    try {
+                        tableDef.addNPCDefinition(NPCDefinitions.forId(Integer.parseInt(npcTypes[i])));
+                        npcCount++;
+                    } catch (NumberFormatException e) {
+                        System.out.println("Number format exception for NPC type " + npcTypes[i] + " in drop def " + tableName);
+                    }
+                }
+            }
+            set = connection.prepareStatement("SELECT * FROM npcdrops").executeQuery();
             while (set.next()) {
                 String tableName = set.getString("def");
-                DropTable table = tables.get(tableName);
-                if (table == null) {
-                    table = new DropTable();
-                    tables.put(tableName, table);
+                TableDefinition tableDef = DropTables.getTable(tableName);
+                if (tableDef == null) {
+                    System.out.println("No drop table called \"" + tableName + "\" found!");
+                    continue;
                 }
                 TableType type = TableType.valueOf(set.getString("table_type"));
                 double chance = set.getDouble("chance");
                 if (set.wasNull()) {
-                    table.addTable(type);
+                    tableDef.getTable().addTable(type);
                 } else {
-                    table.addTable(type, chance);
+                    tableDef.getTable().addTable(type, chance);
                 }
                 String[] drops = set.getString("drops").split(" ");
                 for (String drop : drops) {
                     String[] dropData = drop.split(":");
                     int itemId = Integer.parseInt(dropData[0]);
                     if (dropData.length == 1) {
-                        table.addItem(type, itemId);
+                        tableDef.getTable().addItem(type, itemId);
                     } else {
-                        table.addItem(type, itemId, dropData[1]);
+                        tableDef.getTable().addItem(type, itemId, dropData[1]);
                     }
                 }
             }
-            int count = 0;
-            set = connection.prepareStatement("SELECT * FROM npc_drop_defs").executeQuery();
-            while (set.next()) {
-                String tableName = set.getString("name");
-                DropTable table = tables.get(tableName);
-                if (table == null) {
-                    System.out.println("No drops found for table " + tableName + "!");
-                    continue;
-                }
-                String[] npcTypes = set.getString("types").trim().split(",");
-                int[] npcIds = new int[npcTypes.length];
-                for (int i = 0; i < npcTypes.length; i++) {
-                    try {
-                        npcIds[i] = Integer.parseInt(npcTypes[i]);
-                        count++;
-                    } catch (NumberFormatException e) {
-                        System.out.println("Number format exception for NPC type " + npcTypes[i] + " in drop def " + tableName);
-                    }
-                }
-            }
-            System.out.println("Complete! Loaded drops for " + count + " NPC types.");
+            System.out.println("complete! Loaded " + tableCount + " drop tables for " + npcCount + " NPC types.");
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -399,7 +399,6 @@ public final class JdbcSerializer extends Serializer implements Closeable {
         int count = 0;
         try (ResultSet set = connection.prepareStatement("SELECT * FROM shopdefs").executeQuery()) {
             while (set.next()) {
-                int id = set.getInt("id");
                 String name = set.getString("name");
                 int shopId = set.getInt("shop_id");
                 String[] itemIds = set.getString("stock_ids").split(",");
@@ -407,7 +406,7 @@ public final class JdbcSerializer extends Serializer implements Closeable {
                 for (int i = 0; i < itemIds.length; i++) {
                     stockIds[i] = Integer.parseInt(itemIds[i]);
                 }
-                ShopHandler.shops.put(name, new Shop(id, name, shopId, set.getBoolean("is_gen"), stockIds));
+                ShopHandler.shops.put(name, new Shop(name, shopId, set.getBoolean("is_gen"), stockIds));
                 count++;
             }
             System.out.println("complete! Loaded " + count);

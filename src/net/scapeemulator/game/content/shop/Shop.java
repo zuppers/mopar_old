@@ -10,7 +10,6 @@ import net.scapeemulator.game.util.math.BasicMath;
  */
 public class Shop {
 
-    private final int databaseId;
     private final String name;
     private final int shopId;
 
@@ -33,8 +32,7 @@ public class Shop {
      *            this shop can hold, {@link AMOUNT_STOCK}.
      * @param stockAmounts The amount for each itemId this Shop has in its main stock.
      */
-    public Shop(int databaseId, String name, int shopId, boolean hasPlayerStock, int[] stockIds, int[] stockAmounts) {
-        this.databaseId = databaseId;
+    public Shop(String name, int shopId, boolean hasPlayerStock, int[] stockIds, int[] stockAmounts) {
         this.name = name;
         this.shopId = shopId;
 
@@ -61,8 +59,8 @@ public class Shop {
      * @param stockIds The itemId's which are meant to be in this Shop, this shouldn't be more than
      *            this shop can hold, {@link AMOUNT_STOCK}.
      */
-    public Shop(int databaseId, String name, int shopId, boolean hasPlayerStock, int[] stockIds) {
-        this(databaseId, name, shopId, hasPlayerStock, stockIds, new int[0]);
+    public Shop(String name, int shopId, boolean hasPlayerStock, int[] stockIds) {
+        this(name, shopId, hasPlayerStock, stockIds, new int[0]);
     }
 
     /**
@@ -77,8 +75,7 @@ public class Shop {
      * @param mainStock The itemsInStock used for the mainStock. A copy of this array will be used,
      *            up to {@link AMOUNT_STOCK} elements maximum.
      */
-    public Shop(int databaseId, String name, int shopId, boolean infinite, boolean hasPlayerStock, Item[] mainStock) {
-        this.databaseId = databaseId;
+    public Shop(String name, int shopId, boolean infinite, boolean hasPlayerStock, Item[] mainStock) {
         this.name = name;
         this.shopId = shopId;
 
@@ -97,20 +94,10 @@ public class Shop {
      * @param name The name for this Shop.
      * @param shopId The id for this Shop.
      */
-    public Shop(int databaseId, String name, int shopId) {
-        this.databaseId = databaseId;
+    public Shop(String name, int shopId) {
         this.name = name;
         this.shopId = shopId;
         this.playerStock = new Item[AMOUNT_STOCK];
-    }
-
-    /**
-     * Gets the databaseId of this Shop.
-     * 
-     * @return The associated id in the database.
-     */
-    public int getDatabaseId() {
-        return this.databaseId;
     }
 
     /**
