@@ -64,22 +64,18 @@ bind :cmd, :name => 'reset' do
   player.reset_pos
 end
 
-bind :cmd, :name => 'noclip' do
-  player.toggle_clipping
-end
-
 bind :cmd, :name => 'max' do
   player.set_max
 end
 
-bind :cmd, :name => 'select' do
-  player.select_npc
-end
-
 bind :cmd, :name => 'spawn' do
-  player.spawn_npc
+  player.set_spawn_pos args[0].to_i
 end
 # TODO end remove
+
+bind :cmd, :name => 'noclip' do
+  player.toggle_clipping
+end
 
 bind :cmd, :name => 'overlay' do
   player.interface_set.open_overlay(args[0].to_i)
@@ -214,22 +210,6 @@ end
 
 bind :cmd, :name => 'ge' do
   player.get_grand_exchange_handler.show_interface
-end
-
-bind :cmd, :name => 'yell' do
-  msg = args.to_a.join(' ')
-
-  # convert to string has implied null-check
-  # nil.to_s = '' and ''.to_s = ''  ;-)
-  if msg.to_s.empty?
-    player.send_message 'You cannot yell an empty message'
-  end
-
-  msg.gsub!(/\P{ASCII}/, '') # strip non-ascii characters
-
-  ['@', 'req:', '<', '>', '#', '`', '~'].any? { |invalid| msg.tr?(invalid, '') }
-
-  World::getWorld().send_global_message('[#{player.get_display_name}] #{msg}')
 end
 
 bind :cmd, :name => 'bank' do
