@@ -415,6 +415,48 @@ public final class GroundObjectList {
             return type;
         }
 
+        public Set<Position> getValidInteractPositions() {
+            Set<Position> validPositions = new HashSet<>();
+            ObjectDefinition def = getDefinition();
+            int width = def.getWidth();
+            int length = def.getLength();
+            if (rotation == 1 || rotation == 3) {
+                width = def.getLength();
+                length = def.getWidth();
+            }
+            int validSides = def.getValidInteractSides(rotation);
+            
+            // NORTH
+            if(((validSides >> 0) & 1) == 0) {
+                for(int x = 0; x < width; x++) {
+                    validPositions.add(position.copy(x, length));
+                }
+            }
+            
+            // EAST
+            if(((validSides >> 1) & 1) == 0) {
+                for(int y = 0; y < length; y++) {
+                    validPositions.add(position.copy(width, y));
+                }
+            }
+            
+            // SOUTH
+            if(((validSides >> 2) & 1) == 0) {
+                for(int x = 0; x < width; x++) {
+                    validPositions.add(position.copy(x, -1));
+                }
+            }
+            
+            // WEST
+            if(((validSides >> 3) & 1) == 0) {
+                for(int y = 0; y < length; y++) {
+                    validPositions.add(position.copy(-1, y));
+                }
+            }
+            
+            return validPositions;
+        }
+        
         public Area getBounds() {
             ObjectDefinition def = getDefinition();
             int width = def.getWidth();
