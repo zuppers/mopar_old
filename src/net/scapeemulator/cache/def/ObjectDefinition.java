@@ -6,6 +6,7 @@ import net.scapeemulator.cache.util.ByteBufferUtils;
 
 /**
  * @author Hadyn Richard
+ * @author David Insley
  */
 public final class ObjectDefinition {
 
@@ -16,12 +17,13 @@ public final class ObjectDefinition {
     private int width;
     private int length;
     private int animationId;
+    private int validInteractSides;
 
     private boolean impenetrable;
     private boolean solid;
-    
+
     private int[] childIds;
-    
+
     @SuppressWarnings("unused")
     public static ObjectDefinition decode(ByteBuffer buffer) {
         ObjectDefinition def = new ObjectDefinition();
@@ -104,8 +106,7 @@ public final class ObjectDefinition {
             } else if (opcode == 67) {
                 int i = buffer.getShort() & 0xffff;
             } else if (opcode == 69) {
-                // valid interact sides ?
-                int i = buffer.get() & 0xff;
+                def.validInteractSides = buffer.get() & 0xff;
             } else if (opcode == 70) {
                 int i = buffer.getShort();
             } else if (opcode == 71) {
@@ -119,20 +120,20 @@ public final class ObjectDefinition {
                 int i = buffer.get();
             } else if (opcode == 77 || opcode == 92) {
                 int i4 = -1;
-                
+
                 int i = buffer.getShort() & 0xffff;
-                if(i == '\uFFFF') {
+                if (i == '\uFFFF') {
                     i = -1;
                 }
-                
+
                 int i2 = buffer.getShort() & 0xffff;
-                if(i2 == '\uFFFF') {
+                if (i2 == '\uFFFF') {
                     i2 = -1;
                 }
-                
+
                 if (opcode == 92) {
                     i4 = buffer.getShort();
-                    if(i4 == '\uFFFF') {
+                    if (i4 == '\uFFFF') {
                         i4 = -1;
                     }
                 }
@@ -142,7 +143,7 @@ public final class ObjectDefinition {
                 // Child ids ?
                 for (int var6 = 0; var6 <= i5; var6++) {
                     def.childIds[var6] = buffer.getShort() & 0xFFFF;
-                    if(def.childIds[var6] == '\uFFFF') {
+                    if (def.childIds[var6] == '\uFFFF') {
                         def.childIds[var6] = -1;
                     }
                 }
@@ -212,9 +213,17 @@ public final class ObjectDefinition {
     public int[] getChildIds() {
         return childIds;
     }
-    
+
     public int getAnimationId() {
         return animationId;
+    }
+
+    public int getValidInteractSides() {
+        return validInteractSides;
+    }
+
+    public int getValidInteractSides(int rotation) {
+        return ((validInteractSides << rotation) & 0xF) + (validInteractSides >> (4 - rotation));
     }
 
     public int getWidth() {
