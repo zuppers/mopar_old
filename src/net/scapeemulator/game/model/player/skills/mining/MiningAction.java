@@ -7,12 +7,12 @@ import net.scapeemulator.game.model.World;
 import net.scapeemulator.game.model.object.GroundObjectList.GroundObject;
 import net.scapeemulator.game.model.player.Item;
 import net.scapeemulator.game.model.player.Player;
-import net.scapeemulator.game.model.player.action.ReachDistancedAction;
+import net.scapeemulator.game.model.player.action.ReachObjectAction;
 
 /**
  * @author David Insley
  */
-public class MiningAction extends ReachDistancedAction {
+public class MiningAction extends ReachObjectAction {
 
     private enum State {
         WALKING, START, MINING
@@ -28,7 +28,7 @@ public class MiningAction extends ReachDistancedAction {
     private Pickaxe pickaxe;
 
     public MiningAction(Player player, RockType type, GroundObject object) {
-        super(1, true, player, object.getBounds(), 1);
+        super(1, true, player, object, 1);
         this.type = type;
         this.object = object;
         originalId = object.getId();

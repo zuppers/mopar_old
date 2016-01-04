@@ -3,19 +3,19 @@ package net.scapeemulator.game.model.player.skills.runecrafting;
 import net.scapeemulator.game.model.object.GroundObjectList.GroundObject;
 import net.scapeemulator.game.model.player.Item;
 import net.scapeemulator.game.model.player.Player;
-import net.scapeemulator.game.model.player.action.ReachDistancedAction;
+import net.scapeemulator.game.model.player.action.ReachObjectAction;
 import net.scapeemulator.game.model.player.skills.Skill;
 
 /**
  * @author David Insley
  */
-public class RunecraftingAction extends ReachDistancedAction {
+public class RunecraftingAction extends ReachObjectAction {
 
     private final RCRune runeType;
     private final GroundObject object;
 
     public RunecraftingAction(Player player, RCRune runeType, GroundObject object) {
-        super(1, false, player, object.getBounds(), 1);
+        super(1, false, player, object, 1);
         this.runeType = runeType;
         this.object = object;
     }

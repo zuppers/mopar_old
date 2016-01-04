@@ -15,27 +15,33 @@ public class SpriteDumper {
         Cache cache = new Cache(FileStore.open("data/game/cache"));
         int count = 0;
 
-        Container tableContainer = Container.decode(cache.getStore().read(255, 8));
+        Container tableContainer = Container.decode(cache.getStore().read(255, 9));
         ReferenceTable table = ReferenceTable.decode(tableContainer.getData());
 
         int files = table.capacity();
         Sprite[] definitions = new Sprite[files];
-        
+        System.out.println(files);
         for (int file = 0; file < files; file++) {
             ReferenceTable.Entry entry = table.getEntry(file);
             if (entry == null) {
+                System.out.println("NULL ENTRY");
                 continue;
             }
             for (int member = 0; member < entry.capacity(); member++) {
                 ReferenceTable.ChildEntry childEntry = entry.getEntry(member);
                 if (childEntry == null) {
+                    System.out.println("no child");
                     continue;
                 }
-                definitions[file] = Sprite.decode(cache.read(8, file, member, false));
+                
+                if(member != 0) 
+                //definitions[file] = Sprite.decode(cache.read(8, file, member, false));
                 count++;
+                break;
             }
         }
-        
+        System.out.println(count);
+        /*
         System.out.println("Loaded " + count + " sprites. Dumping...");
 
         try {
@@ -53,7 +59,7 @@ public class SpriteDumper {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        cache.close();
+        cache.close();*/
         System.out.println("Successfully dumped sprites.");
     }
 }

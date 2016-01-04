@@ -10,7 +10,7 @@ import net.scapeemulator.game.model.player.Equipment;
 import net.scapeemulator.game.model.player.Item;
 import net.scapeemulator.game.model.player.Player;
 import net.scapeemulator.game.model.player.SlottedItem;
-import net.scapeemulator.game.model.player.action.ReachDistancedAction;
+import net.scapeemulator.game.model.player.action.ReachObjectAction;
 import net.scapeemulator.game.model.player.skills.MakeItemInterface;
 import net.scapeemulator.game.model.player.skills.Skill;
 import net.scapeemulator.game.model.player.skills.MakeItemInterface.MakeItemInterfaceListener;
@@ -18,7 +18,7 @@ import net.scapeemulator.game.model.player.skills.MakeItemInterface.MakeItemInte
 /**
  * @author David Insley
  */
-public class CookingAction extends ReachDistancedAction {
+public class CookingAction extends ReachObjectAction {
 
     private static final Random random = new Random();
 
@@ -39,7 +39,7 @@ public class CookingAction extends ReachDistancedAction {
     private int amount;
 
     public CookingAction(Player player, HeatSource heatSource, RawFood food, SlottedItem item, GroundObject object) {
-        super(1, true, player, object.getBounds(), 1);
+        super(1, true, player, object, 1);
         this.heatSource = heatSource;
         this.food = food;
         this.item = item;

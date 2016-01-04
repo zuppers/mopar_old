@@ -4,12 +4,12 @@ import net.scapeemulator.game.model.object.GroundObjectList.GroundObject;
 import net.scapeemulator.game.model.player.Equipment;
 import net.scapeemulator.game.model.player.Item;
 import net.scapeemulator.game.model.player.Player;
-import net.scapeemulator.game.model.player.action.ReachDistancedAction;
+import net.scapeemulator.game.model.player.action.ReachObjectAction;
 
 /**
  * @author David Insley
  */
-public class RuinsTeleportAction extends ReachDistancedAction {
+public class RuinsTeleportAction extends ReachObjectAction {
 
     public enum Type {
         TALISMAN,
@@ -21,7 +21,7 @@ public class RuinsTeleportAction extends ReachDistancedAction {
     private final Type type;
 
     public RuinsTeleportAction(Player player, RCAltar altar, GroundObject object, Type type) {
-        super(1, false, player, object.getBounds(), 1);
+        super(1, false, player, object, 1);
         this.altar = altar;
         this.type = type;
     }

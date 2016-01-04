@@ -8,7 +8,7 @@ import net.scapeemulator.game.model.mob.Animation;
 import net.scapeemulator.game.model.object.GroundObjectList.GroundObject;
 import net.scapeemulator.game.model.player.Item;
 import net.scapeemulator.game.model.player.Player;
-import net.scapeemulator.game.model.player.action.ReachDistancedAction;
+import net.scapeemulator.game.model.player.action.ReachObjectAction;
 import net.scapeemulator.game.task.Task;
 import net.scapeemulator.game.util.HandlerContext;
 
@@ -72,13 +72,13 @@ public class Crops {
 
     }
 
-    private static class PickCropAction extends ReachDistancedAction {
+    private static class PickCropAction extends ReachObjectAction {
         private final GroundObject obj;
         private final Crop crop;
         private boolean started;
 
         PickCropAction(Player player, GroundObject obj, Crop crop) {
-            super(1, true, player, obj.getBounds(), 1);
+            super(1, true, player, obj, 1);
             this.obj = obj;
             this.crop = crop;
         }

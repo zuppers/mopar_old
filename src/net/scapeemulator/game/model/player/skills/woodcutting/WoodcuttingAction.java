@@ -8,12 +8,12 @@ import net.scapeemulator.game.model.World;
 import net.scapeemulator.game.model.object.GroundObjectList.GroundObject;
 import net.scapeemulator.game.model.player.Item;
 import net.scapeemulator.game.model.player.Player;
-import net.scapeemulator.game.model.player.action.ReachDistancedAction;
+import net.scapeemulator.game.model.player.action.ReachObjectAction;
 
 /**
  * @author David Insley
  */
-public class WoodcuttingAction extends ReachDistancedAction {
+public class WoodcuttingAction extends ReachObjectAction {
 
     private enum State {
         WALKING, START, CHOPPING
@@ -29,7 +29,7 @@ public class WoodcuttingAction extends ReachDistancedAction {
     private Hatchet hatchet;
 
     public WoodcuttingAction(Player player, TreeType type, GroundObject object) {
-        super(2, true, player, object.getBounds(), 1);
+        super(2, true, player, object, 1);
         this.type = type;
         this.object = object;
         originalId = object.getId();

@@ -4,7 +4,7 @@ import net.scapeemulator.game.dispatcher.object.ObjectHandler;
 import net.scapeemulator.game.model.Option;
 import net.scapeemulator.game.model.object.GroundObjectList.GroundObject;
 import net.scapeemulator.game.model.player.Player;
-import net.scapeemulator.game.model.player.action.ReachDistancedAction;
+import net.scapeemulator.game.model.player.action.ReachObjectAction;
 import net.scapeemulator.game.model.player.skills.construction.House.BuildingSession;
 import net.scapeemulator.game.util.HandlerContext;
 
@@ -20,7 +20,7 @@ public class ObjectBuildHandler extends ObjectHandler {
     @Override
     public void handle(final Player player, final GroundObject object, String optionName, HandlerContext context) {
         context.stop();
-        player.startAction(new ReachDistancedAction(1, true, player, object.getBounds(), 1) {
+        player.startAction(new ReachObjectAction(1, true, player, object, 1) {
             @Override
             public void executeAction() {
                 stop();

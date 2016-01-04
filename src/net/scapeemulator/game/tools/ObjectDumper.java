@@ -18,7 +18,7 @@ public final class ObjectDumper {
         ObjectDefinitions.init(cache);
 
         System.out.println("Dumping cache object data...");
-        try (BufferedWriter output = new BufferedWriter(new FileWriter("data/game/dumps/cache_object_def", false))) {
+        try (BufferedWriter output = new BufferedWriter(new FileWriter("data/game/dumps/cache_object_defs", false))) {
             for (int id = 0; id < ObjectDefinitions.count(); id++) {
                 ObjectDefinition def = ObjectDefinitions.forId(id);
                 if (def != null) {
@@ -28,8 +28,10 @@ public final class ObjectDumper {
                                 + def.isImpenetrable() + "\t");
                         output.write("anim:" + def.getAnimationId() + "\t");
                         if (def.hasOptions()) {
-                            output.write("opts:" + Arrays.toString(def.getOptions()));
+                            output.write("opts:" + Arrays.toString(def.getOptions()) + "\t");
                         }
+                            output.write("validInteract:" + def.getValidInteractSides());
+                        
                         output.newLine();
                         output.flush();
                     } catch (RuntimeException re) {
