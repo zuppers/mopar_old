@@ -30,156 +30,156 @@ public class Construction {
     public static final int ROOM_CREATE_INTERFACE = 402;
     public static final Animation BUILD_ANIM = new Animation(3676);
     public static final Animation REMOVE_ANIM = new Animation(3685);
-    public static final Dialogue PREVIEW_DIALOGUE;
-    public static final Dialogue ROOM_DELETION_DIALOGUE;
-    public static final Dialogue FURNITURE_DELETION_DIALOGUE;
-    public static final Dialogue ENTER_PORTAL_DIALOGUE;
+    public static final Dialogue<Integer> PREVIEW_DIALOGUE;
+    public static final Dialogue<Integer> ROOM_DELETION_DIALOGUE;
+    public static final Dialogue<Integer> FURNITURE_DELETION_DIALOGUE;
+    public static final Dialogue<Integer> ENTER_PORTAL_DIALOGUE;
     public static final ItemRequirement SAW_REQ = new ItemRequirement(8794, false, "You need a hammer and saw to make furniture.");
     public static final ItemRequirement HAMMER_REQ = new ItemRequirement(2347, false, "You need a hammer and saw to make furniture.");
 
     static {
-        ENTER_PORTAL_DIALOGUE = new Dialogue() {
+        ENTER_PORTAL_DIALOGUE = new Dialogue<Integer>() {
 
             @Override
-            public void initialize(DialogueContext context) {
+            public void initialize(DialogueContext<Integer> context) {
                 context.openOptionDialogue("Go to your house", "Go to your house (building mode)", "Go to a friend's house", "Nevermind");
             }
 
             @Override
-            public void handleOption(final DialogueContext context, DialogueOption option) {
+            public void handleOption(final DialogueContext<Integer> context, DialogueOption option) {
 
                 switch (option) {
-                case OPTION_1:
-                case OPTION_2:
-                    context.stop();
-                    context.getPlayer().getHouse().ownerEnterPortal(option == DialogueOption.OPTION_2);
-                    break;
-                case OPTION_3:
-                    context.stop();
-                    context.getPlayer().getScriptInput().showUsernameScriptInput("Enter name:", new ScriptInputListenerAdapter() {
-                        @Override
-                        public void usernameInputReceived(long value) {
-                            Player friend = World.getWorld().getPlayerByLongName(value);
-                            if (friend != null) {
-                                if (friend == context.getPlayer()) {
-                                    context.getPlayer().getHouse().ownerEnterPortal(false);
+                    case OPTION_1:
+                    case OPTION_2:
+                        context.stop();
+                        context.getPlayer().getHouse().ownerEnterPortal(option == DialogueOption.OPTION_2);
+                        break;
+                    case OPTION_3:
+                        context.stop();
+                        context.getPlayer().getScriptInput().showUsernameScriptInput("Enter name:", new ScriptInputListenerAdapter() {
+                            @Override
+                            public void usernameInputReceived(long value) {
+                                Player friend = World.getWorld().getPlayerByLongName(value);
+                                if (friend != null) {
+                                    if (friend == context.getPlayer()) {
+                                        context.getPlayer().getHouse().ownerEnterPortal(false);
+                                    } else {
+                                        friend.getHouse().otherEnterPortal(context.getPlayer());
+                                    }
                                 } else {
-                                    friend.getHouse().otherEnterPortal(context.getPlayer());
+                                    context.getPlayer().sendMessage("No online user found by that name.");
                                 }
-                            } else {
-                                context.getPlayer().sendMessage("No online user found by that name.");
                             }
-                        }
-                    });
-                    break;
-                case OPTION_4:
-                default:
-                    context.stop();
-                    break;
+                        });
+                        break;
+                    case OPTION_4:
+                    default:
+                        context.stop();
+                        break;
                 }
             }
         };
 
-        PREVIEW_DIALOGUE = new Dialogue() {
+        PREVIEW_DIALOGUE = new Dialogue<Integer>() {
 
             @Override
-            public void initialize(DialogueContext context) {
+            public void initialize(DialogueContext<Integer> context) {
                 context.openOptionDialogue("Rotate clockwise", "Rotate counter-clockwise", "Finish", "Cancel");
             }
 
             @Override
-            public void handleOption(DialogueContext context, DialogueOption option) {
+            public void handleOption(DialogueContext<Integer> context, DialogueOption option) {
                 BuildingSession session = context.getPlayer().getHouse().getBuildingSession();
                 if (session == null) {
                     context.stop();
                     return;
                 }
                 switch (option) {
-                case OPTION_1:
-                    session.rotatePreview(Rotation.CW_90);
-                    initialize(context);
-                    break;
-                case OPTION_2:
-                    session.rotatePreview(Rotation.CW_270);
-                    initialize(context);
-                    break;
-                case OPTION_3:
-                    context.stop();
-                    session.finishPreview();
-                    break;
-                case OPTION_4:
-                default:
-                    context.stop();
-                    session.cancelPreview();
-                    break;
+                    case OPTION_1:
+                        session.rotatePreview(Rotation.CW_90);
+                        initialize(context);
+                        break;
+                    case OPTION_2:
+                        session.rotatePreview(Rotation.CW_270);
+                        initialize(context);
+                        break;
+                    case OPTION_3:
+                        context.stop();
+                        session.finishPreview();
+                        break;
+                    case OPTION_4:
+                    default:
+                        context.stop();
+                        session.cancelPreview();
+                        break;
                 }
 
             }
         };
 
-        ROOM_DELETION_DIALOGUE = new Dialogue() {
+        ROOM_DELETION_DIALOGUE = new Dialogue<Integer>() {
 
             @Override
-            public void initialize(DialogueContext context) {
+            public void initialize(DialogueContext<Integer> context) {
                 context.openTextDialogue("Are you sure you want to delete this room? Any furniture inside will be lost.", true);
                 context.setStage(1);
             }
 
             @Override
-            public void handleOption(DialogueContext context, DialogueOption option) {
+            public void handleOption(DialogueContext<Integer> context, DialogueOption option) {
                 switch (context.getStage()) {
-                case 1:
-                    context.openOptionDialogue("Yes, remove it.", "No thanks, I've changed my mind.");
-                    context.setStage(2);
-                    break;
-                case 2:
-                    BuildingSession session = context.getPlayer().getHouse().getBuildingSession();
-                    if (session == null) {
+                    case 1:
+                        context.openOptionDialogue("Yes, remove it.", "No thanks, I've changed my mind.");
+                        context.setStage(2);
+                        break;
+                    case 2:
+                        BuildingSession session = context.getPlayer().getHouse().getBuildingSession();
+                        if (session == null) {
+                            context.stop();
+                            return;
+                        }
+                        if (option == DialogueOption.OPTION_1) {
+                            session.finishRoomDeletion(true);
+                        } else {
+                            session.finishRoomDeletion(false);
+                        }
                         context.stop();
-                        return;
-                    }
-                    if (option == DialogueOption.OPTION_1) {
-                        session.finishRoomDeletion(true);
-                    } else {
-                        session.finishRoomDeletion(false);
-                    }
-                    context.stop();
-                    break;
+                        break;
                 }
             }
         };
 
-        FURNITURE_DELETION_DIALOGUE = new Dialogue() {
+        FURNITURE_DELETION_DIALOGUE = new Dialogue<Integer>() {
 
             @Override
-            public void initialize(DialogueContext context) {
+            public void initialize(DialogueContext<Integer> context) {
                 context.openTextDialogue("Are you sure you want to remove this?", true);
                 context.setStage(1);
             }
 
             @Override
-            public void handleOption(DialogueContext context, DialogueOption option) {
+            public void handleOption(DialogueContext<Integer> context, DialogueOption option) {
                 switch (context.getStage()) {
-                case 1:
-                    context.openOptionDialogue("Yes, remove it.", "Yes, and don't ask again this session.", "No, I'll keep it.");
-                    context.setStage(2);
-                    break;
-                case 2:
-                    BuildingSession session = context.getPlayer().getHouse().getBuildingSession();
-                    if (session == null) {
+                    case 1:
+                        context.openOptionDialogue("Yes, remove it.", "Yes, and don't ask again this session.", "No, I'll keep it.");
+                        context.setStage(2);
+                        break;
+                    case 2:
+                        BuildingSession session = context.getPlayer().getHouse().getBuildingSession();
+                        if (session == null) {
+                            context.stop();
+                            return;
+                        }
+                        if (option == DialogueOption.OPTION_1) {
+                            session.finishFurnitureRemove(true);
+                        } else if (option == DialogueOption.OPTION_2) {
+                            session.getBuilder().getVariables().setVar(Variable.CON_FURN_REMOVE, 1);
+                            session.finishFurnitureRemove(true);
+                        } else {
+                            session.finishFurnitureRemove(false);
+                        }
                         context.stop();
-                        return;
-                    }
-                    if (option == DialogueOption.OPTION_1) {
-                        session.finishFurnitureRemove(true);
-                    } else if (option == DialogueOption.OPTION_2) {
-                        session.getBuilder().getVariables().setVar(Variable.CON_FURN_REMOVE, 1);
-                        session.finishFurnitureRemove(true);
-                    } else {
-                        session.finishFurnitureRemove(false);
-                    }
-                    context.stop();
-                    break;
+                        break;
                 }
             }
         };
@@ -219,12 +219,12 @@ public class Construction {
 
     static RoomType defaultRoom(int height) {
         switch (height) {
-        case 0:
-            return RoomType.DUNGEON_CLEAR;
-        case 1:
-            return RoomType.GRASS;
-        default:
-            return RoomType.NONE;
+            case 0:
+                return RoomType.DUNGEON_CLEAR;
+            case 1:
+                return RoomType.GRASS;
+            default:
+                return RoomType.NONE;
         }
     }
 }

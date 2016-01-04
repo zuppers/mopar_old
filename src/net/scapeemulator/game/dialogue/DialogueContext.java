@@ -12,7 +12,7 @@ import org.codehaus.plexus.util.StringUtils;
 /**
  * @author Hadyn Richard
  */
-public final class DialogueContext {
+public final class DialogueContext<T> {
 
     private static final int TEXT_OFFSET = 210;
     private static final int TEXT_OFFSET_NO_INPUT = 214;
@@ -26,13 +26,13 @@ public final class DialogueContext {
     private static final int MORE_OPTIONS = 5;
 
     private final Player player;
-    private final Dialogue dialogue;
+    private final Dialogue<T> dialogue;
     private DialogueType displayedType;
     private final DialogueContextListener listener;
     private String[] options;
     private boolean inputDisplayed;
     private boolean overflowDisplayed;
-    private int stage;
+    private T stage;
     private int interfaceId = -2;
     private boolean isStopped;
 
@@ -286,11 +286,11 @@ public final class DialogueContext {
         return builder.toString().split("\n");
     }
 
-    public int getStage() {
+    public T getStage() {
         return stage;
     }
     
-    public void setStage(int stage) {
+    public void setStage(T stage) {
         this.stage = stage;
     }
     
