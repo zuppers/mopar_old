@@ -22,7 +22,7 @@ public abstract class NPC extends Mob {
     private int changingType = -1;
     private NPCSkillSet skillSet;
     private Area walkingBounds;
-    private NPCDefinition definition;
+    protected NPCDefinition definition;
 
     public NPC(int type) {
         this.type = type;
@@ -31,11 +31,13 @@ public abstract class NPC extends Mob {
 
     private void init() {
         definition = NPCDefinitions.forId(type);
-        combatBonuses = definition.getCombatBonuses();
-        combatHandler = new NPCCombatHandler(this);
-        skillSet = new NPCSkillSet(definition);
+        if (definition.isAttackable()) {
+            combatBonuses = definition.getCombatBonuses();
+            combatHandler = new NPCCombatHandler(this);
+            skillSet = new NPCSkillSet(definition);
+            skillSet.restoreStats();
+        }
         size = definition.getSize();
-        skillSet.restoreStats();
     }
 
     public abstract void tick();
@@ -62,7 +64,7 @@ public abstract class NPC extends Mob {
     public NPCSkillSet getSkillSet() {
         return skillSet;
     }
-    
+
     public NPCDefinition getDefinition() {
         return definition;
     }
@@ -129,12 +131,18 @@ public abstract class NPC extends Mob {
 
     @Override
     public int getMaximumHitpoints() {
-        return skillSet.getLevel(NPCSkillSet.HITPOINTS);
+        if (definition.isAttackable()) {
+            return skillSet.getLevel(NPCSkillSet.HITPOINTS);
+        }
+        return 1;
     }
 
     @Override
     public int getCurrentHitpoints() {
-        return skillSet.getCurrentLevel(NPCSkillSet.HITPOINTS);
+        if (definition.isAttackable()) {
+            return skillSet.getCurrentLevel(NPCSkillSet.HITPOINTS);
+        }
+        return 1;
     }
 
     @Override

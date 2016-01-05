@@ -23,7 +23,9 @@ public final class NormalNPC extends StatefulNPC<State> {
      * Each of the enumerable states.
      */
     public enum State {
-        NONE, WALK_RANDOMLY, WALK_TO_SPAWN
+        NONE,
+        WALK_RANDOMLY,
+        WALK_TO_SPAWN
     }
 
     /**
@@ -46,8 +48,10 @@ public final class NormalNPC extends StatefulNPC<State> {
 
     @Override
     public State determineState() {
-        if (getCombatHandler().getNoRetaliate() > 0 || frozen() || !alive()) {
-            return NONE;
+        if (definition.isAttackable()) {
+            if (getCombatHandler().getNoRetaliate() > 0 || frozen() || !alive()) {
+                return NONE;
+            }
         }
 
         if (getWalkingBounds() != null) {
