@@ -22,6 +22,8 @@ public final class ObjectDefinition {
     private boolean impenetrable;
     private boolean solid;
 
+    private int varbitId;
+    private int configId;
     private int[] childIds;
 
     @SuppressWarnings("unused")
@@ -121,14 +123,14 @@ public final class ObjectDefinition {
             } else if (opcode == 77 || opcode == 92) {
                 int i4 = -1;
 
-                int i = buffer.getShort() & 0xffff;
-                if (i == '\uFFFF') {
-                    i = -1;
+                def.varbitId = buffer.getShort() & 0xffff;
+                if (def.varbitId == '\uFFFF') {
+                    def.varbitId = -1;
                 }
 
-                int i2 = buffer.getShort() & 0xffff;
-                if (i2 == '\uFFFF') {
-                    i2 = -1;
+                def.configId = buffer.getShort() & 0xffff;
+                if (def.configId == '\uFFFF') {
+                    def.configId = -1;
                 }
 
                 if (opcode == 92) {
@@ -140,7 +142,6 @@ public final class ObjectDefinition {
 
                 int i5 = buffer.get() & 0xff;
                 def.childIds = new int[i5 + 2];
-                // Child ids ?
                 for (int var6 = 0; var6 <= i5; var6++) {
                     def.childIds[var6] = buffer.getShort() & 0xFFFF;
                     if (def.childIds[var6] == '\uFFFF') {
@@ -208,6 +209,14 @@ public final class ObjectDefinition {
 
     public boolean isSolid() {
         return solid;
+    }
+
+    public int getVarbitId() {
+        return varbitId;
+    }
+
+    public int getConfigId() {
+        return configId;
     }
 
     public int[] getChildIds() {

@@ -104,6 +104,7 @@ import net.scapeemulator.game.msg.encoder.ServerMessageEncoder;
 import net.scapeemulator.game.msg.encoder.SetPositionMessageEncoder;
 import net.scapeemulator.game.msg.encoder.SkillMessageEncoder;
 import net.scapeemulator.game.msg.encoder.MinimapUpdateMessageEncoder;
+import net.scapeemulator.game.msg.encoder.VarbitMessageEncoder;
 import net.scapeemulator.game.util.LandscapeKeyTable;
 
 public final class CodecRepository {
@@ -223,6 +224,7 @@ public final class CodecRepository {
         bind(new EnergyMessageEncoder());
         bind(new ResetMinimapFlagMessageEncoder());
         bind(new ConfigMessageEncoder());
+        bind(new VarbitMessageEncoder());
         bind(new ScriptMessageEncoder());
         bind(new NpcUpdateMessageEncoder());
 
