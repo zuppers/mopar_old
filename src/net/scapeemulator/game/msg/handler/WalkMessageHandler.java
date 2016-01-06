@@ -12,6 +12,7 @@ public final class WalkMessageHandler extends MessageHandler<WalkMessage> {
 	@Override
 	public void handle(Player player, WalkMessage message) {
 		if(player.actionsBlocked() || player.frozen()) {
+		    player.getWalkingQueue().setMinimapFlagReset(true);
 			return;
 		}
 		int z = player.getPosition().getHeight();
