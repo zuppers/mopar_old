@@ -74,7 +74,7 @@ public final class MessageDispatcher {
         bind(ScriptInputMessage.class, new ScriptInputMessageHandler());
         bind(GroundItemOptionMessage.class, new GroundItemOptionMessageHandler(groundItemDispatcher));
         bind(ItemOnItemMessage.class, new ItemOnItemMessageHandler(itemOnItemDispatcher));
-        bind(MagicOnItemMessage.class, new MagicOnItemMessageHandler());
+        bind(MagicOnItemMessage.class, new MagicOnItemMessageHandler(itemDispatcher));
         bind(ItemOnObjectMessage.class, new ItemOnObjectMessageHandler(itemOnObjectDispatcher));
         bind(ItemOptionMessage.class, new ItemOptionMessageHandler(itemDispatcher));
         bind(ItemOnNPCMessage.class, new ItemOnNPCMessageHandler(itemOnNPCDispatcher));
