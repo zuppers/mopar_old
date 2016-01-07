@@ -82,10 +82,13 @@ public final class PlayerUpdater {
 
         /* Tick the NPC to update all the...things that need updating */
         npc.tick();
+        if (npc.getDefinition().isAttackable()) {
+            npc.getSkillSet().tick(npc.getHealthRegen(), 2);
+            npc.getCombatHandler().tick();
+            npc.getHits().tick();
+        }
 
         npc.getWalkingQueue().tick();
-        npc.getCombatHandler().tick();
-        npc.getHits().tick();
     }
 
     private void updatePlayers(Player player) {
@@ -105,7 +108,8 @@ public final class PlayerUpdater {
 
         for (Iterator<Player> it = localPlayers.iterator(); it.hasNext();) {
             Player p = it.next();
-            if (!p.isActive() || p.isTeleporting() || !position.isWithinDistance(p.getPosition()) || position.getHeight() != p.getPosition().getHeight()) {
+            if (!p.isActive() || p.isTeleporting() || !position.isWithinDistance(p.getPosition())
+                    || position.getHeight() != p.getPosition().getHeight()) {
                 it.remove();
                 descriptors.add(new RemovePlayerDescriptor(p, tickets));
             } else {
@@ -117,7 +121,8 @@ public final class PlayerUpdater {
             if (localPlayers.size() >= 255)
                 break;
 
-            if (p != player && position.getHeight() == p.getPosition().getHeight() && position.isWithinDistance(p.getPosition()) && !localPlayers.contains(p)) {
+            if (p != player && position.getHeight() == p.getPosition().getHeight() && position.isWithinDistance(p.getPosition())
+                    && !localPlayers.contains(p)) {
                 localPlayers.add(p);
                 descriptors.add(new AddPlayerDescriptor(p, tickets));
             }

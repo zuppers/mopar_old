@@ -33,9 +33,10 @@ public abstract class PlayerDescriptor {
     public PlayerDescriptor(Player player, int[] tickets, boolean force) {
         if (player.isActive()) {
             /*
-             * This active check is required for the RemovePlayerDescriptor. The player id would be
-             * -1 in this case, which causes the following code to crash. Skipping this code doesn't
-             * matter as no update blocks can be sent when removing a player.
+             * This active check is required for the RemovePlayerDescriptor. The
+             * player id would be -1 in this case, which causes the following
+             * code to crash. Skipping this code doesn't matter as no update
+             * blocks can be sent when removing a player.
              */
             int id = player.getId() - 1;
             int ticket = player.getAppearanceTicket();
@@ -69,7 +70,8 @@ public abstract class PlayerDescriptor {
         if (player.isTurnToTargetUpdated())
             addBlock(new TurnToMobPlayerBlock(player));
 
-        // addBlock(new ForceMovementPlayerBlock(player));
+        if (player.isForceMovementUpdated())
+            addBlock(new ForceMovementPlayerBlock(player));
 
     }
 
