@@ -25,6 +25,7 @@ public final class ItemDropMessageHandler extends MessageHandler<ItemDropMessage
         }
         Item removed = player.getInventory().remove(player.getInventory().get(msg.getSlot()), msg.getSlot());
         if (removed != null && removed.getAmount() > 0) {
+            player.stopAction();
             World.getWorld().getGroundItems().add(removed.getId(), removed.getAmount(), player.getPosition(), player);
         }
     }
