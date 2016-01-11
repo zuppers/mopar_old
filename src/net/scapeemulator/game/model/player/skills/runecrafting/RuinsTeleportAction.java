@@ -21,7 +21,7 @@ public class RuinsTeleportAction extends ReachObjectAction {
     private final Type type;
 
     public RuinsTeleportAction(Player player, RCAltar altar, GroundObject object, Type type) {
-        super(1, false, player, object, 1);
+        super(1, false, player, object, 1, true);
         this.altar = altar;
         this.type = type;
     }

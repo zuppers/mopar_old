@@ -29,7 +29,7 @@ public class WoodcuttingAction extends ReachObjectAction {
     private Hatchet hatchet;
 
     public WoodcuttingAction(Player player, TreeType type, GroundObject object) {
-        super(2, true, player, object, 1);
+        super(2, true, player, object, 1, true);
         this.type = type;
         this.object = object;
         originalId = object.getId();

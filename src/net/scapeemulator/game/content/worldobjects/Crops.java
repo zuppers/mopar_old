@@ -22,7 +22,7 @@ public class Crops {
 
     enum Crop {
         ONION(1957, 3366, 5538, 8584),
-        CABBAGE(1965, 1161, 8535, 8536, 8537, 8538, 8539, 8540, 8541, 8542, 8543),
+        CABBAGE(1965, 1161, 8535, 8536, 8537, 8538, 8539, 8540, 8541, 8542, 8543, 22301),
         POTATO(1942, 312, 8562, 9408),
         WHEAT(1947, 313, 5583, 5584, 5585, 15506, 15507, 15508);
 
@@ -78,7 +78,7 @@ public class Crops {
         private boolean started;
 
         PickCropAction(Player player, GroundObject obj, Crop crop) {
-            super(1, true, player, obj, 1);
+            super(1, true, player, obj, 1, true);
             this.obj = obj;
             this.crop = crop;
         }

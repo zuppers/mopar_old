@@ -39,7 +39,7 @@ public class CookingAction extends ReachObjectAction {
     private int amount;
 
     public CookingAction(Player player, HeatSource heatSource, RawFood food, SlottedItem item, GroundObject object) {
-        super(1, true, player, object, 1);
+        super(1, true, player, object, 1, true);
         this.heatSource = heatSource;
         this.food = food;
         this.item = item;

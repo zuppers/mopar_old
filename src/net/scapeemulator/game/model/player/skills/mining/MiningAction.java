@@ -28,7 +28,7 @@ public class MiningAction extends ReachObjectAction {
     private Pickaxe pickaxe;
 
     public MiningAction(Player player, RockType type, GroundObject object) {
-        super(1, true, player, object, 1);
+        super(1, true, player, object, 1, true);
         this.type = type;
         this.object = object;
         originalId = object.getId();

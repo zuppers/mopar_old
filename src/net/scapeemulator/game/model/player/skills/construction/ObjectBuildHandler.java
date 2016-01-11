@@ -20,7 +20,7 @@ public class ObjectBuildHandler extends ObjectHandler {
     @Override
     public void handle(final Player player, final GroundObject object, String optionName, HandlerContext context) {
         context.stop();
-        player.startAction(new ReachObjectAction(1, true, player, object, 1) {
+        player.startAction(new ReachObjectAction(1, true, player, object, 1, true) {
             @Override
             public void executeAction() {
                 stop();

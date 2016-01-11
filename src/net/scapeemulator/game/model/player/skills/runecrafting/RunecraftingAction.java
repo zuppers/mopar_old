@@ -15,7 +15,7 @@ public class RunecraftingAction extends ReachObjectAction {
     private final GroundObject object;
 
     public RunecraftingAction(Player player, RCRune runeType, GroundObject object) {
-        super(1, false, player, object, 1);
+        super(1, false, player, object, 1, true);
         this.runeType = runeType;
         this.object = object;
     }

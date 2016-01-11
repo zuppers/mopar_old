@@ -34,25 +34,47 @@ public abstract class DistancedAction<T extends Mob> extends Action<T> {
     private final boolean immediate;
 
     /**
+     * A flag indicating if this action should wait until the mob has stopped moving completely before firing.
+     */
+    private boolean waitForNotWalking;
+
+    /**
      * A flag indicating if the distance has been reached yet.
      */
     private boolean reached = false;
 
     public DistancedAction(int delay, boolean immediate, T character, Position position, int distance) {
-        this(delay, immediate, character, new PositionArea(position), distance);
+        this(delay, immediate, character, new PositionArea(position), distance, false);
+    }
+
+    public DistancedAction(int delay, boolean immediate, T character, Position position, int distance, boolean waitForStop) {
+        this(delay, immediate, character, new PositionArea(position), distance, waitForStop);
     }
 
     /**
      * Creates a new DistancedAction.
      * 
      * @param delay The delay between executions once the distance threshold is reached.
-     * @param immediate Whether or not this action fires immediately after the distance threshold is
-     *            reached.
+     * @param immediate Whether or not this action fires immediately after the distance threshold is reached.
      * @param character The character.
      * @param position The position.
      * @param distance The distance.
      */
     public DistancedAction(int delay, boolean immediate, T character, Area bounds, int distance) {
+        this(delay, immediate, character, bounds, distance, false);
+    }
+
+    /**
+     * Creates a new DistancedAction.
+     * 
+     * @param delay The delay between executions once the distance threshold is reached.
+     * @param immediate Whether or not this action fires immediately after the distance threshold is reached.
+     * @param character The character.
+     * @param position The position.
+     * @param distance The distance.
+     * @param waitForStop If true, executeAction() will not be called until the mob has completely stopped moving
+     */
+    public DistancedAction(int delay, boolean immediate, T character, Area bounds, int distance, boolean waitForStop) {
         super(character, 1, true);
         this.bounds = bounds;
         this.distance = distance;
@@ -67,6 +89,9 @@ public abstract class DistancedAction<T extends Mob> extends Action<T> {
             // so we don't check once the player got close enough once
             executeAction();
         } else if (bounds.withinArea(mob.getPosition().getX(), mob.getPosition().getY(), distance, false)) {
+            if (waitForNotWalking && !mob.notWalking()) {
+                return;
+            }
             reached = true;
             setDelay(delay);
             if (immediate) {
@@ -76,6 +101,10 @@ public abstract class DistancedAction<T extends Mob> extends Action<T> {
             cantReach();
             stop();
         }
+    }
+
+    public void waitForEmptyQueue() {
+        waitForNotWalking = true;
     }
 
     /**
