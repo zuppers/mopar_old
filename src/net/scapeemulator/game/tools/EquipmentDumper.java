@@ -118,10 +118,12 @@ public final class EquipmentDumper {
 
     private static int getSlot(int id, ItemDefinition definition) {
         switch (id) {
+        case 426: // Priest gown top
         case 546: // Shade robe top
         case 7390: // Wizard robe (g) top
         case 10822: // Yak body
             return Equipment.BODY;
+        case 428: // Priest gown bottom
         case 548: // Shade robe bottom
         case 7398: // Enchanted bottom
         case 10340: // 3rd age robe bottom
@@ -550,7 +552,16 @@ public final class EquipmentDumper {
                 return 7049;
             }
         }
-
+        if(name.contains("mace")) {
+            switch(index) {
+                case 0:
+                case 1:
+                case 3:
+                    return 401;
+                case 2:
+                    return 400;
+            }
+        }     
         if (name.contains("axe")) {
             switch (index) {
             case 0:
