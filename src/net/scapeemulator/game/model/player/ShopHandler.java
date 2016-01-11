@@ -31,13 +31,6 @@ public class ShopHandler extends ComponentListener {
     private Shop activeShop;
     private StockType activeStock;
 
-    /*
-     * 520 Shopkeeper FALADOR 521 Shop assistant 522 Shopkeeper VARROCK 523 Shop assistant 524
-     * Shopkeeper Al Kharid 525 Shop assistant 526 Shopkeeper LUMBRIDGE 527 Shop assistant 528
-     * Shopkeeper 529 Shop assistant 530 Shopkeeper 531 Shop assistant 532 Shopkeeper 533 Shop
-     * assistant 534 Fairy shopkeeper 535 Fairy shop assistant
-     */
-
     public ShopHandler(Player player) {
         this.player = player;
     }
