@@ -41,6 +41,7 @@ import net.scapeemulator.game.model.player.bank.BankerAction;
 import net.scapeemulator.game.model.player.consumable.Consumables;
 import net.scapeemulator.game.model.player.skills.construction.Construction;
 import net.scapeemulator.game.model.player.skills.cooking.Cooking;
+import net.scapeemulator.game.model.player.skills.farming.Farming;
 import net.scapeemulator.game.model.player.skills.firemaking.Firemaking;
 import net.scapeemulator.game.model.player.skills.fishing.Fishing;
 import net.scapeemulator.game.model.player.skills.herblore.Herblore;
@@ -131,17 +132,17 @@ public final class GameServer {
 
         String type = (String) properties.get("type");
         switch (type) {
-        case "dummy":
-            return new DummyPlayerSerializer();
+            case "dummy":
+                return new DummyPlayerSerializer();
 
-        case "jdbc":
-            String url = (String) properties.get("url");
-            String username = (String) properties.get("username");
-            String password = (String) properties.get("password");
-            return new JdbcSerializer(url, username, password);
+            case "jdbc":
+                String url = (String) properties.get("url");
+                String username = (String) properties.get("username");
+                String password = (String) properties.get("password");
+                return new JdbcSerializer(url, username, password);
 
-        default:
-            throw new IOException("unknown serializer type");
+            default:
+                throw new IOException("unknown serializer type");
         }
     }
 
@@ -173,6 +174,15 @@ public final class GameServer {
         NPCDefinitions.init(cache);
         EquipmentDefinition.init();
 
+        /* load player serializer from config file */
+        serializer = createPlayerSerializer();
+        logger.info("Using serializer: " + serializer + ".");
+        loginService = new LoginService(serializer);
+        serializer.loadNPCDrops();
+        serializer.loadNPCDefinitions();
+        serializer.loadNPCSpawns();
+        serializer.loadShops();
+
         /* load all the maps into memory */
         mapLoader = new MapLoader(cache, landscapeKeyTable);
         mapLoader.addListener(new GroundObjectPopulator(world.getGroundObjects()));
@@ -193,7 +203,7 @@ public final class GameServer {
         messageDispatcher.decorateDispatchers(scriptContext);
 
         Ladders.init();
-        
+
         /* bind the non-script skill handlers to the dispatchers */
         Fishing.initialize();
         Magic.initialize();
@@ -205,20 +215,12 @@ public final class GameServer {
         Runecrafting.initialize();
         Woodcutting.initialize();
         Construction.initialize();
+        Farming.initialize();
 
         /* bind other content */
         Consumables.initialize();
         messageDispatcher.getNpcDispatcher().bind(new BankerAction());
         Content.init();
-        
-        /* load player serializer from config file */
-        serializer = createPlayerSerializer();
-        logger.info("Using serializer: " + serializer + ".");
-        loginService = new LoginService(serializer);
-        serializer.loadNPCDrops();
-        serializer.loadNPCDefinitions();
-        serializer.loadNPCSpawns();
-        serializer.loadShops();
 
         /* start netty */
         httpBootstrap.group(loopGroup);
@@ -254,10 +256,7 @@ public final class GameServer {
     }
 
     private void tick() {
-        /*
-         * As the MobList class is not thread-safe, players must be registered within the game logic
-         * processing code.
-         */
+        /* As the MobList class is not thread-safe, players must be registered within the game logic processing code. */
         ticks++;
         loginService.registerNewPlayers(world);
 
@@ -271,7 +270,7 @@ public final class GameServer {
     public int getTickTimestamp() {
         return ticks;
     }
-    
+
     public LoginService getLoginService() {
         return loginService;
     }
