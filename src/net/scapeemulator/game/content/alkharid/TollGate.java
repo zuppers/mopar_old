@@ -19,7 +19,7 @@ import net.scapeemulator.game.model.object.GroundObjectListenerAdapter;
 import net.scapeemulator.game.model.player.Item;
 import net.scapeemulator.game.model.player.Player;
 import net.scapeemulator.game.model.player.action.BlockedAction;
-import net.scapeemulator.game.model.player.action.ReachDistancedAction;
+import net.scapeemulator.game.model.player.action.ReachObjectAction;
 import net.scapeemulator.game.task.Task;
 import net.scapeemulator.game.util.HandlerContext;
 
@@ -28,7 +28,7 @@ import net.scapeemulator.game.util.HandlerContext;
  */
 public class TollGate {
 
-    private static final Dialogue GATE_DIALOGUE = new GateDialogue();
+    private static final Dialogue<Integer> GATE_DIALOGUE = new GateDialogue();
     private static final int GUARD_TYPE = 925;
     private static final Item TOLL = new Item(995, 10);
 
@@ -72,12 +72,12 @@ public class TollGate {
         World.getWorld().addNpc(npc);
     }
 
-    private static class WalkToGate extends ReachDistancedAction {
+    private static class WalkToGate extends ReachObjectAction {
 
         private final boolean quickPay;
 
         public WalkToGate(Player player, GroundObject gate, boolean quickPay) {
-            super(1, true, player, gate.getBounds(), 1);
+            super(1, true, player, gate, 1, true);
             this.quickPay = quickPay;
         }
 
@@ -197,16 +197,47 @@ public class TollGate {
         }
     }
 
-    private static class GateDialogue extends Dialogue {
+   /* private static Dialogue createDialogue() {
+        ContinueNode willPay = new PlayerDialogueNode("Fine. I'll pay that.", HeadAnimation.SAD, true) {
+            @Override
+            public void handleOption(DialogueContext ctx, DialogueOption option) {
+                Player player = ctx.getPlayer();
+                if (!player.getInventory().contains(TOLL)) {
+                    ctx.setNode(new NPCDialogueNode("Bah, you don't even have enough coins! Go away!", GUARD_TYPE, HeadAnimation.ANGRY, true));
+                } else {
+                    ctx.stop();
+                    player.getInventory().remove(TOLL);
+                    player.sendMessage("You pay the guard and he opens the gate.");
+                    player.startAction(new WalkThroughGate(player));
+                }
+            }
+        };
+        ContinueNode goAway = new NPCDialogueNode("Then go away!", GUARD_TYPE, HeadAnimation.ANGRY, true);
+        ContinueNode root =  new NPCDialogueNode("Halt! Anyone wishing to enter Al Kharid must pay the toll.", GUARD_TYPE, HeadAnimation.STERN, true);
+        root.setNext(new PlayerDialogueNode("And how much is that?", HeadAnimation.CALMLY_TALKING, true).setNext(
+                     new NPCDialogueNode("10 gold pieces.", GUARD_TYPE, HeadAnimation.PLEASED, true)).setNext(
+                     new BranchNode().
+                       addBranch("10 whole pieces?! That's ridiculous! I'm not paying that", 
+                         new PlayerDialogueNode("10 whole pieces?! That's ridiculous! I'm not paying that", HeadAnimation.ANGRY, true).setNext(
+                         goAway)).
+                       addBranch("Fine. I'll pay that.", 
+                         willPay)
+                       )
+                     );
+        return new Dialogue(root);
+        
+    }*/
+    
+    private static class GateDialogue extends Dialogue<Integer> {
 
         @Override
-        public void initialize(DialogueContext ctx) {
+        public void initialize(DialogueContext<Integer> ctx) {
             ctx.openNpcConversationDialogue("Halt! Anyone wishing to enter Al Kharid must pay the toll.", GUARD_TYPE, HeadAnimation.STERN, true);
             ctx.setStage(1);
         }
 
         @Override
-        public void handleOption(DialogueContext ctx, DialogueOption opt) {
+        public void handleOption(DialogueContext<Integer> ctx, DialogueOption opt) {
             switch (ctx.getStage()) {
             case -1:
                 ctx.stop();
