@@ -49,11 +49,14 @@ public final class ClientScriptDumper {
         opcodes.put(47, "loads_global");
         opcodes.put(48, "stores_global");
         opcodes.put(51, "switch");
-        opcodes.put(100, "new_dyn_comp");  
+        opcodes.put(100, "new_dyn_comp");
         opcodes.put(101, "dlt_dyn_comp");
         opcodes.put(102, "dlt_dyn_comps");
         opcodes.put(200, "set_active_component");
-        
+
+        opcodes.put(404, "set_local_player_color");
+        opcodes.put(410, "set_local_player_gender");
+
         opcodes.put(1000, "set_dyn_comp_position");
         opcodes.put(1003, "set_dyn_comp_hidden");
         opcodes.put(1005, "set_dyn_comp_image");
@@ -64,7 +67,7 @@ public final class ClientScriptDumper {
         opcodes.put(1300, "set_dyn_comp_option");
         opcodes.put(1301, "set_dyn_comp_parent");
         opcodes.put(1408, "set_dyn_comp_loop_script");
-        
+
         opcodes.put(2000, "set_static_comp_position");
         opcodes.put(2003, "set_static_comp_hidden");
         opcodes.put(2005, "set_static_comp_image");
@@ -75,37 +78,37 @@ public final class ClientScriptDumper {
         opcodes.put(2300, "set_static_comp_option");
         opcodes.put(2301, "set_static_comp_parent");
         opcodes.put(2408, "set_static_comp_loop_script");
-        
+
         opcodes.put(2704, "is_opened");
-        opcodes.put(2705, "is_opened");     // Client allows for two cases
-        opcodes.put(3300, "pushi_lcycle");  
-        opcodes.put(3301, "pushi_itemid");  
-        opcodes.put(3302, "pushi_itemamt");  
-        opcodes.put(3303, "pushi_amtincontainer");  
+        opcodes.put(2705, "is_opened"); // Client allows for two cases
+        opcodes.put(3300, "pushi_lcycle");
+        opcodes.put(3301, "pushi_itemid");
+        opcodes.put(3302, "pushi_itemamt");
+        opcodes.put(3303, "pushi_amtincontainer");
         opcodes.put(3304, "pushi_containersize");
         opcodes.put(3313, "pushi_temp_itemid");
         opcodes.put(3314, "pushi_temp_itemamt");
         opcodes.put(3315, "pushi_temp_amtincontainer");
         opcodes.put(3316, "pushi_rights");
-        
+
         opcodes.put(3400, "pushs_cs2constant");
         opcodes.put(3408, "pusho_cs2constant");
-        
-        opcodes.put(4000, "iadd"); 
-        opcodes.put(4001, "isub"); 
-        opcodes.put(4002, "imult"); 
-        opcodes.put(4003, "idiv"); 
-        
-        opcodes.put(4106, "pushs_i2str"); 
-        
-        opcodes.put(4200, "pushs_itemname"); 
+
+        opcodes.put(4000, "iadd");
+        opcodes.put(4001, "isub");
+        opcodes.put(4002, "imult");
+        opcodes.put(4003, "idiv");
+
+        opcodes.put(4106, "pushs_i2str");
+
+        opcodes.put(4200, "pushs_itemname");
     }
 
     public static void main(String[] args) throws IOException {
-       
+
         PrintStream newStream = new PrintStream(new FileOutputStream(new File("./data/game/dumps/scripts")));
         System.setOut(newStream);
-        
+
         try (Cache cache = new Cache(FileStore.open("./data/game/cache/"))) {
             ReferenceTable rt = ReferenceTable.decode(Container.decode(cache.getStore().read(255, 12)).getData());
             for (int id = 0; id < rt.capacity(); id++) {
@@ -129,10 +132,10 @@ public final class ClientScriptDumper {
                     }
 
                     String param = str != null ? str : Integer.toString(val);
-                    
-                    if(name.equals("pushi")) {
-                        
-                        switch(val) {
+
+                    if (name.equals("pushi")) {
+
+                        switch (val) {
                             case 0x80000001:
                                 param = "mouse_x";
                                 break;
@@ -161,7 +164,7 @@ public final class ClientScriptDumper {
                                 param = "keychar";
                                 break;
                             default:
-                                 if((val >> 16) != 0 && (val & 0xffff) <= 256 && val != 0xffffffff) {
+                                if ((val >> 16) != 0 && (val & 0xffff) <= 256 && val != 0xffffffff) {
                                     param = "id: " + (val >> 16) + ", comp: " + (val & 0xffff) + "";
                                 }
                                 break;

@@ -144087,7 +144087,7 @@ iargs: 0, sargs: 0
 27 pushi id: 771, comp: 52
 28 call 680
 29 pushi 0
-30 opcode: 410 0
+30 set_local_player_gender 0
 31 pushi 0
 32 storei_global 196
 33 call 1711
@@ -144125,7 +144125,7 @@ iargs: 0, sargs: 0
 27 pushi id: 771, comp: 49
 28 call 680
 29 pushi 1
-30 opcode: 410 0
+30 set_local_player_gender 0
 31 pushi 1
 32 storei_global 196
 33 call 1714
@@ -144941,7 +144941,7 @@ iargs: 3, sargs: 0
 11 opcode: 2403 0
 12 loadi 1
 13 loadi 2
-14 opcode: 404 0
+14 set_local_player_color 0
 15 loadi 2
 16 storei_global 94
 17 return 0
@@ -145905,19 +145905,19 @@ iargs: 0, sargs: 0
 49 opcode: 403 0
 50 pushi 0
 51 pushi_varbit 4215
-52 opcode: 404 0
+52 set_local_player_color 0
 53 pushi 1
 54 pushi_varbit 4216
-55 opcode: 404 0
+55 set_local_player_color 0
 56 pushi 2
 57 pushi_varbit 4217
-58 opcode: 404 0
+58 set_local_player_color 0
 59 pushi 3
 60 pushi_varbit 4218
-61 opcode: 404 0
+61 set_local_player_color 0
 62 pushi 4
 63 pushi_varbit 4219
-64 opcode: 404 0
+64 set_local_player_color 0
 65 call 1717
 66 call 1718
 67 call 1719
@@ -145944,10 +145944,10 @@ iargs: 0, sargs: 0
 14 opcode: 403 0
 15 pushi 0
 16 pushi_varbit 4215
-17 opcode: 404 0
+17 set_local_player_color 0
 18 pushi 4
 19 pushi_varbit 4219
-20 opcode: 404 0
+20 set_local_player_color 0
 21 call 1717
 22 call 1718
 23 call 1719
@@ -145995,13 +145995,13 @@ iargs: 0, sargs: 0
 35 opcode: 403 0
 36 pushi 1
 37 pushi_varbit 4216
-38 opcode: 404 0
+38 set_local_player_color 0
 39 pushi 2
 40 pushi_varbit 4217
-41 opcode: 404 0
+41 set_local_player_color 0
 42 pushi 3
 43 pushi_varbit 4218
-44 opcode: 404 0
+44 set_local_player_color 0
 45 call 1717
 46 call 1718
 47 call 1719
@@ -146059,19 +146059,19 @@ iargs: 0, sargs: 0
 45 opcode: 403 0
 46 pushi 0
 47 pushi_varbit 4215
-48 opcode: 404 0
+48 set_local_player_color 0
 49 pushi 1
 50 pushi_varbit 4216
-51 opcode: 404 0
+51 set_local_player_color 0
 52 pushi 2
 53 pushi_varbit 4217
-54 opcode: 404 0
+54 set_local_player_color 0
 55 pushi 3
 56 pushi_varbit 4218
-57 opcode: 404 0
+57 set_local_player_color 0
 58 pushi 4
 59 pushi_varbit 4219
-60 opcode: 404 0
+60 set_local_player_color 0
 61 call 1717
 62 call 1718
 63 call 1719
@@ -146094,10 +146094,10 @@ iargs: 0, sargs: 0
 10 opcode: 403 0
 11 pushi 0
 12 pushi_varbit 4215
-13 opcode: 404 0
+13 set_local_player_color 0
 14 pushi 4
 15 pushi_varbit 4219
-16 opcode: 404 0
+16 set_local_player_color 0
 17 call 1717
 18 call 1718
 19 call 1719
@@ -146145,13 +146145,13 @@ iargs: 0, sargs: 0
 35 opcode: 403 0
 36 pushi 1
 37 pushi_varbit 4216
-38 opcode: 404 0
+38 set_local_player_color 0
 39 pushi 2
 40 pushi_varbit 4217
-41 opcode: 404 0
+41 set_local_player_color 0
 42 pushi 3
 43 pushi_varbit 4218
-44 opcode: 404 0
+44 set_local_player_color 0
 45 call 1717
 46 call 1718
 47 call 1719
