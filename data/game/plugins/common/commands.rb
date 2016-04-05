@@ -15,6 +15,7 @@ java_import 'net.scapeemulator.game.msg.impl.inter.InterfaceItemMessage'
 java_import 'net.scapeemulator.game.msg.impl.inter.InterfaceVisibleMessage'
 java_import 'net.scapeemulator.game.msg.impl.inter.InterfaceOpenMessage'
 java_import 'net.scapeemulator.game.msg.impl.ConfigMessage'
+java_import 'net.scapeemulator.game.msg.impl.Packet17Message'
 java_import 'net.scapeemulator.game.msg.impl.camera.CameraMoveMessage'
 java_import 'net.scapeemulator.game.msg.impl.camera.CameraResetMessage'
 java_import 'net.scapeemulator.game.msg.impl.camera.CameraAngleMessage'
@@ -54,24 +55,6 @@ end
 bind :cmd, :name => 'window' do
   player.interface_set.open_window(args[0].to_i)
 end
-
-# TODO start remove
-bind :cmd, :name => 'min' do
-  player.set_min
-end
-
-bind :cmd, :name => 'reset' do 
-  player.reset_pos
-end
-
-bind :cmd, :name => 'max' do
-  player.set_max
-end
-
-bind :cmd, :name => 'spawn' do
-  player.set_spawn_pos args[0].to_i
-end
-# TODO end remove
 
 bind :cmd, :name => 'noclip' do
   player.toggle_clipping
@@ -121,10 +104,6 @@ end
 
 bind :cmd, :name => 'camface' do
   player.send CameraFaceMessage.new(args[0].to_i, args[1].to_i, args[2].to_i, args[3].to_i, args[4].to_i)
-end
-
-bind :cmd, :name => 'dumpcon' do
-  player.get_house.dump_room_data
 end
 
 bind :cmd, :name => 'camangle' do
