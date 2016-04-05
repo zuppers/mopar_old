@@ -71,6 +71,7 @@ public final class PlayerUpdater {
         }
 
         player.getTimers().tick();
+        player.getFarms().tick();
         player.getPrayers().tick();
         player.getSkillSet().tick(player.getHealthRegen(), player.getPrayers().prayerActive(Prayer.RESTORE) ? 2 : 1);
         player.getWalkingQueue().tick();

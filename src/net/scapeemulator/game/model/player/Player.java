@@ -7,7 +7,9 @@ import io.netty.channel.ChannelFutureListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.scapeemulator.cache.def.NPCDefinition;
 import net.scapeemulator.game.GameServer;
+import net.scapeemulator.game.io.JdbcSerializer;
 import net.scapeemulator.game.model.Position;
 import net.scapeemulator.game.model.World;
 import net.scapeemulator.game.model.definition.NPCDefinitions;
@@ -31,6 +33,7 @@ import net.scapeemulator.game.model.player.skills.SkillAppearanceListener;
 import net.scapeemulator.game.model.player.skills.SkillMessageListener;
 import net.scapeemulator.game.model.player.skills.SkillSet;
 import net.scapeemulator.game.model.player.skills.construction.House;
+import net.scapeemulator.game.model.player.skills.farming.PlayerFarms;
 import net.scapeemulator.game.model.player.skills.firemaking.Firemaking;
 import net.scapeemulator.game.model.player.skills.fishing.FishingTool;
 import net.scapeemulator.game.model.player.skills.magic.Rune;
@@ -55,7 +58,7 @@ import net.scapeemulator.util.Base37Utils;
 
 public final class Player extends Mob {
 
-    private static final Position[] HOME_LOCATIONS = { new Position(3222, 3222) };
+    private static final Position[] HOME_LOCATIONS = {new Position(3222, 3222)};
 
     private static int appearanceTicketCounter = 0;
     private static Animation DEATH_ANIMATION = new Animation(7185, 50);
@@ -88,6 +91,7 @@ public final class Player extends Mob {
     private TradeSession tradeSession;
     private final House house = new House(this);
     private House inHouse;
+    private final PlayerFarms farms = new PlayerFarms(this);
     private final SkillSet skillSet = new SkillSet();
     private BankSession bankSession;
     private final BankSettings bankSettings = new BankSettings();
@@ -148,7 +152,7 @@ public final class Player extends Mob {
             combatBonuses.setAttackBonus(type, typeAttackBonus);
             combatBonuses.setDefenceBonus(type, typeDefenceBonus);
         }
-        
+
         int prayerBonus = 0;
         int strengthBonus = 0;
         for (Item equipped : getEquipment().toArray()) {
@@ -357,6 +361,10 @@ public final class Player extends Mob {
         this.inHouse = inHouse;
     }
 
+    public PlayerFarms getFarms() {
+        return farms;
+    }
+
     public SkillSet getSkillSet() {
         return skillSet;
     }
@@ -418,23 +426,22 @@ public final class Player extends Mob {
         }
     }
 
-    public void forceMovement(ForcedMovement forcedMove, int duration) {
+    public void forceMovement(ForcedMovement forcedMove) {
         this.forcedMove = forcedMove;
         blockActions = true;
-        World.getWorld().getTaskScheduler().schedule(new Task(duration, false) {
-
+        walkingQueue.reset();
+        World.getWorld().getTaskScheduler().schedule(new Task(forcedMove.getDurationTicks(), false) {
             @Override
             public void execute() {
                 stop();
             }
 
             public void stop() {
-                teleport(forcedMove.getDestination());
+                teleport(forcedMove.getSecondPosition());
                 blockActions = false;
                 super.stop();
             }
         });
-
     }
 
     public ForcedMovement getForcedMove() {
@@ -631,14 +638,19 @@ public final class Player extends Mob {
     }
 
     public void setSpawnPos(int id) {
-        sendMessage("Spawn for " + NPCDefinitions.forId(id).getName() + " sent to console.");
-        if (min == null || max == null) {
-            System.out.println("INSERT INTO `npcspawns`(`type`, `x`, `y`, `height`, `roam`) " + "VALUES (" + id + "," + position.getX() + "," + position.getY() + "," + position.getHeight() + "," + 0
-                    + ");");
-        } else {
-            System.out.println("INSERT INTO `npcspawns`(`type`, `x`, `y`, `height`, `roam`, `min_x`, `min_y`, `max_x`, `max_y`) " + "VALUES (" + id + "," + position.getX() + "," + position.getY()
-                    + "," + position.getHeight() + "," + 1 + "," + min.getX() + "," + min.getY() + "," + max.getX() + "," + max.getY() + ");");
-        }
+
+            NPCDefinition def = NPCDefinitions.forId(id);
+            if (def.getExamine() == null) {
+                sendMessage("Creating default NPC definition for " + def.getName());
+                def.setExamine(def.getName() + (def.getCombatLevel() > 0 ? (" (lvl:" + def.getCombatLevel() + ")") : ""));
+                ((JdbcSerializer) GameServer.getInstance().getSerializer()).saveDefaultNPCDef(id, def.getName() + (def.getCombatLevel() > 0 ? (" (lvl:" + def.getCombatLevel() + ")") : ""));
+            }
+            if((min != null && max != null) && (position.getX() < min.getX() || position.getY() < min.getY() || position.getX() > max.getX() || position.getY() > max.getY())) {
+                sendMessage("Spawn position out of bounds!");
+                return;
+            }
+            ((JdbcSerializer) GameServer.getInstance().getSerializer()).saveNPCSpawn(id, position, min, max);
+            sendMessage("Spawn for " + def.getName() + " sent to SQL.");        
     }
 
     public void setSpellbook(Spellbook spellbook) {
