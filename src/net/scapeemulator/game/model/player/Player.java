@@ -7,9 +7,7 @@ import io.netty.channel.ChannelFutureListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.scapeemulator.cache.def.NPCDefinition;
 import net.scapeemulator.game.GameServer;
-import net.scapeemulator.game.io.JdbcSerializer;
 import net.scapeemulator.game.model.Position;
 import net.scapeemulator.game.model.World;
 import net.scapeemulator.game.model.definition.NPCDefinitions;
@@ -117,10 +115,6 @@ public final class Player extends Mob {
     private int appearanceTicket = nextAppearanceTicket();
     private final PlayerOption[] options = new PlayerOption[10];
     private int pnpc = -1;
-
-    // TODO remove
-    private Position min;
-    private Position max;
 
     public Player() {
         init();
@@ -599,22 +593,6 @@ public final class Player extends Mob {
         this.regionChanging = true;
     }
 
-    public void resetPos() {
-        min = null;
-        max = null;
-        sendMessage("Min/max reset.");
-    }
-
-    public void setMax() {
-        max = position;
-        sendMessage("Top right bounds set to " + max);
-    }
-
-    public void setMin() {
-        min = position;
-        sendMessage("Bottom left bounds set to " + min);
-    }
-
     public void setPassword(String password) {
         this.password = password;
     }
@@ -635,22 +613,6 @@ public final class Player extends Mob {
 
     public void setSession(GameSession session) {
         this.session = session;
-    }
-
-    public void setSpawnPos(int id) {
-
-            NPCDefinition def = NPCDefinitions.forId(id);
-            if (def.getExamine() == null) {
-                sendMessage("Creating default NPC definition for " + def.getName());
-                def.setExamine(def.getName() + (def.getCombatLevel() > 0 ? (" (lvl:" + def.getCombatLevel() + ")") : ""));
-                ((JdbcSerializer) GameServer.getInstance().getSerializer()).saveDefaultNPCDef(id, def.getName() + (def.getCombatLevel() > 0 ? (" (lvl:" + def.getCombatLevel() + ")") : ""));
-            }
-            if((min != null && max != null) && (position.getX() < min.getX() || position.getY() < min.getY() || position.getX() > max.getX() || position.getY() > max.getY())) {
-                sendMessage("Spawn position out of bounds!");
-                return;
-            }
-            ((JdbcSerializer) GameServer.getInstance().getSerializer()).saveNPCSpawn(id, position, min, max);
-            sendMessage("Spawn for " + def.getName() + " sent to SQL.");        
     }
 
     public void setSpellbook(Spellbook spellbook) {
