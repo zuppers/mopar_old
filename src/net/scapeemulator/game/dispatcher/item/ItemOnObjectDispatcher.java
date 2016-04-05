@@ -10,6 +10,7 @@ import net.scapeemulator.game.model.object.GroundObjectList;
 import net.scapeemulator.game.model.object.GroundObjectList.GroundObject;
 import net.scapeemulator.game.model.player.Player;
 import net.scapeemulator.game.model.player.SlottedItem;
+import net.scapeemulator.game.model.player.action.ReachObjectAction;
 import net.scapeemulator.game.model.player.inventory.Inventory;
 
 /**
@@ -64,7 +65,19 @@ public final class ItemOnObjectDispatcher {
         if (handler != null) {
             handler.handle(player, object, item);
         } else {
-            player.sendMessage("Nothing interesting happens.");
+            player.startAction(new ReachObjectAction(1, false, player, object, 1, true) {
+
+                @Override
+                public void executeAction() {
+                    player.turnToPosition(object.getCenterPosition());
+                    player.sendMessage("Nothing interesting happens.");
+                    stop();
+                }
+            });
+
+            if (player.getRights() > 0) {
+                System.out.println("Item on Object: " + item.getItem().getId() + " on " + object.getId());
+            }
         }
     }
 
