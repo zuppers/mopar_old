@@ -23,15 +23,27 @@ public final class ObjectDumper {
                 ObjectDefinition def = ObjectDefinitions.forId(id);
                 if (def != null) {
                     try {
-                        output.write(id + "\t" + def.getName() + "\t\t");
-                        output.write("len/width:" + def.getLength() + "/" + def.getWidth() + "\t" + "solid/impen:" + def.isSolid() + "/"
+                        output.write(id + "\t" + def.getName() + "\t\t\t");
+                        output.write("len/width:[" + def.getLength() + "/" + def.getWidth() + "]\t" + "solid/impen:" + def.isSolid() + "/"
                                 + def.isImpenetrable() + "\t");
-                        output.write("anim:" + def.getAnimationId() + "\t");
-                        if (def.hasOptions()) {
-                            output.write("opts:" + Arrays.toString(def.getOptions()) + "\t");
+                        if (def.getAnimationId() > 0) {
+                            output.write("anim[" + def.getAnimationId() + "]\t");
                         }
-                            output.write("validInteract:" + def.getValidInteractSides());
-                        
+                        if (def.hasOptions()) {
+                            output.write("opts" + Arrays.toString(def.getOptions()) + "\t");
+                        }
+                        if (def.getValidInteractSides() > 0) {
+                            output.write("validInteract[" + def.getValidInteractSides() + "]\t");
+                        }
+                        if (def.getConfigId() > 0) {
+                            output.write("config[" + def.getConfigId() + "]\t");
+                        }
+                        if (def.getVarbitId() > 0) {
+                            output.write("varbit[" + def.getVarbitId() + "]\t");
+                        }
+                        if(def.getChildIds() != null) {
+                            output.write("childids" + Arrays.toString(def.getChildIds()) + "\t");
+                        }
                         output.newLine();
                         output.flush();
                     } catch (RuntimeException re) {

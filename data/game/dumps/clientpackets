@@ -60,7 +60,7 @@ Packet 56: size[10]
 Packet 57: size[0]
 Packet 58: size[0]
 Packet 59: size[0]
-Packet 60: size[3]
+Packet 60: size[3] config (byte size)
 Packet 61: size[0]
 Packet 62: size[V_B]
 Packet 63: size[0]
